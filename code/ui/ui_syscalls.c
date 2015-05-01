@@ -375,6 +375,8 @@ qboolean trap_VerifyCDKey( const char *key, const char *chksum) {
     return syscall( UI_VERIFY_CDKEY, key, chksum);
 }
 
+/*
 int trap_Key_GetModelCount( void ) {
     return syscall( UI_GET_MODELCOUNT );
 }
+*/

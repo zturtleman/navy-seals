@@ -34,7 +34,6 @@ typedef enum {
     UI_FS_FCLOSEFILE,
     UI_FS_GETFILELIST,
     UI_R_REGISTERMODEL,
-	UI_R_REGISTERPERMAMODEL,
     UI_R_REGISTERSKIN,
     UI_R_REGISTERSHADERNOMIP,
     UI_R_CLEARSCENE,
@@ -102,9 +101,9 @@ typedef enum {
     UI_LAN_GETSERVERPING,
     UI_LAN_SERVERISVISIBLE,
     UI_LAN_COMPARESERVERS,
+	// 1.32
 	UI_FS_SEEK,
 	UI_SET_PBCLSTATUS,
-	UI_GET_MODELCOUNT,
 
     UI_MEMSET = 100,
     UI_MEMCPY,
@@ -132,6 +131,7 @@ typedef enum {
 #define SORT_CLIENTS		2
 #define SORT_GAME			3
 #define SORT_PING			4
+#define SORT_PUNKBUSTER		5
 
 typedef enum {
     UI_GETAPIVERSION = 0,	// system reserved
@@ -153,9 +153,6 @@ typedef enum {
 
     UI_IS_FULLSCREEN,
     //	qboolean UI_IsFullscreen( void );
-
-	UI_PRECACHE,
-	//	void	UI_Precache( void );
 
     UI_SET_ACTIVE_MENU,
     //	void	UI_SetActiveMenu( uiMenuCommand_t menu );

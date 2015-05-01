@@ -14,7 +14,7 @@ USER INTERFACE MAIN
 #include "ui_local.h"
 
 #define DEBUGCHARACTER 0
-#define INIT_PRECACHE 1
+//#define INIT_PRECACHE 1
 
 uiInfo_t uiInfo;
 
@@ -514,9 +514,11 @@ int vmMain( int command, int arg0, int arg1, int arg2, int arg3, int arg4, int a
     case UI_IS_FULLSCREEN:
         return _UI_IsFullscreen();
 
+/*
 	case UI_PRECACHE:
 		_UI_Precache( arg0 );
 		return 0;
+*/
 
     case UI_SET_ACTIVE_MENU:
         _UI_SetActiveMenu( arg0 );
