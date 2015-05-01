@@ -2973,7 +2973,7 @@ void CG_EventHandling(int type) {
 }
 
 
-#include "..\q3_ui\keycodes.h"
+#include "../q3_ui/keycodes.h"
 
 void CG_KeyEvent(int key, qboolean down) {
 

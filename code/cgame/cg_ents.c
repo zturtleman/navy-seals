@@ -11,7 +11,7 @@
 
 #include "cg_local.h"
 
-#include "..\game\variables.h"
+#include "../game/variables.h"
 
 
 /*

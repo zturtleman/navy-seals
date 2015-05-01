@@ -1187,7 +1187,7 @@ typedef enum _flag_status {
 #define CDCHKSUM_LEN 2
 
 // Navy Seals +
-#include "..\game\variables.h"
+#include "../game/variables.h"
 
 extern	vec4_t		colorLtBlue;
 
