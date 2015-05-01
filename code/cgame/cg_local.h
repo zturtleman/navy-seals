@@ -1711,7 +1711,8 @@ int			trap_CM_MarkFragments( int numPoints, const vec3_t *points,
 // normal sounds will have their volume dynamically changed as their entity
 // moves and the listener moves
 void		trap_S_StartSound( vec3_t origin, int entityNum, int entchannel, sfxHandle_t sfx );
-void		trap_S_StartSoundExtended( vec3_t origin, float volume, float rolloff, float pitch, int entityNum, int entchannel, sfxHandle_t sfx );
+//void		trap_S_StartSoundExtended( vec3_t origin, float volume, float rolloff, float pitch, int entityNum, int entchannel, sfxHandle_t sfx );
+#define		trap_S_StartSoundExtended( origin, volume, rolloff, pitch, entityNum, entchannel, sfx ) trap_S_StartSound( origin, entityNum, entchannel, sfx )
 void		trap_S_StopLoopingSound(int entnum);
 
 // a local sound is always played full volume
@@ -1734,7 +1735,8 @@ void		trap_R_LoadWorldMap( const char *mapname );
 // all media should be registered during level startup to prevent
 // hitches during gameplay
 qhandle_t	trap_R_RegisterModel( const char *name );			// returns rgb axis if not found
-qhandle_t	trap_R_RegisterPermanentModel( const char *name );			// returns rgb axis if not found 
+//qhandle_t	trap_R_RegisterPermanentModel( const char *name );			// returns rgb axis if not found 
+#define		trap_R_RegisterPermanentModel(x) trap_R_RegisterModel(x)
 qhandle_t	trap_R_RegisterSkin( const char *name );			// returns all white if not found
 qhandle_t	trap_R_RegisterShader( const char *name );			// returns all white if not found
 qhandle_t	trap_R_RegisterShaderNoMip( const char *name );			// returns all white if not found

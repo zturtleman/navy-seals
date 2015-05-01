@@ -1238,3 +1238,4 @@ typedef struct weaponInfo_s {
 
     int				kickBack;
 } weaponInfo_t;
+

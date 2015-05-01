@@ -208,10 +208,12 @@ void  trap_S_StartSound( vec3_t origin, int entityNum, int entchannel, sfxHandle
     syscall( CG_S_STARTSOUND, origin, entityNum, entchannel, sfx );
 }
 
+/*
 void trap_S_StartSoundExtended( vec3_t origin, float volume, float rolloff, float pitch, int entityNum, int entchannel, sfxHandle_t sfx )
 {
     syscall( CG_S_STARTSOUNDEXTENDED, origin, PASSFLOAT(volume), PASSFLOAT(rolloff), PASSFLOAT(pitch), entityNum, entchannel, sfx );
 }
+*/
 
 void  trap_S_StartLocalSound( sfxHandle_t sfx, int channelNum )
 {
@@ -268,10 +270,12 @@ qhandle_t trap_R_RegisterModel( const char *name )
     return syscall( CG_R_REGISTERMODEL, name );
 }
 
+/*
 qhandle_t trap_R_RegisterPermanentModel( const char *name )
 {
     return syscall( CG_R_REGISTERPERMAMODEL, name );
 }
+*/
 
 qhandle_t trap_R_RegisterSkin( const char *name )
 {

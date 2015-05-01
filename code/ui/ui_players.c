@@ -618,6 +618,13 @@ static void UI_PlayerFloatSprite( playerInfo_t *pi, vec3_t origin, qhandle_t sha
 
 
 /*
+
+*/
+void UI_DrawPlayer( float x, float y, float w, float h, playerInfo_t *pi, int time ) {
+	trap_Print( "FIXME!!! UI_DrawPlayer not implemented\n" );
+}
+
+/*
 ===============
 UI_DrawPlayer
 ===============

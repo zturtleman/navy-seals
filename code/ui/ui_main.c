@@ -7748,7 +7748,7 @@ void _UI_Precache( qboolean skipPrecache )
 {
 #ifdef INIT_PRECACHE  
 	int i = 0;
-	int numModels = trap_Key_GetModelCount();
+	//int numModels = trap_Key_GetModelCount();
 	int start;
 
 	if ( skipPrecache == qfalse ){

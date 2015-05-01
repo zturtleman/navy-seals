@@ -103,9 +103,11 @@ qhandle_t trap_R_RegisterModel( const char *name ) {
     return syscall( UI_R_REGISTERMODEL, name );
 }
 
+/*
 qhandle_t trap_R_RegisterPermanentModel( const char *name ) {
     return syscall( UI_R_REGISTERPERMAMODEL, name );
 } 
+*/
 
 qhandle_t trap_R_RegisterSkin( const char *name ) {
     return syscall( UI_R_REGISTERSKIN, name );

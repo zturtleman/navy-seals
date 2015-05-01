@@ -935,7 +935,8 @@ void			trap_FS_Write( const void *buffer, int len, fileHandle_t f );
 void			trap_FS_FCloseFile( fileHandle_t f );
 int				trap_FS_GetFileList(  const char *path, const char *extension, char *listbuf, int bufsize );
 qhandle_t		trap_R_RegisterModel( const char *name );
-qhandle_t		trap_R_RegisterPermanentModel( const char *name ); 
+//qhandle_t		trap_R_RegisterPermanentModel( const char *name ); 
+#define			trap_R_RegisterPermanentModel(x) trap_R_RegisterModel(x)
 qhandle_t		trap_R_RegisterSkin( const char *name );
 qhandle_t		trap_R_RegisterShaderNoMip( const char *name );
 void			trap_R_ClearScene( void );

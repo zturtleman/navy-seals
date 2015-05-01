@@ -5655,7 +5655,7 @@ qboolean MenuParse_name( itemDef_t *item, int handle ) {
 
 qboolean MenuParse_fullscreen( itemDef_t *item, int handle ) {
     menuDef_t *menu = (menuDef_t*)item;
-    if (!PC_Int_Parse( handle, &(int)menu->fullScreen)) {
+    if (!PC_Int_Parse( handle, &menu->fullScreen)) {
         return qfalse;
     }
     return qtrue;
