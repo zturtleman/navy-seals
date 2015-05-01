@@ -12,7 +12,9 @@
 // a quake3 arena modifiation
 // defcon-x@ns-co.net
 
-#include "q_shared.h"
+#ifdef Q3_VM
+
+#include "../qcommon/q_shared.h"
 
 /*-
 * Copyright (c) 1992, 1993
@@ -1315,4 +1317,5 @@ int sscanf( const char *buffer, const char *fmt, ... ) {
     return count;
 }
 
+#endif
 #endif

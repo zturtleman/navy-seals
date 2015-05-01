@@ -9,7 +9,7 @@
 // a quake3 arena modifiation
 // defcon-x@ns-co.net
 
-#include "q_shared.h"
+#include "../qcommon/q_shared.h"
 #include "bg_public.h"
 
 /*QUAKED item_***** ( 0 0 0 ) (-16 -16 -16) (16 16 16) suspended

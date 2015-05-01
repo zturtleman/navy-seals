@@ -59,7 +59,7 @@ you will have to add your own version for support in the VM.
 
 #ifdef Q3_VM
 
-#include "bg_lib.h"
+#include "../game/bg_lib.h"
 
 #else
 

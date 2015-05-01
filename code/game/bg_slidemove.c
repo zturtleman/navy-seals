@@ -9,7 +9,7 @@
 // a quake3 arena modifiation
 // defcon-x@ns-co.net
 
-#include "q_shared.h"
+#include "../qcommon/q_shared.h"
 #include "bg_public.h"
 #include "bg_local.h"
 
