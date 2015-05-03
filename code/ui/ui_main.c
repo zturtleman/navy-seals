@@ -2753,6 +2753,9 @@ static void UI_DrawGLInfo(rectDef_t *rect, float scale, vec4_t color, int textSt
         while ( *eptr && *eptr == ' ' )
             *eptr++ = '\0';
 
+        if ( numLines == 64 )
+            break;
+
         // track start of valid string
         if (*eptr && *eptr != ' ')
         {
