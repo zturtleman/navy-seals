@@ -1,5 +1,0 @@
-// eof
-void empty()
-{
-
-}
