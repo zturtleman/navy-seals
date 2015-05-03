@@ -1440,7 +1440,8 @@ void _UI_Refresh( int realtime )
         float y = uiInfo.uiDC.cursory-4; 
         qhandle_t hShader = uiInfo.uiDC.Assets.cursor;
 
-        if ( uiInfo.uiDC.cursor_lbutton_dn )
+        // only use cursor_dn shader if UI defined it
+        if ( uiInfo.uiDC.cursor_lbutton_dn && uiInfo.uiDC.Assets.cursor_dn )
             hShader = uiInfo.uiDC.Assets.cursor_dn;
  
         UI_AdjustFrom640( &x, &y, NULL,NULL );
