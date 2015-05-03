@@ -464,7 +464,7 @@ void model_die ( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int
     VectorSubtract(self->r.maxs, self->r.mins, origin);
 
     // define in : bg_public.h (oder so) bei den ganzen EV_ sachen das:
-    // EV_FUNCEXPLOSIVE, (ganz am ende hinzufügen , vor der - aber dann dem vorletzen ein , hintendran falls keines da ist '}')
+    // EV_FUNCEXPLOSIVE, (ganz am ende hinzufÃ¼gen , vor der - aber dann dem vorletzen ein , hintendran falls keines da ist '}')
     temp = G_TempEntity( origin , EV_FUNCEXPLOSIVE );
 
     VectorCopy( self->r.maxs, temp->s.origin );
