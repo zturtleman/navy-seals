@@ -2485,7 +2485,6 @@ Q3UIOBJ_ = \
   $(B)/$(BASEGAME)/ui/ui_players.o \
   $(B)/$(BASEGAME)/ui/ui_precache.o \
   $(B)/$(BASEGAME)/ui/ui_shared.o \
-  $(B)/$(BASEGAME)/ui/ui_util.o \
   \
   $(B)/$(BASEGAME)/ui/bg_misc.o \
   $(B)/$(BASEGAME)/ui/bg_lib.o \
@@ -2515,7 +2514,6 @@ MPUIOBJ_ = \
   $(B)/$(MISSIONPACK)/ui/ui_players.o \
   $(B)/$(MISSIONPACK)/ui/ui_precache.o \
   $(B)/$(MISSIONPACK)/ui/ui_shared.o \
-  $(B)/$(MISSIONPACK)/ui/ui_util.o \
   \
   $(B)/$(MISSIONPACK)/ui/bg_misc.o \
   $(B)/$(MISSIONPACK)/ui/bg_lib.o \
