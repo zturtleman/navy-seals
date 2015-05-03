@@ -1,14 +1,5 @@
-
-## This is a Navy SEALs: Covert Operations Document.
-## copyright (c) 2007 by Team Mirage. All Rights reserved. 
-##
-## This document has to be carefully read before any files 
-## of the sourcecode may be opened, viewed, copied or 
-## modified.
-
------------------------------------------------------------
-
- Navy SEALs: Covert Operations - Sourcecode Readme
+Navy SEALs: Covert Operations Gold Edition - Source Code
+--------------------------------------------------------
 
 Navy SEALs: Covert Operations is a scale realism total 
 conversion for id Software's Quake3/Team Arena engine. 
@@ -25,13 +16,15 @@ technology, all original code, stunning art, level design,
 modeling and animation; wrapped in a rich game interface 
 that gives players new exciting control over game-play that 
 is unique, realistic and enormous fun.
- 
------------------------------------------------------------
 
- Original Codebase: 
-	Manfred Nerurkar, Michael Sauer and id Software
+Original Codebase
+-----------------
 
------------------------------------------------------------
+Manfred Nerurkar, Michael Sauer, and id Software.
+
+```
+Copyright (C) 1999-2005 Id Software, Inc.
+Copyright (C) 2007 Team Mirage
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -47,8 +40,5 @@ You should have received a copy of the GNU General Public
 License along with this program; if not, write to the Free 
 Software Foundation, Inc., 51 Franklin Street, Fifth Floor, 
 Boston, MA 02110-1301, USA.
+```
 
------------------------------------------------------------
-
-You are not allowed to remove this Readme from the directory
-of the sourcecode. 
