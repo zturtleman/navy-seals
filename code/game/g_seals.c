@@ -4652,8 +4652,8 @@ int NS_CalcDamageOnRange(vec3_t start, vec3_t end, int damage, int attackerweapo
     /*
     a = maximale reichweite [m]
     b = normaler schaden (grundschaden bei reichweite = 0)
-    x = tats‰chliche reichweite [m]
-    y = tats‰chlicher schaden
+    x = tats√§chliche reichweite [m]
+    y = tats√§chlicher schaden
 
     */
 
