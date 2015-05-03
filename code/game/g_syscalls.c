@@ -26,12 +26,14 @@ Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 
 // this file is only included when building a dll
 // g_syscalls.asm is included instead when building a qvm
+#ifdef Q3_VM
+#error "Do not use in VM build"
+#endif
 
-static int (QDECL *syscall)( int arg, ... ) = (int (QDECL *)( int, ...))-1;
+static intptr_t (QDECL *syscall)( intptr_t arg, ... ) = (intptr_t (QDECL *)( intptr_t, ...))-1;
 
-
-void dllEntry( int (QDECL *syscallptr)( int arg,... ) ) {
-    syscall = syscallptr;
+Q_EXPORT void dllEntry( intptr_t (QDECL *syscallptr)( intptr_t arg,... ) ) {
+	syscall = syscallptr;
 }
 
 int PASSFLOAT( float x ) {

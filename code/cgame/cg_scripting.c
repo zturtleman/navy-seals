@@ -101,7 +101,7 @@ void QDECL NSSL_Printf( const char *msg, ... ) {
     char		text[1024];
 
     va_start (argptr, msg);
-    vsprintf (text, msg, argptr);
+    Q_vsnprintf (text, sizeof (text), msg, argptr);
     va_end (argptr);
 
     Com_sprintf( text, 1024, S_COLOR_YELLOW "NSSL: %s", text );

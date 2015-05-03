@@ -5331,7 +5331,7 @@ void QDECL PrintMsgToAllAlive( qboolean toallwaiting, const char *fmt, ... ) {
     int			i;
 
     va_start (argptr,fmt);
-    if (vsprintf (msg, fmt, argptr) > sizeof(msg)) {
+    if (Q_vsnprintf(msg, sizeof(msg), fmt, argptr) >= sizeof(msg)) {
         G_Error ( "PrintMsg overrun" );
     }
     va_end (argptr);

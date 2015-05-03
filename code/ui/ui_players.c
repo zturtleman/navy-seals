@@ -78,8 +78,7 @@ tryagain:
     }
 
     if ( item->classname ) {
-        strcpy( path, item->world_model[0] );
-        COM_StripExtension( path, path );
+        COM_StripExtension( item->world_model[0], path, sizeof ( path ) );
         strcat( path, "_vweap.md3" );
         pi->flashModel = trap_R_RegisterModel( path );
         pi->weaponModel = trap_R_RegisterModel( path );
@@ -94,8 +93,7 @@ tryagain:
         goto tryagain;
     }
 
-    strcpy( path, item->world_model[0] );
-    COM_StripExtension( path, path );
+	COM_StripExtension( item->world_model[0], path, sizeof ( path ) );
     strcat( path, "_flash.md3" );
     pi->flashModel = trap_R_RegisterModel( path );
 

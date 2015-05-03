@@ -70,8 +70,7 @@ void UI_RegisterWeapon( int weaponNum )
     */
     if ( BG_IsPrimary( weaponNum) || BG_IsSecondary( weaponNum ) && weaponNum != WP_SL8SD )
     {
-        strcpy( path, item->world_model[0] );
-        COM_StripExtension( path, path );
+        COM_StripExtension( item->world_model[0], path, sizeof ( path ) );
         strcat( path, "_flash.md3" );
         weaponInfo->flashModel = trap_R_RegisterPermanentModel( path );
 
@@ -87,13 +86,11 @@ void UI_RegisterWeapon( int weaponNum )
     */
     if ( BG_WeaponMods( weaponNum ) & ( 1 << WM_SCOPE ) )
     {
-        strcpy( path, item->world_model[0] );
-        COM_StripExtension( path, path );
+		COM_StripExtension( item->world_model[0], path, sizeof ( path ) );
         strcat( path, "_scope.md3" );
         weaponInfo->scopeModel = trap_R_RegisterPermanentModel( path );
         // vweap
-        strcpy( path, item->world_model[0] );
-        COM_StripExtension( path, path );
+        COM_StripExtension( item->world_model[0], path, sizeof ( path ) );
         strcat( path, "_scope_vweap.md3" );
         weaponInfo->v_scopeModel = trap_R_RegisterPermanentModel( path );
 
@@ -109,13 +106,11 @@ void UI_RegisterWeapon( int weaponNum )
     */
     if ( BG_WeaponMods( weaponNum ) & ( 1 << WM_LASER ) )
     {
-        strcpy( path, item->world_model[0] );
-        COM_StripExtension( path, path );
+        COM_StripExtension( item->world_model[0], path, sizeof ( path ) );
         strcat( path, "_laser.md3" );
         weaponInfo->lasersightModel = trap_R_RegisterPermanentModel( path );
         // vweap
-        strcpy( path, item->world_model[0] );
-        COM_StripExtension( path, path );
+        COM_StripExtension( item->world_model[0], path, sizeof ( path ) );
         strcat( path, "_laser_vweap.md3" );
         weaponInfo->v_lasersightModel = trap_R_RegisterPermanentModel( path );
 
@@ -131,13 +126,11 @@ void UI_RegisterWeapon( int weaponNum )
     */
     if ( BG_WeaponMods( weaponNum ) & ( 1 << WM_SILENCER ) )
     {
-        strcpy( path, item->world_model[0] );
-        COM_StripExtension( path, path );
+        COM_StripExtension( item->world_model[0], path, sizeof ( path ) );
         strcat( path, "_silencer.md3" );
         weaponInfo->silencerModel = trap_R_RegisterPermanentModel( path );
         // vweap
-        strcpy( path, item->world_model[0] );
-        COM_StripExtension( path, path );
+        COM_StripExtension( item->world_model[0], path, sizeof ( path ) );
         strcat( path, "_silencer_vweap.md3" );
         weaponInfo->v_silencerModel = trap_R_RegisterPermanentModel( path );
 
@@ -153,13 +146,11 @@ void UI_RegisterWeapon( int weaponNum )
     */
     if ( BG_WeaponMods( weaponNum ) & ( 1 << WM_FLASHLIGHT ) )
     {
-        strcpy( path, item->world_model[0] );
-        COM_StripExtension( path, path );
+        COM_StripExtension( item->world_model[0], path, sizeof ( path ) );
         strcat( path, "_flashlight.md3" );
         weaponInfo->glModel = trap_R_RegisterPermanentModel( path );
         // vweap
-        strcpy( path, item->world_model[0] );
-        COM_StripExtension( path, path );
+        COM_StripExtension( item->world_model[0], path, sizeof ( path ) );
         strcat( path, "_flashlight_vweap.md3" );
         weaponInfo->v_glModel = trap_R_RegisterPermanentModel( path );
 
@@ -175,13 +166,11 @@ void UI_RegisterWeapon( int weaponNum )
     */
     if ( BG_WeaponMods( weaponNum ) & ( 1 << WM_DUCKBILL ) )
     {
-        strcpy( path, item->world_model[0] );
-        COM_StripExtension( path, path );
+        COM_StripExtension( item->world_model[0], path, sizeof ( path ) );
         strcat( path, "_duckbill.md3" );
         weaponInfo->silencerModel = trap_R_RegisterPermanentModel( path );
         // vweap
-        strcpy( path, item->world_model[0] );
-        COM_StripExtension( path, path );
+        COM_StripExtension( item->world_model[0], path, sizeof ( path ) );
         strcat( path, "_duckbill_vweap.md3" );
         weaponInfo->v_silencerModel = trap_R_RegisterPermanentModel( path );
 
@@ -198,13 +187,11 @@ void UI_RegisterWeapon( int weaponNum )
     if ( BG_WeaponMods( weaponNum ) & ( 1 << WM_BAYONET ) )
     {
 
-        strcpy( path, item->world_model[0] );
-        COM_StripExtension( path, path );
+        COM_StripExtension( item->world_model[0], path, sizeof ( path ) );
         strcat( path, "_bayonet.md3" );
         weaponInfo->bayonetModel = trap_R_RegisterPermanentModel( path );
         // vweap
-        strcpy( path, item->world_model[0] );
-        COM_StripExtension( path, path );
+        COM_StripExtension( item->world_model[0], path, sizeof ( path ) );
         strcat( path, "_bayonet_vweap.md3" );
         weaponInfo->v_bayonetModel = trap_R_RegisterPermanentModel( path );
 
@@ -221,8 +208,7 @@ void UI_RegisterWeapon( int weaponNum )
 
     if ( BG_WeaponMods( weaponNum ) & ( 1 << WM_GRENADELAUNCHER ) )
     {
-        strcpy( path, item->world_model[0] );
-        COM_StripExtension( path, path );
+        COM_StripExtension( item->world_model[0], path, sizeof ( path ) );
         if ( item->giTag == WP_M4 )
             strcat( path, "_m203_1stperson.md3" );
         else
@@ -231,8 +217,7 @@ void UI_RegisterWeapon( int weaponNum )
         weaponInfo->glModel  = trap_R_RegisterPermanentModel( path );
 
         // vweap
-        strcpy( path, item->world_model[0] );
-        COM_StripExtension( path, path );
+        COM_StripExtension( item->world_model[0], path, sizeof ( path ) );
         if ( item->giTag == WP_M4 )
             strcat( path, "_m203_vweap.md3" );
         else
@@ -254,8 +239,7 @@ void UI_RegisterWeapon( int weaponNum )
     */
     if ( weaponNum != WP_C4 )
     {
-        strcpy( path, item->world_model[0] );
-        COM_StripExtension( path, path );
+        COM_StripExtension( item->world_model[0], path, sizeof ( path ) );
         strcat( path, "_1stperson_body.md3" );
         weaponInfo->weaponModel = trap_R_RegisterPermanentModel( path );
 
@@ -268,8 +252,7 @@ void UI_RegisterWeapon( int weaponNum )
     1st Person Model [ Hands ]
     ==========
     */
-    strcpy( path, item->world_model[0] );
-    COM_StripExtension( path, path );
+    COM_StripExtension( item->world_model[0], path, sizeof ( path ) );
     strcat( path, "_1stperson.md3" );
     weaponInfo->handsModel = trap_R_RegisterPermanentModel( path );
 
@@ -283,8 +266,7 @@ void UI_RegisterWeapon( int weaponNum )
     */
  //   if ( !cg_disableTangoHandSkin.integer )
     {
-        strcpy( path, item->world_model[0] );
-        COM_StripExtension( path, path );
+        COM_StripExtension( item->world_model[0], path, sizeof ( path ) );
         strcat( path, "_t.skin" );
         weaponInfo->t_viewweaponSkin = trap_R_RegisterSkin( path );
 
@@ -297,8 +279,7 @@ void UI_RegisterWeapon( int weaponNum )
     View Weapon
     ==========
     */
-    strcpy( path, item->world_model[0] );
-    COM_StripExtension( path, path );
+    COM_StripExtension( item->world_model[0], path, sizeof ( path ) );
     strcat( path, "_vweap.md3" );
     weaponInfo->viewweaponModel  = trap_R_RegisterPermanentModel( path );
 
@@ -473,8 +454,7 @@ void UI_RegisterWeapon( int weaponNum )
 
     while ( strlen(weaponInfo->partTags[i]) > 0 && i < MAX_WEAPONPARTS )
     {
-        strcpy( path, item->world_model[0] );
-        COM_StripExtension( path, path );
+        COM_StripExtension( item->world_model[0], path, sizeof ( path ) );
 
         if ( !Q_stricmp( "handle", weaponInfo->partTags[i] ) ) {
             weaponInfo->v_flashModel = trap_R_RegisterPermanentModel( va("%s_handle_vweap.md3",path) );

@@ -46,7 +46,7 @@ This is the only way control passes into the module.
 This must be the very first function compiled into the .q3vm file
 ================
 */
-int vmMain( int command, int arg0, int arg1, int arg2, int arg3, int arg4, int arg5, int arg6, int arg7, int arg8, int arg9, int arg10, int arg11  ) {
+Q_EXPORT intptr_t vmMain( int command, int arg0, int arg1, int arg2, int arg3, int arg4, int arg5, int arg6, int arg7, int arg8, int arg9, int arg10, int arg11  ) {
 
     switch ( command ) {
     case CG_INIT:
@@ -928,7 +928,7 @@ void QDECL CG_Printf( const char *msg, ... ) {
     char		text[1024];
 
     va_start (argptr, msg);
-    vsprintf (text, msg, argptr);
+    Q_vsnprintf (text, sizeof (text), msg, argptr);
     va_end (argptr);
 
     if ( cg_showConsole.integer )
@@ -943,7 +943,7 @@ void QDECL CG_Error( const char *msg, ... ) {
     char		text[1024];
 
     va_start (argptr, msg);
-    vsprintf (text, msg, argptr);
+    Q_vsnprintf (text, sizeof (text), msg, argptr);
     va_end (argptr);
 
     trap_Error( text );
@@ -957,7 +957,7 @@ void QDECL Com_Error( int level, const char *error, ... ) {
     char		text[1024];
 
     va_start (argptr, error);
-    vsprintf (text, error, argptr);
+    Q_vsnprintf (text, sizeof (text), error, argptr);
     va_end (argptr);
 
     CG_Error( "%s", text);
@@ -968,7 +968,7 @@ void QDECL Com_Printf( const char *msg, ... ) {
     char		text[1024];
 
     va_start (argptr, msg);
-    vsprintf (text, msg, argptr);
+    Q_vsnprintf (text, sizeof (text), msg, argptr);
     va_end (argptr);
 
     CG_Printf ("%s", text);

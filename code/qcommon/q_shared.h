@@ -34,7 +34,7 @@ Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 #define NEW_ANIMS
 #define MAX_TEAMNAME 32
 
-#ifdef _WIN32
+#ifdef _MSC_VER
 
 #pragma warning(disable : 4018)     // signed/unsigned mismatch
 #pragma warning(disable : 4032)
@@ -57,10 +57,30 @@ Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 #pragma warning(disable : 4702)		// unreachable code
 #pragma warning(disable : 4711)		// selected for automatic inline expansion
 #pragma warning(disable : 4220)		// varargs matches remaining parameters
+//#pragma intrinsic( memset, memcpy )
 #endif
 
-#if defined(ppc) || defined(__ppc) || defined(__ppc__) || defined(__POWERPC__)
-#define idppc 1
+//Ignore __attribute__ on non-gcc platforms
+#ifndef __GNUC__
+#ifndef __attribute__
+#define __attribute__(x)
+#endif
+#endif
+
+#ifdef __GNUC__
+#define UNUSED_VAR __attribute__((unused))
+#else
+#define UNUSED_VAR
+#endif
+
+#if (defined _MSC_VER)
+#define Q_EXPORT __declspec(dllexport)
+#elif (defined __SUNPRO_C)
+#define Q_EXPORT __global
+#elif ((__GNUC__ >= 3) && (!__EMX__) && (!sun))
+#define Q_EXPORT __attribute__((visibility("default")))
+#else
+#define Q_EXPORT
 #endif
 
 /**********************************************************************
@@ -83,6 +103,8 @@ you will have to add your own version for support in the VM.
 
 #include "../game/bg_lib.h"
 
+typedef int intptr_t;
+
 #else
 
 #include <assert.h>
@@ -94,118 +116,31 @@ you will have to add your own version for support in the VM.
 #include <time.h>
 #include <ctype.h>
 #include <limits.h>
+#ifdef _MSC_VER
+  #include <io.h>
 
-#endif
+  typedef __int64 int64_t;
+  typedef __int32 int32_t;
+  typedef __int16 int16_t;
+  typedef __int8 int8_t;
+  typedef unsigned __int64 uint64_t;
+  typedef unsigned __int32 uint32_t;
+  typedef unsigned __int16 uint16_t;
+  typedef unsigned __int8 uint8_t;
 
-#ifdef _WIN32
-
-//#pragma intrinsic( memset, memcpy )
-
-#endif
-
-
-// this is the define for determining if we have an asm version of a C function
-#if (defined _M_IX86 || defined __i386__) && !defined __sun__  && !defined __LCC__
-#define id386	1
+  // vsnprintf is ISO/IEC 9899:1999
+  // abstracting this to make it portable
+  int Q_vsnprintf(char *str, size_t size, const char *format, va_list ap);
 #else
-#define id386	0
+  #include <stdint.h>
+
+  #define Q_vsnprintf vsnprintf
 #endif
 
-// for windows fastcall option
-
-#define	QDECL
-
-//======================= WIN32 DEFINES =================================
-
-#ifdef WIN32
-
-#define	MAC_STATIC
-
-#undef QDECL
-#define	QDECL	__cdecl
-
-// buildstring will be incorporated into the version string
-#ifdef NDEBUG
-#ifdef _M_IX86
-#define	CPUSTRING	"win-x86"
-#elif defined _M_ALPHA
-#define	CPUSTRING	"win-AXP"
-#endif
-#else
-#ifdef _M_IX86
-#define	CPUSTRING	"win-x86-debug"
-#elif defined _M_ALPHA
-#define	CPUSTRING	"win-AXP-debug"
-#endif
 #endif
 
 
-#define	PATH_SEP '\\'
-
-#endif
-
-//======================= MAC OS X SERVER DEFINES =====================
-
-#if defined(__MACH__) && defined(__APPLE__)
-
-#define MAC_STATIC
-
-#ifdef __ppc__
-#define CPUSTRING	"MacOSXS-ppc"
-#elif defined __i386__
-#define CPUSTRING	"MacOSXS-i386"
-#else
-#define CPUSTRING	"MacOSXS-other"
-#endif
-
-#define	PATH_SEP	'/'
-
-#define	GAME_HARD_LINKED
-#define	CGAME_HARD_LINKED
-#define	UI_HARD_LINKED
-#define	BOTLIB_HARD_LINKED
-
-#endif
-
-//======================= MAC DEFINES =================================
-
-#ifdef __MACOS__
-
-#include <MacTypes.h>
-#define	MAC_STATIC	static
-
-#define	CPUSTRING	"MacOS-PPC"
-
-#define	PATH_SEP ':'
-
-#define	GAME_HARD_LINKED
-#define	CGAME_HARD_LINKED
-#define	UI_HARD_LINKED
-#define	BOTLIB_HARD_LINKED
-
-void Sys_PumpEvents( void );
-
-#endif
-
-//======================= LINUX DEFINES =================================
-
-// the mac compiler can't handle >32k of locals, so we
-// just waste space and make big arrays static...
-#ifdef __linux__
-
-#define	MAC_STATIC
-
-#ifdef __i386__
-#define	CPUSTRING	"linux-i386"
-#elif defined __axp__
-#define	CPUSTRING	"linux-alpha"
-#else
-#define	CPUSTRING	"linux-other"
-#endif
-
-#define	PATH_SEP '/'
-
-#endif
+#include "q_platform.h"
 
 //=============================================================
 
@@ -214,19 +149,39 @@ typedef unsigned char 		byte;
 
 typedef enum {qfalse, qtrue}	qboolean;
 
+typedef union {
+	float f;
+	int i;
+	unsigned int ui;
+} floatint_t;
 typedef int		qhandle_t;
 typedef int		sfxHandle_t;
 typedef int		fileHandle_t;
 typedef int		clipHandle_t;
 
+#define PAD(base, alignment)	(((base)+(alignment)-1) & ~((alignment)-1))
+#define PADLEN(base, alignment)	(PAD((base), (alignment)) - (base))
+
+#define PADP(base, alignment)	((void *) PAD((intptr_t) (base), (alignment)))
+
+#ifdef __GNUC__
+#define QALIGN(x) __attribute__((aligned(x)))
+#else
+#define QALIGN(x)
+#endif
 
 #ifndef NULL
 #define NULL ((void *)0)
 #endif
 
+#define STRING(s)			#s
+// expand constants before stringifying them
+#define XSTRING(s)			STRING(s)
 #define	MAX_QINT			0x7fffffff
 #define	MIN_QINT			(-MAX_QINT-1)
 
+#define ARRAY_LEN(x)			(sizeof(x) / sizeof(*(x)))
+#define STRARRAY_LEN(x)			(ARRAY_LEN(x) - 1)
 
 // angle indexes
 #define	PITCH				0		// up / down
@@ -236,7 +191,7 @@ typedef int		clipHandle_t;
 // the game guarantees that no string from the network will ever
 // exceed MAX_STRING_CHARS
 #define	MAX_STRING_CHARS	1024	// max length of a string passed to Cmd_TokenizeString
-#define	MAX_STRING_TOKENS	256		// max tokens resulting from Cmd_TokenizeString
+#define	MAX_STRING_TOKENS	1024	// max tokens resulting from Cmd_TokenizeString
 #define	MAX_TOKEN_CHARS		1024	// max length of an individual token
 
 #define	MAX_INFO_STRING		1024
@@ -249,7 +204,11 @@ typedef int		clipHandle_t;
 
 
 #define	MAX_QPATH			64		// max length of a quake game pathname
+#ifdef PATH_MAX
+#define MAX_OSPATH			PATH_MAX
+#else
 #define	MAX_OSPATH			256		// max length of a filesystem pathname
+#endif
 
 #define	MAX_NAME_LENGTH		32		// max length of a client name
 
@@ -332,8 +291,8 @@ void *Hunk_AllocDebug( int size, ha_pref preference, char *label, char *file, in
 void *Hunk_Alloc( int size, ha_pref preference );
 #endif
 
-void Com_Memset (void* dest, const int val, const size_t count);
-void Com_Memcpy (void* dest, const void* src, const size_t count);
+#define Com_Memset memset
+#define Com_Memcpy memcpy
 
 #define CIN_system	1
 #define CIN_loop	2
@@ -474,14 +433,14 @@ void ByteToDir( int b, vec3_t dir );
 
 #endif
 
-#ifdef __LCC__
+#ifdef Q3_VM
 #ifdef VectorCopy
 #undef VectorCopy
 // this is a little hack to get more efficient copies in our interpreter
 typedef struct {
     float	v[3];
 } vec3struct_t;
-#define VectorCopy(a,b)	*(vec3struct_t *)b=*(vec3struct_t *)a;
+#define VectorCopy(a,b)	(*(vec3struct_t *)b=*(vec3struct_t *)a)
 #endif
 #endif
 
@@ -489,9 +448,10 @@ typedef struct {
 #define VectorNegate(a,b)		((b)[0]=-(a)[0],(b)[1]=-(a)[1],(b)[2]=-(a)[2])
 #define VectorSet(v, x, y, z)	((v)[0]=(x), (v)[1]=(y), (v)[2]=(z))
 #define Vector4Copy(a,b)		((b)[0]=(a)[0],(b)[1]=(a)[1],(b)[2]=(a)[2],(b)[3]=(a)[3])
+#define Byte4Copy(a,b)			((b)[0]=(a)[0],(b)[1]=(a)[1],(b)[2]=(a)[2],(b)[3]=(a)[3])
 
 #define	SnapVector(v) {v[0]=((int)(v[0]));v[1]=((int)(v[1]));v[2]=((int)(v[2]));}
-// just in case you do't want to use the macros
+// just in case you don't want to use the macros
 vec_t _DotProduct( const vec3_t v1, const vec3_t v2 );
 void _VectorSubtract( const vec3_t veca, const vec3_t vecb, vec3_t out );
 void _VectorAdd( const vec3_t veca, const vec3_t vecb, vec3_t out );
@@ -561,13 +521,22 @@ void MatrixMultiply(float in1[3][3], float in2[3][3], float out[3][3]);
 void AngleVectors( const vec3_t angles, vec3_t forward, vec3_t right, vec3_t up);
 void PerpendicularVector( vec3_t dst, const vec3_t src );
 
+#ifndef MAX
+#define MAX(x,y) ((x)>(y)?(x):(y))
+#endif
+
+#ifndef MIN
+#define MIN(x,y) ((x)<(y)?(x):(y))
+#endif
 
 //=============================================
 
 float Com_Clamp( float min, float max, float value );
 
 char	*COM_SkipPath( char *pathname );
-void	COM_StripExtension( const char *in, char *out );
+const char	*COM_GetExtension( const char *name );
+void	COM_StripExtension(const char *in, char *out, int destsize);
+qboolean COM_CompareExtension(const char *in, const char *ext);
 void	COM_DefaultExtension( char *path, int maxSize, const char *extension );
 
 void	COM_BeginParseSession( const char *name );
@@ -575,8 +544,8 @@ int		COM_GetCurrentParseLine( void );
 char	*COM_Parse( char **data_p );
 char	*COM_ParseExt( char **data_p, qboolean allowLineBreak );
 int		COM_Compress( char *data_p );
-void	COM_ParseError( char *format, ... );
-void	COM_ParseWarning( char *format, ... );
+void	COM_ParseError( char *format, ... ) __attribute__ ((format (printf, 1, 2)));
+void	COM_ParseWarning( char *format, ... ) __attribute__ ((format (printf, 1, 2)));
 //int		COM_ParseInfos( char *buf, int max, char infos[][MAX_INFO_STRING] );
 
 #define MAX_TOKENLENGTH		1024
@@ -603,15 +572,20 @@ typedef struct pc_token_s
 
 void	COM_MatchToken( char**buf_p, char *match );
 
-void SkipBracedSection (char **program);
+qboolean SkipBracedSection (char **program, int depth);
 void SkipRestOfLine ( char **data );
 
 void Parse1DMatrix (char **buf_p, int x, float *m);
 void Parse2DMatrix (char **buf_p, int y, int x, float *m);
 void Parse3DMatrix (char **buf_p, int z, int y, int x, float *m);
+int Com_HexStrToInt( const char *str );
 
-void	QDECL Com_sprintf (char *dest, int size, const char *fmt, ...);
+int QDECL Com_sprintf (char *dest, int size, const char *fmt, ...) __attribute__ ((format (printf, 3, 4)));
 
+char *Com_SkipTokens( char *s, int numTokens, char *sep );
+char *Com_SkipCharset( char *s, char *sep );
+
+void Com_RandomBytes( byte *string, int len );
 
 // mode parm for FS_FOpenFile
 typedef enum {
@@ -633,6 +607,8 @@ int Q_isprint( int c );
 int Q_islower( int c );
 int Q_isupper( int c );
 int Q_isalpha( int c );
+qboolean Q_isanumber( const char *s );
+qboolean Q_isintegral( float f );
 
 // portable case insensitive compare
 int		Q_stricmp (const char *s1, const char *s2);
@@ -641,6 +617,7 @@ int		Q_stricmpn (const char *s1, const char *s2, int n);
 char	*Q_strlwr( char *s1 );
 char	*Q_strupr( char *s1 );
 char	*Q_strrchr( const char* string, int c );
+const char	*Q_stristr( const char *s, const char *find);
 
 // buffer size safe library replacements
 void	Q_strncpyz( char *dest, const char *src, int destsize );
@@ -650,6 +627,8 @@ void	Q_strcat( char *dest, int size, const char *src );
 int Q_PrintStrlen( const char *string );
 // removes color sequences from string
 char *Q_CleanStr( char *string );
+// Count the number of char tocount encountered in string
+int Q_CountChar(const char *string, char tocount);
 
 //=============================================
 
@@ -669,17 +648,21 @@ typedef struct
 
 //=============================================
 
+/*
 short	BigShort(short l);
 short	LittleShort(short l);
 int		BigLong (int l);
 int		LittleLong (int l);
 qint64  BigLong64 (qint64 l);
 qint64  LittleLong64 (qint64 l);
-float	BigFloat (float l);
-float	LittleFloat (float l);
+float	BigFloat (const float *l);
+float	LittleFloat (const float *l);
 
 void	Swap_Init (void);
-char	* QDECL va(char *format, ...);
+*/
+char	* QDECL va(char *format, ...) __attribute__ ((format (printf, 1, 2)));
+#define TRUNCATE_LENGTH	64
+void Com_TruncateLongString( char *buffer, const char *s );
 
 //=============================================
 
@@ -688,15 +671,15 @@ char	* QDECL va(char *format, ...);
 //
 char *Info_ValueForKey( const char *s, const char *key );
 void Info_RemoveKey( char *s, const char *key );
-void Info_RemoveKey_big( char *s, const char *key );
+void Info_RemoveKey_Big( char *s, const char *key );
 void Info_SetValueForKey( char *s, const char *key, const char *value );
 void Info_SetValueForKey_Big( char *s, const char *key, const char *value );
 qboolean Info_Validate( const char *s );
 void Info_NextPair( const char **s, char *key, char *value );
 
 // this is only here so the functions in q_shared.c and bg_*.c can link
-void	QDECL Com_Error( int level, const char *error, ... );
-void	QDECL Com_Printf( const char *msg, ... );
+void	QDECL Com_Error( int level, const char *error, ... ) __attribute__ ((noreturn, format(printf, 2, 3)));
+void	QDECL Com_Printf( const char *msg, ... ) __attribute__ ((format (printf, 1, 2)));
 
 
 /*
@@ -811,7 +794,7 @@ typedef struct {
 // or ENTITYNUM_NONE, ENTITYNUM_WORLD
 
 
-// markfragments are returned by CM_MarkFragments()
+// markfragments are returned by R_MarkFragments()
 typedef struct {
     int		firstPoint;
     int		numPoints;
@@ -947,7 +930,7 @@ typedef struct playerState_s {
     int			torsoTimer;		// don't change low priority animations until this runs out
     int			torsoAnim;		// mask off ANIM_TOGGLEBIT
 
-    int			movementDir;	// a number 0 to 7 that represents the reletive angle
+    int			movementDir;	// a number 0 to 7 that represents the relative angle
     // of movement to the view angle (axial and diagonals)
     // when at rest, the value will remain unchanged
     // used to twist the legs during strafing
@@ -988,7 +971,7 @@ typedef struct playerState_s {
 
     // not communicated over the net at all
     int			ping;			// server to game info for scoreboard
-    int			pmove_framecount;	// FIXME: don't transmit over the network
+    int			pmove_framecount;
     int			jumppad_frame;
     int			entityEventSequence;
 } playerState_t;
@@ -1168,6 +1151,7 @@ typedef struct qtime_s {
 
 
 // server browser sources
+// TTimo: AS_MPLAYER is no longer used
 #define AS_LOCAL			0
 #define AS_MPLAYER		1
 #define AS_GLOBAL			2
@@ -1195,9 +1179,9 @@ typedef enum _flag_status {
 
 
 
-#define	MAX_GLOBAL_SERVERS			2048
+#define	MAX_GLOBAL_SERVERS				4096
 #define	MAX_OTHER_SERVERS			128
-#define MAX_PINGREQUESTS			16
+#define MAX_PINGREQUESTS					32
 #define MAX_SERVERSTATUSREQUESTS	16
 
 #define SAY_ALL		0
@@ -1207,6 +1191,11 @@ typedef enum _flag_status {
 
 #define CDKEY_LEN 16
 #define CDCHKSUM_LEN 2
+
+
+#define LERP( a, b, w ) ( ( a ) * ( 1.0f - ( w ) ) + ( b ) * ( w ) )
+#define LUMA( red, green, blue ) ( 0.2126f * ( red ) + 0.7152f * ( green ) + 0.0722f * ( blue ) )
+
 
 // Navy Seals +
 #include "../game/variables.h"
