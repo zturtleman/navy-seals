@@ -1,14 +1,29 @@
-// Copyright (C) 2003-2003 team-mirage
+/*
+===========================================================================
+Copyright (C) 1999-2005 Id Software, Inc.
+
+This file is part of Navy SEALs: Covert Operations source code.
+
+Navy SEALs: Covert Operations source code is free software; you can
+redistribute it and/or modify it under the terms of the GNU General Public
+License as published by the Free Software Foundation; either version 2 of
+the License, or (at your option) any later version.
+
+Navy SEALs: Covert Operations source code is distributed in the hope that it
+will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Navy SEALs: Covert Operations source code; if not, write to the
+Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+02110-1301  USA
+===========================================================================
+*/
 //
 //
 // cg_mem.c - dynamic memory pool written for regexp
 //
-
-// every line of code is property of manfred nerurkar
-// no commercial explotation allowed
-// you are only allowed to use this code in navy seals: covert operations
-// a quake3 arena modifiation
-// defcon-x@ns-co.net
 
 #include "cg_local.h"
 
