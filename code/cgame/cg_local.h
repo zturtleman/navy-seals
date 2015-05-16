@@ -1661,7 +1661,7 @@ void CG_CheckChangedPredictableEvents( playerState_t *ps );
 
 //===============================================
 
-typedef enum {
+enum {
 	SYSTEM_PRINT,
 	CHAT_PRINT,
 	TEAMCHAT_PRINT

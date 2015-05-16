@@ -200,8 +200,6 @@ typedef struct radio_queue_entry_s
 	qboolean click;
 } radio_queue_entry_t;
 
-typedef struct navyseals_s navyseals_t;
-
 ////////////////////////////////////////////////////////////////////////////////////////
 //
 // NS:CO playerinfo structure - cleared on each respawn
@@ -241,7 +239,7 @@ typedef struct navyseals_s {
 	int bomb_wires[8];
 
 	qboolean test;
-};
+} navyseals_t;
 
 ///////////////////////////////////////////////////////////////////////////////////////
 //
@@ -251,8 +249,6 @@ typedef struct navyseals_s {
 #define MAX_HEADGEAR        64
 #define MAX_FACESKINS       64
 #define MAX_PLAYERMODELS    4
-
-typedef struct heargear_s headgear_t;
 
 typedef struct heargear_s {
 	char e_head[MAX_HEADGEAR][MAX_QPATH],
@@ -267,7 +263,7 @@ typedef struct heargear_s {
 	int numMouth;
 	int numPPM;
 	int numFaceSkin;
-};
+} headgear_t;
 
 ///////////////////////////////////////////////////////////////////////////////////////
 //
