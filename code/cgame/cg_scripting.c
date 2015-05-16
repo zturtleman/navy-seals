@@ -246,9 +246,11 @@ qboolean ClientScript_Operate( char value1[256], int function, char value2[256] 
 		case OP_REGEXP:
 		{
 			regexp *test;
-			// value2 is a expression: \.*\
-			// value1 is a string: bla
-			// term is: if bla =~ "\.*\"
+			/*
+			value2 is a expression: \.*\
+			value1 is a string: bla
+			term is: if bla =~ "\.*\"
+			*/
 			test = regcomp( Q_CleanStr( value2 ) );
 			return regexec( test, Q_CleanStr( value1 ) );
 		}
@@ -301,7 +303,7 @@ void ClientScript_GetScriptCommand( char value[256], const char *token ) {
 		key = trap_Key_GetKey( value );
 		cha = key;
 		if ( key == -1 ) {
-			strcpy( value, "<???>" );
+			strcpy( value, "<??\?>" );
 			return;
 		}
 		Com_sprintf( value,size,"%c",key );
@@ -346,7 +348,7 @@ void ClientScript_GetScriptCommand( char value[256], const char *token ) {
 
 		if ( atoi( token ) >= MAX_STATS ) {
 			NSSL_Printf( "*stat%s > MAX_STATS\n", token );
-			strcpy( value, "<???>" );
+			strcpy( value, "<??\?>" );
 			return;
 		}
 		strcpy( value, va( "%i", cg.predictedPlayerState.stats[atoi( token )] ) );
@@ -355,7 +357,7 @@ void ClientScript_GetScriptCommand( char value[256], const char *token ) {
 
 		if ( atoi( token ) >= MAX_PERSISTANT ) {
 			NSSL_Printf( "*pers%s > MAX_PERSISTANT\n", token );
-			strcpy( value, "<???>" );
+			strcpy( value, "<??\?>" );
 			return;
 		}
 		strcpy( value, va( "%i", cg.predictedPlayerState.persistant[atoi( token )] ) );
@@ -366,7 +368,7 @@ void ClientScript_GetScriptCommand( char value[256], const char *token ) {
 	} else if ( !Q_stricmp( token, "qcmd_active" ) ) {
 		strcpy( value, va( "%i", cg.viewCmd ) );
 	} else {
-		strcpy( value, "<???>" );
+		strcpy( value, "<??\?>" );
 	}
 }
 
@@ -554,8 +556,10 @@ void ClientScript_RegExp( char value[256], const char *token ) {
 	ClientScript_GetValue( string[0], temp, qfalse );
 	ClientScript_GetValue( string[1], _token, qfalse );
 
-	// string[1] is a expression: \.*\
-	// string[0] is a string: bla
+	/*
+	string[1] is a expression: \.*\
+	string[0] is a string: bla
+	*/
 	reg_exp = regcomp( string[1] );
 	result = regexec( reg_exp, string[0] );
 
