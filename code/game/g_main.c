@@ -710,7 +710,7 @@ void QDECL Com_Error( int level, const char *error, ... ) {
 	Q_vsnprintf( text, sizeof( text ), error, argptr );
 	va_end( argptr );
 
-	G_Error( "%s", text );
+	trap_Error( text );
 }
 
 void QDECL Com_Printf( const char *msg, ... ) {

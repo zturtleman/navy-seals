@@ -27,7 +27,6 @@ Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 #include "../qcommon/q_shared.h"
 #include "bg_public.h"
 #include "g_public.h"
-#include "g_syscalls.h"
 
 //==================================================================
 
@@ -881,6 +880,7 @@ void SpawnModelsOnVictoryPads( void );
 void Svcmd_AbortPodium_f( void );
 
 #include "g_team.h" // teamplay specific stuff
+#include "g_syscalls.h"
 
 
 extern level_locals_t level;
