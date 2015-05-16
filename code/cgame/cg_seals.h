@@ -41,12 +41,12 @@ extern menuState_t i_Menu[MAX_MENU_LINES];
 void CG_LoadBarInit( void );
 void CG_LoadingBarUpdate( int amount );
 void CG_LoadingBarSetMax( int maximum );
-void CG_CacheAllModels();
+void CG_CacheAllModels( void );
 void CG_RemoveAllFragments( void );
 
 void CG_CreateBleeder( vec3_t origin, int damage, int playerNum );
 void CG_BloodOnWallMark( vec3_t end, vec3_t normal, int damage, qboolean brain );
-void CG_ReloadClipWarning();
+void CG_ReloadClipWarning( void );
 void CG_LaunchParticle( vec3_t origin, vec3_t baseangle, vec3_t dir, qhandle_t hModel, int sound, int bouncefactor );
 void CG_BleederTrail( localEntity_t *le );
 qboolean    CG_ParseWeaponAnimationFile( const char *filename, int weapon_num );
@@ -61,8 +61,8 @@ qboolean CG_ParseBriefingFile( char * mapstring );
 void CG_BloodPool( vec3_t origin );
 void CG_EnviromentParse( char * text_p );
 char *CG_GetCamoStringForType( int camoType );
-void CG_InvenSelect();
-void CG_AddAtmosphericEffects();
+void CG_InvenSelect( void );
+void CG_AddAtmosphericEffects( void );
 void CG_GetOriginFromTag( const refEntity_t *parent, qhandle_t parentModel, char *tagName, vec3_t out );
 char *vtos( const vec3_t v );
 // id

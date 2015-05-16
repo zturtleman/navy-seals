@@ -280,7 +280,7 @@ void NS_TMequip( gentity_t *me );
 void NS_Itsame( gentity_t *me );
 
 void Pickup_Briefcase( gentity_t *ent, gentity_t *other );
-void PrecacheRadioSounds();
+void PrecacheRadioSounds( void );
 void RadioThink( gentity_t *ent );
 void Cmd_Radioteam_f( gentity_t *ent );
 void Cmd_Radio_power_f( gentity_t *ent );
@@ -308,13 +308,13 @@ void NS_NavySeals_ClientInit( gentity_t *ent, qboolean roundbegin );
 void NS_Bandaging( gentity_t *ent );
 void NS_StartBandage( gentity_t *ent );
 void NS_DropWeapon( gentity_t *ent );
-void NS_RemoveItems();
+void NS_RemoveItems( void );
 void NS_ClearInventory( gentity_t *ent );
 void NS_WonRound( team_t team );
 void NS_GiveXP( gentity_t *ent, int num, qboolean take );
 void NS_WeaponMode( gentity_t *ent, int mode );
-void NS_EndRound();
-void Reset_Briefcase();
+void NS_EndRound( void );
+void Reset_Briefcase( void );
 void NS_HolsterWeapon( gentity_t *ent );
 void NS_OpenDoor( gentity_t *ent, qboolean direct );
 void NS_EndRoundForTeam( int team );
@@ -330,7 +330,7 @@ void NS_RaiseCharacterLevel( gentity_t *ent );
 void G_SetupServerInfo( void );
 void NS_InitHeadBBoxes( void );
 void NS_ModifyClientBBox( gentity_t *ent );
-void assault_field_stopall();
+void assault_field_stopall( void );
 qboolean NS_InitMapCycle( void );
 char *NS_GetNextMap( void );
 char *NS_GetPrevMap( void );
@@ -357,10 +357,10 @@ void bomb_explode_instantly( gentity_t *ent );
 void bomb_explode( gentity_t *ent );
 
 
-qboolean NS_CheckEndRound();
+qboolean NS_CheckEndRound( void );
 float NS_CalcWeight( gentity_t *ent );
 
-void CheckTeamplay();
+void CheckTeamplay( void );
 
 // remove me later
 void Laser_Gen( gentity_t *ent, int type );

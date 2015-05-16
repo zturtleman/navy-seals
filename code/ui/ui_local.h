@@ -356,13 +356,13 @@ extern sfxHandle_t  MenuField_Key( menufield_s* m, int* key );
 //
 // ui_main.c
 //
-void UI_Report();
-void UI_Load();
+void UI_Report( void );
+void UI_Load( void );
 void UI_LoadMenus( const char *menuFile, qboolean reset );
 void _UI_SetActiveMenu( uiMenuCommand_t menu );
 int UI_AdjustTimeByGame( int time );
 void UI_ShowPostGame( qboolean newHigh );
-void UI_ClearScores();
+void UI_ClearScores( void );
 void UI_LoadArenas( void );
 
 //
