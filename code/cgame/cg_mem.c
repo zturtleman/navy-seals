@@ -28,36 +28,36 @@ Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 #include "cg_local.h"
 
 
-#define POOLSIZE	(256 * 1024)
+#define POOLSIZE    ( 256 * 1024 )
 
-static char		cg_memoryPool[POOLSIZE];
-static int		cg_allocPoint;
+static char cg_memoryPool[POOLSIZE];
+static int cg_allocPoint;
 
-vmCvar_t	cg_debugAlloc;
+vmCvar_t cg_debugAlloc;
 
 void *CG_Alloc( int size ) {
-    char	*p;
+	char    *p;
 
-    if ( cg_debugAlloc.integer ) {
-        CG_Printf( "CG_Alloc of 7%i bytes (%i left)\n", size, POOLSIZE - cg_allocPoint - ( ( size + 31 ) & ~31 ) );
-    }
+	if ( cg_debugAlloc.integer ) {
+		CG_Printf( "CG_Alloc of 7%i bytes (%i left)\n", size, POOLSIZE - cg_allocPoint - ( ( size + 31 ) & ~31 ) );
+	}
 
-    if ( cg_allocPoint + size > POOLSIZE ) {
-        CG_Error( "CG_Alloc: failed on allocation of %u bytes\n", size );
-        return NULL;
-    }
+	if ( cg_allocPoint + size > POOLSIZE ) {
+		CG_Error( "CG_Alloc: failed on allocation of %u bytes\n", size );
+		return NULL;
+	}
 
-    p = &cg_memoryPool[cg_allocPoint];
+	p = &cg_memoryPool[cg_allocPoint];
 
-    cg_allocPoint += ( size + 31 ) & ~31;
+	cg_allocPoint += ( size + 31 ) & ~31;
 
-    return p;
+	return p;
 }
 
 void CG_InitMemory( void ) {
-    cg_allocPoint = 0;
+	cg_allocPoint = 0;
 }
 
 void CG_GameMem_f( void ) {
-    CG_Printf( "CGame memory status: %i out of %i bytes allocated\n", cg_allocPoint, POOLSIZE );
+	CG_Printf( "CGame memory status: %i out of %i bytes allocated\n", cg_allocPoint, POOLSIZE );
 }

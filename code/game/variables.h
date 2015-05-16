@@ -49,7 +49,7 @@ Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 
 // ###########################################################################
 // clientgame sound specific
-#define SEALS_FOOTSTEP_FALLOFF		0.12f
+#define SEALS_FOOTSTEP_FALLOFF      0.12f
 
 // ###########################################################################
 // grenade specific
@@ -159,7 +159,7 @@ Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 
 // ###########################################################################
 // SNIPER specific stuff (MacMillan, PSG1, SL8SD)
-#define SEALS_IS_SNIPER(blub) ( blub == WP_MACMILLAN || blub == WP_SL8SD || blub == WP_PSG1 )
+#define SEALS_IS_SNIPER( blub ) ( blub == WP_MACMILLAN || blub == WP_SL8SD || blub == WP_PSG1 )
 #define SEALS_SNIPER_DEFLECTION_STANDING  2.0
 #define SEALS_SNIPER_DEFLECTION_CROUCHING 3.0
 #define SEALS_SNIPER_DEFLECTION_WALKING   3.0
@@ -170,7 +170,7 @@ Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 
 // ###########################################################################
 // RIFLE specific stuff (ak47, m4, m14)
-#define SEALS_IS_RIFLE(blub) ( blub == WP_AK47 || blub == WP_M4 || blub == WP_M14 )
+#define SEALS_IS_RIFLE( blub ) ( blub == WP_AK47 || blub == WP_M4 || blub == WP_M14 )
 #define SEALS_RIFLE_DEFLECTION_STANDING  0.2
 #define SEALS_RIFLE_DEFLECTION_CROUCHING 0.6
 #define SEALS_RIFLE_DEFLECTION_WALKING   1.2
@@ -181,7 +181,7 @@ Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 
 // ###########################################################################
 // SMG specific stuff (mac10 mp5 pdw)
-#define SEALS_IS_SMG(blub) ( blub == WP_MAC10 || blub == WP_MP5 || blub == WP_PDW )
+#define SEALS_IS_SMG( blub ) ( blub == WP_MAC10 || blub == WP_MP5 || blub == WP_PDW )
 #define SEALS_SMG_DEFLECTION_STANDING  0.8
 #define SEALS_SMG_DEFLECTION_CROUCHING 1.2
 #define SEALS_SMG_DEFLECTION_WALKING   2.4
@@ -192,7 +192,7 @@ Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 
 // ###########################################################################
 // PISTOL specific stuff (
-#define SEALS_IS_PISTOL(blub) ( blub == WP_P9S || blub == WP_GLOCK || blub == WP_MK23 || blub == WP_SW40T || blub == WP_SW629 || blub == WP_DEAGLE )
+#define SEALS_IS_PISTOL( blub ) ( blub == WP_P9S || blub == WP_GLOCK || blub == WP_MK23 || blub == WP_SW40T || blub == WP_SW629 || blub == WP_DEAGLE )
 #define SEALS_PISTOL_DEFLECTION_STANDING  0.6
 #define SEALS_PISTOL_DEFLECTION_CROUCHING 1.2
 #define SEALS_PISTOL_DEFLECTION_WALKING   1.4
@@ -204,7 +204,7 @@ Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 // ###########################################################################
 // SHOTGUN specific stuff (870 m590 spas15)
 // this one is not deflection, this one is how the bullets are sprayed
-#define SEALS_IS_SHOTGUN(blub) ( blub == WP_870 || blub == WP_M590 || blub == WP_SPAS15 )
+#define SEALS_IS_SHOTGUN( blub ) ( blub == WP_870 || blub == WP_M590 || blub == WP_SPAS15 )
 #define SEALS_SHOTGUN_DEFLECTION_STANDING  2.0
 #define SEALS_SHOTGUN_DEFLECTION_CROUCHING 2.0
 #define SEALS_SHOTGUN_DEFLECTION_WALKING   2.0
@@ -215,7 +215,7 @@ Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 
 // ###########################################################################
 // MG specific stuff (m249)
-#define SEALS_IS_MG(blub) ( blub == WP_M249 )
+#define SEALS_IS_MG( blub ) ( blub == WP_M249 )
 #define SEALS_MG_DEFLECTION_STANDING  0.3
 #define SEALS_MG_DEFLECTION_CROUCHING 1.0
 #define SEALS_MG_DEFLECTION_WALKING   2.5
@@ -286,10 +286,10 @@ Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 
 // ###########################################################################
 // basic weapon recoil factors
-#define SEALS_WKICK_BASE          1.0	// base weapon recoil factor
-#define SEALS_WKICK_SPEEDFACT     4.0	// maximum speed factor
-#define SEALS_WKICK_JUMPFACT      1.2	// jump factor
-#define SEALS_WKICK_2HANDLEFACT   0.5	// handle factor (PDW)
+#define SEALS_WKICK_BASE          1.0   // base weapon recoil factor
+#define SEALS_WKICK_SPEEDFACT     4.0   // maximum speed factor
+#define SEALS_WKICK_JUMPFACT      1.2   // jump factor
+#define SEALS_WKICK_2HANDLEFACT   0.5   // handle factor (PDW)
 #define SEALS_WKICK_CROUCHNOSPD   0.8 // crouched and no speed factor
 #define SEALS_WKICK_MAXSTRFACT    0.7 // the maximum factor one gained through strength
 #define SEALS_WKICK_MAXRANDFACT   0.3 // the maximum random factor
@@ -447,8 +447,8 @@ Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 #define SEALS_INCLUDE_NVG 0 // set to 1 if night vision gogles should be included
 #define SEALS_NO_GRENADE_CROSSHAIR 1 // set to 1 if there should be no crosshair when grenades are selected
 
-#define	NS_FLAG_BUSY_CARRIYNG	0x00000001
-#define NS_FLAG_END_ROUND	    0x00000002
+#define NS_FLAG_BUSY_CARRIYNG   0x00000001
+#define NS_FLAG_END_ROUND       0x00000002
 #define NS_FLAG_LOOP          0x00000004
 #define NS_FLAG_DEFUSABLE     0x00000008
 

@@ -3,4 +3,3 @@
 * number; the start node begins in the second byte.
 */
 #define MAGIC        0234
-
