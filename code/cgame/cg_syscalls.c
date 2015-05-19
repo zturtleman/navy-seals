@@ -48,6 +48,10 @@ void trap_Print( const char *fmt ) {
 
 void trap_Error( const char *fmt ) {
 	syscall( CG_ERROR, fmt );
+#ifndef Q3_VM
+	// shut up GCC warning about returning functions, because we know better
+	exit(1);
+#endif
 }
 
 int trap_Milliseconds( void ) {

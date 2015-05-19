@@ -314,7 +314,7 @@ void CG_RegisterWeapon( int weaponNum ) {
 	Muzzle Flash
 	==========
 	*/
-	if ( BG_IsPrimary( weaponNum ) || BG_IsSecondary( weaponNum ) && weaponNum != WP_SL8SD ) {
+	if ( weaponNum != WP_SL8SD && ( BG_IsPrimary( weaponNum ) || BG_IsSecondary( weaponNum ) ) ) {
 		COM_StripExtension( item->world_model[0], path, sizeof( path ) );
 		strcat( path, "_flash.md3" );
 		weaponInfo->flashModel = trap_R_RegisterPermanentModel( path );
