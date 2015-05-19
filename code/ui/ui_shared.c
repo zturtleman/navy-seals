@@ -3347,30 +3347,41 @@ void Item_TextField_Paint( itemDef_t *item ) {
 }
 
 void Item_YesNo_Paint( itemDef_t *item ) {
-	// vec4_t newColor, lowLight;
 	float value;
-	//menuDef_t *parent = (menuDef_t*)item->parent;
 
 	value = ( item->cvar ) ? DC->getCVarValue( item->cvar ) : 0;
 
-#if 0
-	if ( item->window.flags & WINDOW_HASFOCUS ) {
-		lowLight[0] = 0.8 * parent->focusColor[0];
-		lowLight[1] = 0.8 * parent->focusColor[1];
-		lowLight[2] = 0.8 * parent->focusColor[2];
-		lowLight[3] = 0.8 * parent->focusColor[3];
-		LerpColor( parent->focusColor,lowLight,newColor,0.5 + 0.5 * sin( DC->realTime / PULSE_DIVISOR ) );
+	/* nsco: gold edition uses checkboxes instead of text yes/no */
+	if ( DC->Assets.checkBox[0] && DC->Assets.checkBox[1] ) {
+		if ( item->text ) {
+			Item_Text_Paint( item );
+			DC->drawHandlePic( item->textRect.x + item->textRect.w + 8,item->textRect.y - 9,  12, 12, ( value != 0 ) ? DC->Assets.checkBox[0] : DC->Assets.checkBox[1] );
+		} else {
+			DC->drawHandlePic( item->textRect.x,item->textRect.y - 9,  12, 12, ( value != 0 ) ? DC->Assets.checkBox[0] : DC->Assets.checkBox[1] );
+		}
 	} else {
-		memcpy( &newColor, &item->window.foreColor, sizeof( vec4_t ) );
-	}
-#endif
+		/* use text yes/no */
+		vec4_t newColor, lowLight;
+		menuDef_t *parent = (menuDef_t*)item->parent;
 
-	/* nsco using checkboxes instead of txt yes/no */
-	if ( item->text ) {
-		Item_Text_Paint( item );
-		DC->drawHandlePic( item->textRect.x + item->textRect.w + 8,item->textRect.y - 9,  12, 12, ( value != 0 ) ? DC->Assets.checkBox[0] : DC->Assets.checkBox[1] );
-	} else {
-		DC->drawHandlePic( item->textRect.x,item->textRect.y - 9,  12, 12, ( value != 0 ) ? DC->Assets.checkBox[0] : DC->Assets.checkBox[1] );
+		value = ( item->cvar ) ? DC->getCVarValue( item->cvar ) : 0;
+
+		if ( item->window.flags & WINDOW_HASFOCUS ) {
+			lowLight[0] = 0.8 * parent->focusColor[0];
+			lowLight[1] = 0.8 * parent->focusColor[1];
+			lowLight[2] = 0.8 * parent->focusColor[2];
+			lowLight[3] = 0.8 * parent->focusColor[3];
+			LerpColor( parent->focusColor,lowLight,newColor,0.5 + 0.5 * sin( DC->realTime / PULSE_DIVISOR ) );
+		} else {
+			memcpy( &newColor, &item->window.foreColor, sizeof( vec4_t ) );
+		}
+
+		if ( item->text ) {
+			Item_Text_Paint( item );
+			DC->drawText( item->textRect.x + item->textRect.w + 8, item->textRect.y, item->textscale, newColor, ( value != 0 ) ? "Yes" : "No", 0, 0, item->textStyle );
+		} else {
+			DC->drawText( item->textRect.x, item->textRect.y, item->textscale, newColor, ( value != 0 ) ? "Yes" : "No", 0, 0, item->textStyle );
+		}
 	}
 }
 
