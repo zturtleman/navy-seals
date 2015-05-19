@@ -30,18 +30,11 @@ Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 
 
 //
-// arena and bot info
+// arena info
 //
-
-
-int ui_numBots;
-static char     *ui_botInfos[MAX_BOTS];
 
 static int ui_numArenas;
 static char     *ui_arenaInfos[MAX_ARENAS];
-
-static int ui_numSinglePlayerArenas;
-static int ui_numSpecialSinglePlayerArenas;
 
 /*
 ===============

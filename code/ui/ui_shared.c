@@ -251,12 +251,13 @@ void String_Init() {
 	}
 }
 
+#if 0
 /*
 =================
 PC_SourceWarning
 =================
 */
-void PC_SourceWarning( int handle, char *format, ... ) {
+static __attribute__ ((format (printf, 2, 3))) void PC_SourceWarning( int handle, char *format, ... ) {
 	int line;
 	char filename[128];
 	va_list argptr;
@@ -272,13 +273,14 @@ void PC_SourceWarning( int handle, char *format, ... ) {
 
 	Com_Printf( S_COLOR_YELLOW "WARNING: %s, line %d: %s\n", filename, line, string );
 }
+#endif
 
 /*
 =================
 PC_SourceError
 =================
 */
-void PC_SourceError( int handle, char *format, ... ) {
+static __attribute__ ((format (printf, 2, 3))) void PC_SourceError( int handle, char *format, ... ) {
 	int line;
 	char filename[128];
 	va_list argptr;
@@ -1810,12 +1812,12 @@ int Item_Slider_OverSlider( itemDef_t *item, float x, float y ) {
 
 int Item_ListBox_OverLB( itemDef_t *item, float x, float y ) {
 	rectDef_t r;
-	listBoxDef_t *listPtr;
+	//listBoxDef_t *listPtr;
 	int thumbstart;
-	int count;
+	//int count;
 
-	count = DC->feederCount( item->special );
-	listPtr = (listBoxDef_t*)item->typeData;
+	//count = DC->feederCount( item->special );
+	//listPtr = (listBoxDef_t*)item->typeData;
 	if ( item->window.flags & WINDOW_HORIZONTAL ) {
 		// check if on left arrow
 		r.x = item->window.rect.x;
@@ -2660,7 +2662,7 @@ qboolean Item_HandleKey( itemDef_t *item, int key, qboolean down ) {
 		captureFunc = NULL;
 		captureData = NULL;
 	} else {
-		if ( down && key == K_MOUSE1 || key == K_MOUSE2 || key == K_MOUSE3 ) {
+		if ( down && ( key == K_MOUSE1 || key == K_MOUSE2 || key == K_MOUSE3 ) ) {
 			Item_StartCapture( item, key );
 		}
 	}
@@ -2801,7 +2803,7 @@ static void Menu_CloseCinematics( menuDef_t *menu ) {
 	}
 }
 
-static void Display_CloseCinematics() {
+static void Display_CloseCinematics( void ) {
 	int i;
 	for ( i = 0; i < menuCount; i++ ) {
 		Menu_CloseCinematics( &Menus[i] );
@@ -2825,7 +2827,7 @@ void  Menus_Activate( menuDef_t *menu ) {
 
 }
 
-int Display_VisibleMenuCount() {
+int Display_VisibleMenuCount( void ) {
 	int i, count;
 	count = 0;
 	for ( i = 0; i < menuCount; i++ ) {
@@ -2917,7 +2919,7 @@ void Menu_HandleKey( menuDef_t *menu, int key, qboolean down ) {
 	// see if the mouse is within the window bounds and if so is this a mouse click
 	if ( down && !( menu->window.flags & WINDOW_POPUP ) && !Rect_ContainsPoint( &menu->window.rect, DC->cursorx, DC->cursory ) ) {
 		static qboolean inHandleKey = qfalse;
-		if ( !inHandleKey && key == K_MOUSE1 || key == K_MOUSE2 || key == K_MOUSE3 ) {
+		if ( !inHandleKey && ( key == K_MOUSE1 || key == K_MOUSE2 || key == K_MOUSE3 ) ) {
 			inHandleKey = qtrue;
 			Menus_HandleOOBClick( menu, key, down );
 			inHandleKey = qfalse;
@@ -3347,21 +3349,21 @@ void Item_TextField_Paint( itemDef_t *item ) {
 void Item_YesNo_Paint( itemDef_t *item ) {
 	// vec4_t newColor, lowLight;
 	float value;
-	menuDef_t *parent = (menuDef_t*)item->parent;
+	//menuDef_t *parent = (menuDef_t*)item->parent;
 
 	value = ( item->cvar ) ? DC->getCVarValue( item->cvar ) : 0;
 
-	/*
-	if (item->window.flags & WINDOW_HASFOCUS) {
-	    lowLight[0] = 0.8 * parent->focusColor[0];
-	    lowLight[1] = 0.8 * parent->focusColor[1];
-	    lowLight[2] = 0.8 * parent->focusColor[2];
-	    lowLight[3] = 0.8 * parent->focusColor[3];
-	    LerpColor(parent->focusColor,lowLight,newColor,0.5+0.5*sin(DC->realTime / PULSE_DIVISOR));
+#if 0
+	if ( item->window.flags & WINDOW_HASFOCUS ) {
+		lowLight[0] = 0.8 * parent->focusColor[0];
+		lowLight[1] = 0.8 * parent->focusColor[1];
+		lowLight[2] = 0.8 * parent->focusColor[2];
+		lowLight[3] = 0.8 * parent->focusColor[3];
+		LerpColor( parent->focusColor,lowLight,newColor,0.5 + 0.5 * sin( DC->realTime / PULSE_DIVISOR ) );
 	} else {
-	    memcpy(&newColor, &item->window.foreColor, sizeof(vec4_t));
+		memcpy( &newColor, &item->window.foreColor, sizeof( vec4_t ) );
 	}
-	*/
+#endif
 
 	/* nsco using checkboxes instead of txt yes/no */
 	if ( item->text ) {
@@ -3503,6 +3505,7 @@ static bind_t g_bindings[] =
 
 static const int g_bindCount = sizeof( g_bindings ) / sizeof( bind_t );
 
+#if 0
 static configcvar_t g_configcvars[] =
 {
 	{"cl_run",          0,                  0},
@@ -3515,6 +3518,7 @@ static configcvar_t g_configcvars[] =
 	{"cl_freelook",     0,                  0},
 	{NULL,              0,                  0}
 };
+#endif
 
 /*
 =================
@@ -3679,11 +3683,9 @@ void BindingFromName( const char *cvar ) {
 
 void Item_Slider_Paint( itemDef_t *item ) {
 	vec4_t newColor, lowLight;
-	float x, y, value;
+	float x, y;
 	menuDef_t *parent = (menuDef_t*)item->parent;
 	qboolean novscreen = qfalse;
-
-	value = ( item->cvar ) ? DC->getCVarValue( item->cvar ) : 0;
 
 	if ( item->window.flags & WINDOW_HASFOCUS ) {
 		lowLight[0] = 0.8 * parent->focusColor[0];
@@ -4117,12 +4119,9 @@ void Item_ListBox_Paint( itemDef_t *item ) {
 
 
 void Item_OwnerDraw_Paint( itemDef_t *item ) {
-	menuDef_t *parent;
-
 	if ( item == NULL ) {
 		return;
 	}
-	parent = (menuDef_t*)item->parent;
 
 	if ( DC->ownerDrawItem ) {
 		vec4_t color, lowLight;
@@ -5639,9 +5638,16 @@ qboolean MenuParse_name( itemDef_t *item, int handle ) {
 
 qboolean MenuParse_fullscreen( itemDef_t *item, int handle ) {
 	menuDef_t *menu = (menuDef_t*)item;
-	if ( !PC_Int_Parse( handle, &menu->fullScreen ) ) {
+	union
+	{
+		qboolean b;
+		int i;
+	} fullScreen;
+
+	if ( !PC_Int_Parse( handle, &fullScreen.i ) ) {
 		return qfalse;
 	}
+	menu->fullScreen = fullScreen.b;
 	return qtrue;
 }
 
@@ -5943,22 +5949,23 @@ keywordHash_t menuParseKeywords[] = {
 	{"fadeAmount", MenuParse_fadeAmount, NULL},
 	{"", MenuParse_fadeAmount, NULL}
 };
-/*
+#if 0
 keywordHash_t *menuParseKeywordHash[KEYWORDHASH_SIZE];
 
 /*
 ===============
 Menu_SetupKeywordHash
 ===============
+*/
+void Menu_SetupKeywordHash( void ) {
+	int i;
 
-void Menu_SetupKeywordHash(void) {
-int i;
-
-memset(menuParseKeywordHash, 0, sizeof(menuParseKeywordHash));
-for (i = 0; menuParseKeywords[i].keyword; i++) {
-KeywordHash_Add(menuParseKeywordHash, &menuParseKeywords[i]);
+	memset( menuParseKeywordHash, 0, sizeof( menuParseKeywordHash ) );
+	for ( i = 0; menuParseKeywords[i].keyword; i++ ) {
+		KeywordHash_Add( menuParseKeywordHash, &menuParseKeywords[i] );
+	}
 }
-}*/
+#endif
 
 /*
 ===============
@@ -6046,9 +6053,6 @@ void Menu_Reset() {
 displayContextDef_t *Display_GetContext() {
 	return DC;
 }
-
-static float captureX;
-static float captureY;
 
 void *Display_CaptureItem( int x, int y ) {
 	int i;

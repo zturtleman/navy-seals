@@ -115,6 +115,7 @@ static void UI_ForceLegsAnim( playerInfo_t *pi, int anim ) {
 }
 
 
+#if 0
 /*
 ===============
 UI_SetLegsAnim
@@ -127,6 +128,7 @@ static void UI_SetLegsAnim( playerInfo_t *pi, int anim ) {
 	}
 	UI_ForceLegsAnim( pi, anim );
 }
+#endif
 
 
 /*
@@ -147,6 +149,7 @@ static void UI_ForceTorsoAnim( playerInfo_t *pi, int anim ) {
 }
 
 
+#if 0
 /*
 ===============
 UI_SetTorsoAnim
@@ -251,6 +254,7 @@ static void UI_LegsSequencing( playerInfo_t *pi ) {
 		return;
 	}
 }
+#endif
 
 
 /*
@@ -279,6 +283,7 @@ static void UI_PositionEntityOnTag( refEntity_t *entity, const refEntity_t *pare
 }
 
 
+#if 0
 /*
 ======================
 UI_PositionRotatedEntityOnTag
@@ -593,6 +598,7 @@ static void UI_PlayerAngles( playerInfo_t *pi, vec3_t legs[3], vec3_t torso[3], 
 	AnglesToAxis( torsoAngles, torso );
 	AnglesToAxis( headAngles, head );
 }
+#endif
 
 /*
 ===============
@@ -601,18 +607,9 @@ UI_HeadAngle
 */
 static void UI_HeadAngle( playerInfo_t *pi, vec3_t head[3] ) {
 	vec3_t headAngles;
-	float dest;
 
 	VectorCopy( pi->viewAngles, headAngles );
 	headAngles[YAW] = AngleMod( headAngles[YAW] );
-
-	// --------- pitch -------------
-	// only show a fraction of the pitch angle in the torso
-	if ( headAngles[PITCH] > 180 ) {
-		dest = ( -360 + headAngles[PITCH] ) * 0.75;
-	} else {
-		dest = headAngles[PITCH] * 0.75;
-	}
 
 	AnglesToAxis( headAngles, head );
 }
