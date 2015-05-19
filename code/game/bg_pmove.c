@@ -61,7 +61,7 @@ float pm_ladderScale = 0.50;
 float pm_ladderaccelerate = 3000;
 float pm_ladderfriction = 3000;
 
-int     NS_OnLadder();
+int     NS_OnLadder( void );
 
 vec3_t pm_previous_origin[MAX_CLIENTS];
 int pm_lastsprint[MAX_CLIENTS];
@@ -442,7 +442,7 @@ static qboolean PM_CheckJump( void ) {
 	/*	if ( pm->cmd.forwardmove >= 0 ) {*/
 	PM_ForceLegsAnim( LEGS_JUMP );
 	pm->ps->pm_flags &= ~PMF_BACKWARDS_JUMP;
-	/*	}/* else {
+	/*	} else {
 	PM_ForceLegsAnim( LEGS_JUMPB );
 	pm->ps->pm_flags |= PMF_BACKWARDS_JUMP;
 	}*/
@@ -1257,13 +1257,13 @@ Returns an event number apropriate for the groundsurface
 static int PM_FootstepForSurface( void ) {
 	if ( pml.groundTrace.surfaceFlags & SURF_NOSTEPS ) {
 		return 0;
-	} else if ( pml.groundTrace.surfaceFlags & SURF_METALSTEPS )   {
+	} else if ( pml.groundTrace.surfaceFlags & SURF_METALSTEPS ) {
 		return EV_FOOTSTEP_METAL;
-	} else if ( pml.groundTrace.surfaceFlags & SURF_DIRTSTEPS || pml.groundTrace.surfaceFlags & SURF_SANDSTEPS )   {
+	} else if ( pml.groundTrace.surfaceFlags & SURF_DIRTSTEPS || pml.groundTrace.surfaceFlags & SURF_SANDSTEPS ) {
 		return EV_FOOTSTEP_DIRT;
-	} else if ( pml.groundTrace.surfaceFlags & SURF_SNOWSTEPS )   {
+	} else if ( pml.groundTrace.surfaceFlags & SURF_SNOWSTEPS ) {
 		return EV_FOOTSTEP_SNOW;
-	} else if ( pml.groundTrace.surfaceFlags & SURF_WOODSTEPS )   {
+	} else if ( pml.groundTrace.surfaceFlags & SURF_WOODSTEPS ) {
 		return EV_FOOTSTEP_WOOD;
 	}
 	// Navy Seals --
@@ -1490,26 +1490,28 @@ static void PM_GroundTrace( void ) {
 		return;
 	}
 
+#if 0
 	// check if getting thrown off the ground
-	/*	if ( pm->ps->velocity[2] > 0 && DotProduct( pm->ps->velocity, trace.plane.normal ) > 10 ) {
-	if ( pm->debugLevel ) {
-	Com_Printf("%i:kickoff\n", c_pmove);
+	if ( pm->ps->velocity[2] > 0 && DotProduct( pm->ps->velocity, trace.plane.normal ) > 10 ) {
+		if ( pm->debugLevel ) {
+			Com_Printf( "%i:kickoff\n", c_pmove );
+		}
+		// go into jump animation
+		if ( pm->cmd.forwardmove >= 0 ) {
+			PM_ForceLegsAnim( LEGS_JUMP );
+			pm->ps->pm_flags &= ~PMF_BACKWARDS_JUMP;
+		} else {
+			PM_ForceLegsAnim( LEGS_JUMPB );
+			pm->ps->pm_flags |= PMF_BACKWARDS_JUMP;
+		}
+
+		pm->ps->groundEntityNum = ENTITYNUM_NONE;
+		pml.groundPlane = qfalse;
+		pml.walking = qfalse;
+		return;
 	}
-	// go into jump animation
-	/////////*		if ( pm->cmd.forwardmove >= 0 ) {*/
-	/*		PM_ForceLegsAnim( LEGS_JUMP );
-	pm->ps->pm_flags &= ~PMF_BACKWARDS_JUMP;*/
-	/*	} else {
-	PM_ForceLegsAnim( LEGS_JUMPB );
-	pm->ps->pm_flags |= PMF_BACKWARDS_JUMP;
-	}*/
-	/*
-	pm->ps->groundEntityNum = ENTITYNUM_NONE;
-	pml.groundPlane = qfalse;
-	pml.walking = qfalse;
-	return;
-	}
-	*/
+#endif
+
 	// slopes that are too steep will not be considered onground
 	if ( trace.plane.normal[2] < MIN_WALK_NORMAL ) {
 		if ( pm->debugLevel ) {
@@ -1824,7 +1826,7 @@ static void PM_Footsteps( void ) {
 			// on ground will only play sounds if running
 			if ( footstep && !pm->noFootsteps && ( pm->ps->stats[STAT_STEALTH] < 6  ||  pm->ps->eFlags & EF_VIP  || pm->cmd.buttons & BUTTON_SPRINT ) && PM_FootstepForSurface() == EV_FOOTSTEP ) {
 				PM_AddEvent( EV_FOOTSTEP );
-			} else if ( footstep && !pm->noFootsteps && ( pm->ps->stats[STAT_STEALTH] < 8  ||  pm->ps->eFlags & EF_VIP  || pm->cmd.buttons & BUTTON_SPRINT ) && PM_FootstepForSurface() > EV_FOOTSTEP )   {
+			} else if ( footstep && !pm->noFootsteps && ( pm->ps->stats[STAT_STEALTH] < 8  ||  pm->ps->eFlags & EF_VIP  || pm->cmd.buttons & BUTTON_SPRINT ) && PM_FootstepForSurface() > EV_FOOTSTEP ) {
 				PM_AddEvent( PM_FootstepForSurface() );
 			}
 		} else if ( pm->waterlevel == 1 && ( pm->ps->stats[STAT_STEALTH] < 9  ||  pm->ps->eFlags & EF_VIP  || pm->cmd.buttons & BUTTON_SPRINT ) ) {
@@ -2105,8 +2107,8 @@ static void PM_TorsoAnimation( void ) {
 			PM_ContinueTorsoAnim( TORSO_STAND_SUITCASE );
 		} else if (
 			( pm->ps->stats[STAT_WEAPONMODE] & ( 1 << WM_ZOOM2X ) ) ||
-			( pm->ps->stats[STAT_WEAPONMODE] & ( 1 << WM_ZOOM4X ) ) &&
-			( BG_IsRifle( pm->ps->weapon ) || pm->ps->weapon == WP_M4 )
+			( ( pm->ps->stats[STAT_WEAPONMODE] & ( 1 << WM_ZOOM4X ) ) &&
+			  ( BG_IsRifle( pm->ps->weapon ) || pm->ps->weapon == WP_M4 ) )
 			) {
 			PM_ContinueTorsoAnim( TORSO_STAND_RIFLE_SCOPED );
 		} else if
@@ -2240,7 +2242,7 @@ static void PM_Weapon_Bombcase( void ) {
 		 || pm->ps->weaponstate == WEAPON_MELEE
 		 || pm->ps->weaponstate == WEAPON_THROW
 		 || pm->ps->weaponstate == WEAPON_FIRING21
-		 || pm->ps->weaponstate == WEAPON_FIRING22 && pm->ps->weaponTime <= 5 ) {
+		 || ( pm->ps->weaponstate == WEAPON_FIRING22 && pm->ps->weaponTime <= 5 ) ) {
 		if ( pm->ps->weaponstate == WEAPON_LASTRND ) {
 			event = EV_CLIPWIRE_1;
 		} else if ( pm->ps->weaponstate == WEAPON_BANDAGING_START ) {
@@ -2292,19 +2294,19 @@ static void PM_Weapon_Bombcase( void ) {
 		*/
 		if ( pm->ps->weaponstate == WEAPON_FIRING ) {
 			pm->ps->weaponstate = WEAPON_FIRING2;
-		} else if ( pm->ps->weaponstate == WEAPON_FIRING2 )   {
+		} else if ( pm->ps->weaponstate == WEAPON_FIRING2 ) {
 			pm->ps->weaponstate = WEAPON_FIRING3;
-		} else if ( pm->ps->weaponstate == WEAPON_FIRING3 )   {
+		} else if ( pm->ps->weaponstate == WEAPON_FIRING3 ) {
 			pm->ps->weaponstate = WEAPON_FIREEMPTY;
-		} else if ( pm->ps->weaponstate == WEAPON_FIREEMPTY )   {
+		} else if ( pm->ps->weaponstate == WEAPON_FIREEMPTY ) {
 			pm->ps->weaponstate = WEAPON_RELOADING;
-		} else if ( pm->ps->weaponstate == WEAPON_RELOADING )   {
+		} else if ( pm->ps->weaponstate == WEAPON_RELOADING ) {
 			pm->ps->weaponstate = WEAPON_RELOADING_CYCLE;
-		} else if ( pm->ps->weaponstate == WEAPON_RELOADING_CYCLE )   {
+		} else if ( pm->ps->weaponstate == WEAPON_RELOADING_CYCLE ) {
 			pm->ps->weaponstate = WEAPON_RELOADING_STOP;
-		} else if ( pm->ps->weaponstate == WEAPON_RELOADING_STOP )   {
+		} else if ( pm->ps->weaponstate == WEAPON_RELOADING_STOP ) {
 			pm->ps->weaponstate = WEAPON_RELOADING_EMPTY;
-		} else if ( pm->ps->weaponstate == WEAPON_RELOADING_EMPTY )   {
+		} else if ( pm->ps->weaponstate == WEAPON_RELOADING_EMPTY ) {
 			pm->ps->weaponstate = WEAPON_FIRING;
 		} else {
 			pm->ps->weaponstate = WEAPON_FIRING; // if we came here from some unknown wire go back to first!
@@ -2331,19 +2333,19 @@ static void PM_Weapon_Bombcase( void ) {
 
 	if ( pm->ps->weaponstate == WEAPON_FIRING ) {
 		pm->ps->weaponstate = WEAPON_LASTRND;
-	} else if ( pm->ps->weaponstate == WEAPON_FIRING2 )   {
+	} else if ( pm->ps->weaponstate == WEAPON_FIRING2 ) {
 		pm->ps->weaponstate = WEAPON_BANDAGING_START;
-	} else if ( pm->ps->weaponstate == WEAPON_FIRING3 )   {
+	} else if ( pm->ps->weaponstate == WEAPON_FIRING3 ) {
 		pm->ps->weaponstate = WEAPON_BANDAGING_END;
-	} else if ( pm->ps->weaponstate == WEAPON_FIREEMPTY )   {
+	} else if ( pm->ps->weaponstate == WEAPON_FIREEMPTY ) {
 		pm->ps->weaponstate = WEAPON_BANDAGING;
-	} else if ( pm->ps->weaponstate == WEAPON_RELOADING )   {
+	} else if ( pm->ps->weaponstate == WEAPON_RELOADING ) {
 		pm->ps->weaponstate = WEAPON_MELEE;
-	} else if ( pm->ps->weaponstate == WEAPON_RELOADING_CYCLE )   {
+	} else if ( pm->ps->weaponstate == WEAPON_RELOADING_CYCLE ) {
 		pm->ps->weaponstate = WEAPON_THROW;
-	} else if ( pm->ps->weaponstate == WEAPON_RELOADING_STOP )   {
+	} else if ( pm->ps->weaponstate == WEAPON_RELOADING_STOP ) {
 		pm->ps->weaponstate = WEAPON_FIRING21;
-	} else if ( pm->ps->weaponstate == WEAPON_RELOADING_EMPTY )   {
+	} else if ( pm->ps->weaponstate == WEAPON_RELOADING_EMPTY ) {
 		pm->ps->weaponstate = WEAPON_FIRING22;
 	}
 
@@ -2462,7 +2464,7 @@ static void PM_Weapon( void ) {
 				if ( pm->ps->pm_flags & PMF_SHOT_LOCKED && !( pm->cmd.buttons & 1 ) && pm->ps->weaponTime < PM_GetWeaponTime( pm->ps->weapon ) - 50 ) {
 					pm->ps->pm_flags &= ~PMF_SHOT_LOCKED;
 				}
-			} else if ( BG_IsPistol( pm->ps->weapon ) )   {
+			} else if ( BG_IsPistol( pm->ps->weapon ) ) {
 				if ( ( pm->cmd.buttons & BUTTON_ATTACK ) && pm->ps->weaponTime < PM_GetWeaponTime( pm->ps->weapon ) - 50 &&  pm->ps->stats[STAT_ROUNDS] > 0 && !( pm->ps->pm_flags & PMF_SHOT_LOCKED ) ) {
 					if ( pm->ps->weaponstate == WEAPON_FIRING ) {
 						pm->ps->weaponstate = WEAPON_FIRING2;
@@ -2550,7 +2552,7 @@ static void PM_Weapon( void ) {
 					pm->ps->weaponTime = 360; // set weapontime
 				}
 				PM_StartTorsoAnim( TORSO_THROW );
-			} else if ( pm->cmd.buttons & BUTTON_ATTACK )   {
+			} else if ( pm->cmd.buttons & BUTTON_ATTACK ) {
 				if ( pm->ps->weaponTime <= -500 ) {
 					return;
 				}
@@ -2634,7 +2636,7 @@ static void PM_Weapon( void ) {
 				pm->ps->weaponTime = 1000;
 				PM_AddEvent( EV_RELOAD_EMPTY );
 				return;
-			} else if ( pm->ps->stats[STAT_ROUNDS] < maxround && pm->ps->ammo[ AM_SHOTGUN ] > 0 )    {
+			} else if ( pm->ps->stats[STAT_ROUNDS] < maxround && pm->ps->ammo[ AM_SHOTGUN ] > 0 ) {
 				pm->ps->weaponstate = WEAPON_RELOADING_CYCLE;
 				pm->ps->weaponTime = 600;
 				PM_AddEvent( EV_RELOAD );
@@ -2708,8 +2710,8 @@ static void PM_Weapon( void ) {
 			PM_StartTorsoAnim( TORSO_STAND_SUITCASE );
 		} else if (
 			( pm->ps->stats[STAT_WEAPONMODE] & ( 1 << WM_ZOOM2X ) ) ||
-			( pm->ps->stats[STAT_WEAPONMODE] & ( 1 << WM_ZOOM4X ) ) &&
-			( ( BG_IsRifle( pm->ps->weapon ) || pm->ps->weapon == WP_M4 ) )
+			( ( pm->ps->stats[STAT_WEAPONMODE] & ( 1 << WM_ZOOM4X ) ) &&
+			  ( ( BG_IsRifle( pm->ps->weapon ) || pm->ps->weapon == WP_M4 ) ) )
 			) {
 			PM_StartTorsoAnim( TORSO_STAND_RIFLE_SCOPED );
 		} else if ( BG_IsRifle( pm->ps->weapon )  ) {
@@ -2805,7 +2807,7 @@ static void PM_Weapon( void ) {
 		if ( rnd <= 0.33 ) {
 			anim = TORSO_ATTACK_MELEE; //TORSO_MEELE_ATTACK1;
 			pm->ps->weaponstate = WEAPON_FIRING;
-		} else if ( rnd <= 0.66 )     {
+		} else if ( rnd <= 0.66 ) {
 			anim = TORSO_ATTACK_MELEE; //TORSO_MEELE_ATTACK2;
 			pm->ps->weaponstate = WEAPON_FIRING2;
 		} else {
@@ -2823,8 +2825,8 @@ static void PM_Weapon( void ) {
 	if ( pm->ps->powerups[PW_BRIEFCASE] ) {
 		PM_StartTorsoAnim( TORSO_ATTACK_SUITCASE );
 	} else if ( ( pm->ps->stats[STAT_WEAPONMODE] & ( 1 << WM_ZOOM2X ) ) ||
-				( pm->ps->stats[STAT_WEAPONMODE] & ( 1 << WM_ZOOM4X ) ) &&
-				( BG_IsRifle( pm->ps->weapon ) )
+				( ( pm->ps->stats[STAT_WEAPONMODE] & ( 1 << WM_ZOOM4X ) ) &&
+				  ( BG_IsRifle( pm->ps->weapon ) ) )
 				) {
 		PM_StartTorsoAnim( TORSO_ATTACK_RIFLE_SCOPED );
 	} else if (
