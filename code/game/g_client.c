@@ -392,7 +392,7 @@ void BodyTouch( gentity_t *ent, gentity_t *other, trace_t *trace ) {
 		// BLUTENGEL 20040207 removed, need bot_chattime for
 		// bomb placement
 		ent->bot_chattime = 1;
-	} else if ( ent->ns_team == OtherTeam( other->client->sess.sessionTeam ) && ent->count == 0 )   {
+	} else if ( ent->ns_team == OtherTeam( other->client->sess.sessionTeam ) && ent->count == 0 ) {
 		NS_SendStatusMessageToTeam( ent, MS_DEAD, OtherTeam( ent->ns_team ) );
 		ent->count = 1;
 	}
@@ -777,8 +777,8 @@ if desired.
 
 void ClientUserinfoChanged( int clientNum ) {
 	gentity_t *ent;
-	int team,i;    //, health;
-	char    *s;
+	int i;
+	char *s;
 	char e_head[MAX_QPATH],e_eyes[MAX_QPATH],e_mouth[MAX_QPATH];
 	char custom[MAX_QPATH];
 	char oldname[MAX_STRING_CHARS];
@@ -855,8 +855,6 @@ void ClientUserinfoChanged( int clientNum ) {
 		}
 	}
 
-	team = client->sess.sessionTeam;
-
 	Q_strncpyz( custom, "0",sizeof( custom ) );
 
 	{   // use the headskin we want
@@ -916,13 +914,13 @@ void ClientUserinfoChanged( int clientNum ) {
 		} else {
 			Com_sprintf( e_mouth, sizeof( e_mouth ), "dcs_mask" );
 		}
-	} else if ( client->pers.nsPC.is_hoak )   {
+	} else if ( client->pers.nsPC.is_hoak ) {
 		if ( client->pers.nsPC.is_hoak == 2 ) {
 			Com_sprintf( e_eyes, sizeof( e_eyes ), "nvg_hoak" );
 		} else {
 			Com_sprintf( e_eyes, sizeof( e_eyes ), "mask_hoak" );
 		}
-	} else if ( client->pers.nsPC.is_ogun )   {
+	} else if ( client->pers.nsPC.is_ogun ) {
 		if ( client->pers.nsPC.is_ogun == 2 ) {
 			Com_sprintf( e_eyes, sizeof( e_eyes ), "glasses_ogun2" );
 		} else {
@@ -1200,7 +1198,7 @@ void ClientSpawn( gentity_t *ent ) {
 		// spawn right in place of death
 		VectorCopy( client->ps.origin, spawn_origin );
 		spawn_origin[2] += 15;
-	} else if ( client->sess.sessionTeam == TEAM_SPECTATOR )   {
+	} else if ( client->sess.sessionTeam == TEAM_SPECTATOR ) {
 		spawnPoint = SelectSpectatorSpawnPoint(
 			spawn_origin, spawn_angles );
 	} else if ( g_gametype.integer >= GT_TEAM ) {
@@ -1339,7 +1337,7 @@ void ClientSpawn( gentity_t *ent ) {
 	if ( g_gametype.integer == GT_LTS && GameState == STATE_OPEN ) {
 		client->ps.eFlags |= EF_WEAPONS_LOCKED;
 		NS_SendPlayersStatusToAllPlayers( client->ps.clientNum, MS_HEALTH5 );
-	} else if ( g_gametype.integer == GT_TEAM )   {
+	} else if ( g_gametype.integer == GT_TEAM ) {
 		NS_SendPlayersStatusToAllPlayers(  client->ps.clientNum, MS_HEALTH5 );
 	} else {
 		NS_SendPlayersStatusToAllPlayers( client->ps.clientNum, MS_DEAD );

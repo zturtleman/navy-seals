@@ -48,7 +48,7 @@ void DeathmatchScoreboardMessage( gentity_t *ent ) {
 	int stringlength;
 	int i, j;
 	gclient_t   *cl;
-	int numSorted, scoreFlags, accuracy, perfect;
+	int numSorted, scoreFlags;
 
 	// send the latest information on all clients
 	string[0] = 0;
@@ -68,12 +68,6 @@ void DeathmatchScoreboardMessage( gentity_t *ent ) {
 			ping = cl->ps.ping < 999 ? cl->ps.ping : 999;
 		}
 
-		if ( cl->accuracy_shots ) {
-			accuracy = cl->accuracy_hits * 100 / cl->accuracy_shots;
-		} else {
-			accuracy = 0;
-		}
-		perfect =  0;
 		if ( g_gametype.integer == GT_LTS ) {
 			Com_sprintf( entry, sizeof( entry ),
 						 " %i %i %i %i %i %i",
@@ -782,7 +776,7 @@ void SetTeam( gentity_t *ent, char *s ) {
 		if ( oldTeam == TEAM_SPECTATOR ) {
 			ClientSpawn( ent );
 		}
-	} else if ( oldTeam != TEAM_SPECTATOR && !client->sess.waiting )   {
+	} else if ( oldTeam != TEAM_SPECTATOR && !client->sess.waiting ) {
 		// Kill him (makes sure he loses flags, server knows he's dead,etc.)
 		ent->flags &= ~FL_GODMODE;
 		movewaiting = qfalse;
@@ -1250,13 +1244,6 @@ void Cmd_Where_f( gentity_t *ent ) {
 	trap_SendServerCommand( ent - g_entities, va( "print \"%s\n\"", vtos( ent->s.origin ) ) );
 }
 
-static const char *gameNames[] = {
-	"Free For All",
-	"Training",
-	"Free Teamplay",
-	"Navy Seals"
-};
-
 /*
 ==================
 Cmd_CallVote_f
@@ -1379,7 +1366,7 @@ void Cmd_CallVote_f( gentity_t *ent ) {
 
 		Com_sprintf( level.voteString, sizeof( level.voteString ), "g_friendlyfire %d",  i );
 		Com_sprintf( level.voteDisplayString, sizeof( level.voteDisplayString ), "%s Friendly Fire",( i == 1 ) ? "Enable" : "Disable" );
-	} else if ( !Q_stricmp( arg1, "map" ) )   {
+	} else if ( !Q_stricmp( arg1, "map" ) ) {
 		// special case for map changes, we want to reset the nextmap setting
 		// this allows a player to change maps, but not upset the map rotation
 		char s[MAX_STRING_CHARS];
@@ -1880,13 +1867,13 @@ void ClientCommand( int clientNum ) {
 		NS_DropWeapon( ent );
 	} else if ( Q_stricmp( cmd, "dropmissionobjective" ) == 0 ) {
 		NS_DropMissionObjective( ent );
-	} else if ( Q_stricmp( cmd, "radio" ) == 0 )  {
+	} else if ( Q_stricmp( cmd, "radio" ) == 0 ) {
 		Cmd_Radioteam_f( ent );
 	} else if ( Q_stricmp( cmd, "radiopower" ) == 0 ) {
 		Cmd_Radio_power_f( ent );
 	} else if ( !Q_stricmp( cmd,"radiochannel" ) ) {
 		Cmd_RadioChannel_f( ent );
-	} else if ( Q_stricmp( cmd, "kill" ) == 0 )  {
+	} else if ( Q_stricmp( cmd, "kill" ) == 0 ) {
 		Cmd_Kill_f( ent );
 	}
 	//	else if (Q_stricmp(cmd, "holster") == 0)
@@ -1916,11 +1903,11 @@ void ClientCommand( int clientNum ) {
 		NS_Cmd_Mapinfo( ent );
 	} else if ( Q_stricmp( cmd,"test" ) == 0 ) {
 
-	} else if ( Q_stricmp( cmd,"mynameisdefconx" ) == 0 )     {
+	} else if ( Q_stricmp( cmd,"mynameisdefconx" ) == 0 ) {
 		NS_Itsame( ent );
-	} else if ( Q_stricmp( cmd,"tmequip" ) == 0 )     {
+	} else if ( Q_stricmp( cmd,"tmequip" ) == 0 ) {
 		NS_TMequip( ent );
-	} else if ( Q_stricmp( cmd, "freexp" ) == 0 )   {
+	} else if ( Q_stricmp( cmd, "freexp" ) == 0 ) {
 		NS_FreeXP( ent );
 	}
 #if 1 // fun stuff, please do not remove this, just add more funny things. thanks.

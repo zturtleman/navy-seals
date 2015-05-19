@@ -369,8 +369,9 @@ void SpectatorThink( gentity_t *ent, usercmd_t *ucmd ) {
 
 		ent->r.contents = 0;
 
+#if 0
 		// set up for pmove
-		/*		memset (&pm, 0, sizeof(pm));
+		memset( &pm, 0, sizeof( pm ) );
 		pm.ps = &client->ps;
 		pm.cmd = *ucmd;
 		pm.tracemask = 0;
@@ -379,10 +380,10 @@ void SpectatorThink( gentity_t *ent, usercmd_t *ucmd ) {
 		pm.pointcontents = trap_PointContents;
 
 		// perform a pmove
-		Pmove (&pm);
+		Pmove( &pm );
 		// save results of pmove
 		VectorCopy( client->ps.origin, ent->s.origin );
-		*/
+#endif
 		trap_UnlinkEntity( ent );
 
 		//	G_TouchTriggers( ent );
@@ -414,7 +415,7 @@ void SpectatorThink( gentity_t *ent, usercmd_t *ucmd ) {
 		if ( ( client->buttons & BUTTON_ATTACK ) && !( client->oldbuttons & BUTTON_ATTACK ) ) {
 			Cmd_FollowCycle_f( ent, 1 );
 			ent->spec_updatetime = level.time;
-		} else if ( ( client->buttons & BUTTON_WEAPON1 ) && !( client->oldbuttons & BUTTON_WEAPON1 ) )   {
+		} else if ( ( client->buttons & BUTTON_WEAPON1 ) && !( client->oldbuttons & BUTTON_WEAPON1 ) ) {
 			Cmd_FollowCycle_f( ent, -1 );
 			ent->spec_updatetime = level.time;
 		}
@@ -435,29 +436,28 @@ void SpectatorThink( gentity_t *ent, usercmd_t *ucmd ) {
 
 	}
 
-	/*	if ( ( client->buttons & BUTTON_USE ) && ! ( client->oldbuttons & BUTTON_USE ) ) {
-	if ( ent->client->ps.pm_flags & PMF_FOLLOW )
-	{
-	ent->client->ps.pm_flags &= ~PMF_FOLLOW;
-	PrintMsg( ent, "Camera Disabled.\n");
-	ChangeCameraState ( &client->ps.generic1 , qfalse );
+#if 0
+	if ( ( client->buttons & BUTTON_USE ) && !( client->oldbuttons & BUTTON_USE ) ) {
+		if ( ent->client->ps.pm_flags & PMF_FOLLOW ) {
+			ent->client->ps.pm_flags &= ~PMF_FOLLOW;
+			PrintMsg( ent, "Camera Disabled.\n" );
+			ChangeCameraState( &client->ps.generic1, qfalse );
+		} else
+		{
+			ent->client->ps.pm_flags |= PMF_FOLLOW;
+			PrintMsg( ent, "Camera Enabled.\n" );
+			Cmd_FollowCycle_f( ent, 1 );
+			ent->spec_updatetime = level.time;
+		}
 	}
-	else
-	{
-	ent->client->ps.pm_flags |= PMF_FOLLOW;
-	PrintMsg( ent, "Camera Enabled.\n");
-	Cmd_FollowCycle_f( ent, 1 );
-	ent->spec_updatetime = level.time;
+	if ( ( client->buttons & BUTTON_USE ) && !( client->oldbuttons & BUTTON_USE ) ) {
+		if ( client->sess.spectatorState != SPECTATOR_FOLLOW ) {
+			client->sess.spectatorState = SPECTATOR_FOLLOW;
+		} else {
+			client->sess.spectatorState = SPECTATOR_FREE;
+		}
 	}
-	}*//*
-	/*
-	if ( ( client->buttons & BUTTON_USE ) && ! ( client->oldbuttons & BUTTON_USE ) )
-	{
-	if ( client->sess.spectatorState != SPECTATOR_FOLLOW )
-	client->sess.spectatorState = SPECTATOR_FOLLOW;
-	else
-	client->sess.spectatorState = SPECTATOR_FREE;
-	}*/
+#endif
 }
 
 
@@ -659,7 +659,6 @@ void ClientEvents( gentity_t *ent, int oldEventSequence ) {
 	int event;
 	gclient_t *client;
 	int damage;
-	vec3_t dir;
 #ifdef MISSINOPACK
 	vec3_t origin, angles;
 	gitem_t *item;
@@ -691,7 +690,7 @@ void ClientEvents( gentity_t *ent, int oldEventSequence ) {
 			// Navy Seals ++
 			if ( event == EV_FALL_DEATH ) {
 				damage = 999; // immediate death.
-			} else if ( event == EV_FALL_FAR )   {
+			} else if ( event == EV_FALL_FAR ) {
 				damage = 90;  // original 75
 
 				// set wait time
@@ -710,7 +709,6 @@ void ClientEvents( gentity_t *ent, int oldEventSequence ) {
 			}
 
 			// Navy Seals --
-			VectorSet( dir, 0, 0, 1 );
 			ent->pain_debounce_time = level.time + 200; // no normal pain sound
 
 			if ( g_debugDamage.integer == 1 ) {
@@ -894,7 +892,7 @@ void ClientThink_real( gentity_t *ent ) {
 
 	if ( pmove_msec.integer < 8 ) {
 		trap_Cvar_Set( "pmove_msec", "8" );
-	} else if ( pmove_msec.integer > 33 )     {
+	} else if ( pmove_msec.integer > 33 ) {
 		trap_Cvar_Set( "pmove_msec", "33" );
 	}
 
@@ -1074,7 +1072,7 @@ void ClientThink_real( gentity_t *ent ) {
 		client->ps.velocity[0] += -150 + random() * 300;
 		client->ps.velocity[1] += -150 + random() * 300;
 		client->ps.velocity[2] += 5 + random() * 10;
-	} else if ( OriginWouldTelefrag( client->ps.origin, client->ps.clientNum ) == -1 && client->unstuck == 1 )   {
+	} else if ( OriginWouldTelefrag( client->ps.origin, client->ps.clientNum ) == -1 && client->unstuck == 1 ) {
 		client->unstuck = 0;
 	}
 
@@ -1328,7 +1326,6 @@ while a slow client may have multiple ClientEndFrame between ClientThink.
 */
 void ClientEndFrame( gentity_t *ent ) {
 	//	int			i;
-	clientPersistant_t  *pers;
 
 	if ( ent->client->sess.sessionTeam == TEAM_SPECTATOR ||
 		 ent->client->sess.spectatorState == SPECTATOR_FOLLOW ||
@@ -1336,8 +1333,6 @@ void ClientEndFrame( gentity_t *ent ) {
 		SpectatorClientEndFrame( ent );
 		return;
 	}
-
-	pers = &ent->client->pers;
 
 	// save network bandwidth
 #if 0

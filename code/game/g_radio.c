@@ -97,7 +97,7 @@ void RadioThink( gentity_t *ent ) {
 	if ( ent->client->ns.radio_delay > 1 ) {
 		ent->client->ns.radio_delay--;
 		return;
-	} else if ( ent->client->ns.radio_delay == 1 )     {
+	} else if ( ent->client->ns.radio_delay == 1 ) {
 		DeleteFirstRadioQueueEntry( ent );
 		ent->client->ns.radio_delay = 0;
 	}
@@ -252,16 +252,16 @@ char *GetReportMsg( gentity_t *ent ) {
 	if ( ent->health <= 20 ) {
 		msg = "report1";
 		NS_SendStatusMessageToTeam( ent, MS_HEALTH1, ent->client->sess.sessionTeam );
-	} else if ( ent->health <= 40 )   {
+	} else if ( ent->health <= 40 ) {
 		msg = "report2";
 		NS_SendStatusMessageToTeam( ent, MS_HEALTH2, ent->client->sess.sessionTeam );
-	} else if ( ent->health <= 60 )   {
+	} else if ( ent->health <= 60 ) {
 		msg = "report3";
 		NS_SendStatusMessageToTeam( ent, MS_HEALTH3, ent->client->sess.sessionTeam );
-	} else if ( ent->health <= 80 )   {
+	} else if ( ent->health <= 80 ) {
 		msg = "report4";
 		NS_SendStatusMessageToTeam( ent, MS_HEALTH4, ent->client->sess.sessionTeam );
-	} else if ( ent->health > 80 )   {
+	} else if ( ent->health > 80 ) {
 		msg = "report5";
 		NS_SendStatusMessageToTeam( ent, MS_HEALTH5, ent->client->sess.sessionTeam );
 	} else
@@ -332,7 +332,7 @@ void RadioBroadcast( gentity_t *ent, char *msg, qboolean userinput ) {
 		return;
 	}
 	if ( ent->client->ns.radio_power_off ) {
-		PrintMsg( ent, va( "print \"Your radio is currently turned off!\n\"" ) );
+		PrintMsg( ent, "print \"Your radio is currently turned off!\n\"" );
 		return;
 	}
 
@@ -504,12 +504,9 @@ int CG_GetSingalTypeForString( char *string ) {
 void    G_ParseRadioConfigFileForTeam( int team ) {
 	char        *text_p;
 	int len;
-	//	int			lines = 0;
 	char        *token;
-	//	float		fps;
-	int skip;
 	char text[20000];
-	char filename[128];
+	char filename[MAX_QPATH];
 	fileHandle_t f;
 
 	if ( team == TEAM_BLUE ) {
@@ -524,7 +521,7 @@ void    G_ParseRadioConfigFileForTeam( int team ) {
 		return ;
 	}
 	if ( len >= sizeof( text ) - 1 ) {
-		G_Printf( "File %s (%i>%i)too long\n", text, len, sizeof( text ) );
+		G_Printf( "File %s (%i>%u)too long\n", text, len, (unsigned)sizeof( text ) );
 		return ;
 	}
 	trap_FS_Read( text, len, f );
@@ -533,7 +530,6 @@ void    G_ParseRadioConfigFileForTeam( int team ) {
 
 	// parse the text
 	text_p = text;
-	skip = 0;   // quite the compiler warning
 
 	//
 	// set defaults

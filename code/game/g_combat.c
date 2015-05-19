@@ -337,7 +337,7 @@ void player_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int
 					}
 				}
 			}
-		} else if ( attacker == self )   {
+		} else if ( attacker == self ) {
 			// self killing.. we will remove a point for that one
 			AddScore( attacker, self->r.currentOrigin,-1 );
 		} else
@@ -562,13 +562,12 @@ int G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker,
 			  vec3_t dir, vec3_t point, int damage, int dflags, int mod ) {
 	// Navy Seals --
 	gclient_t   *client;
-	int take = 0, save = 0, knockback = 0, dummy = 0, armorhit = 0;
+	int take = 0, knockback = 0, dummy = 0, armorhit = 0;
 	int HitLocation = LOC_NULL;
 	qboolean bleeding = qfalse;
 	qboolean headblown = qfalse;
 	qboolean spray_blood = qfalse;
-	float through_vest = 1;
-	vec3_t newdir;
+	//float through_vest = 1;
 
 	//	PrintMsg( NULL, "targ: %s|inflictor: %s|attack: %s\n", targ->classname, inflictor->classname,attacker->classname );
 
@@ -597,7 +596,6 @@ int G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker,
 				 !Q_stricmp( targ->classname, "flashbang" ) ||
 				 !Q_stricmp( targ->classname, "grenade" ) ) {
 
-				VectorCopy( dir, newdir );
 				VectorScale( dir, damage / 2.0, targ->s.pos.trDelta );
 				targ->s.pos.trType = TR_MOREGRAVITY;
 				targ->s.pos.trTime = level.time;
@@ -704,8 +702,6 @@ int G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker,
 	// initialize the take variable, later this will indicate how much of the damage is done
 	take = damage;
 
-	save = 0;
-
 	// check for falldamage
 	if ( mod == MOD_FALLING ) {
 		// add damage to both legs...
@@ -734,15 +730,17 @@ int G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker,
 			return -1;
 		}
 
+#if 0
 		if ( attacker->client->ps.weapon == WP_PSG1 ||
 			 attacker->client->ps.weapon == WP_SL8SD ||
 			 attacker->client->ps.weapon == WP_MACMILLAN ) {
 			through_vest = 0;
 		} else if ( NS_GotPowerup( targ, PW_VEST ) && ( BG_IsRifle( attacker->client->ps.weapon ) ) ) {
 			through_vest = 0; //random();
-		} else if ( !NS_GotPowerup( targ, PW_VEST ) )                                   {
+		} else if ( !NS_GotPowerup( targ, PW_VEST ) ) {
 			through_vest = 0;
 		}
+#endif
 
 		// get the hit location
 		if ( g_debugDamage.integer == 1 ) {
@@ -1091,7 +1089,6 @@ int G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker,
 		}
 	}
 
-	save = 0;
 	// Navy Seals ++
 	// save some from armor
 	//	asave = CheckArmor (targ, take, dflags);

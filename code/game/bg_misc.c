@@ -281,7 +281,6 @@ gitem_t bg_itemlist[] =
 		/* sounds */ ""
 	},
 #if 0
-	/*
 	/*QUAKED weapon_rpg (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	*/
 	{
@@ -298,7 +297,6 @@ gitem_t bg_itemlist[] =
 		/* precache */ "",
 		/* sounds */ ""
 	},
-	* /
 #endif
 	/*QUAKED weapon_mk23 (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	*/
@@ -1876,13 +1874,13 @@ qboolean BG_CanItemBeGrabbed( int gametype, const entityState_t *ent, const play
 			} else {
 				return qfalse;
 			}
-		} else if ( item->giTag == WP_SMOKE )   {
+		} else if ( item->giTag == WP_SMOKE ) {
 			if ( ps->ammo[AM_SMOKE] < 2 ) {
 				return qtrue;
 			} else {
 				return qfalse;
 			}
-		} else if ( item->giTag == WP_GRENADE )   {
+		} else if ( item->giTag == WP_GRENADE ) {
 			if ( ps->ammo[AM_GRENADES] < 2 ) {
 				return qtrue;
 			} else {

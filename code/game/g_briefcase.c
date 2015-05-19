@@ -59,15 +59,13 @@ qboolean NS_BriefCaseExist( void ) {
 }
 
 void Reset_Briefcase( void ) {
-	gentity_t *ent, *rent = NULL;
-
+	gentity_t *ent;
 
 	ent = NULL;
 	while ( ( ent = G_Find( ent, FOFS( classname ), "team_briefcase" ) ) != NULL ) {
 		if ( ent->flags & FL_DROPPED_ITEM ) {
 			G_FreeEntity( ent );
 		} else {
-			rent = ent;
 			RespawnItem( ent );
 		}
 	}

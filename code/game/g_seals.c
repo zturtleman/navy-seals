@@ -907,7 +907,7 @@ Bot Hacks... Adjust XP + stuff when spawning
 ==================
 */
 void NS_BotHacks( gentity_t *ent ) {
-	int xp;
+	//int xp;
 	float rnd = random();
 	gitem_t *weapon;
 
@@ -915,7 +915,7 @@ void NS_BotHacks( gentity_t *ent ) {
 		return;
 	}
 
-	xp = ent->client->pers.nsPC.xp;
+	//xp = ent->client->pers.nsPC.xp;
 
 	if ( ent->client->sess.waiting ) {
 		return;
@@ -944,15 +944,15 @@ void NS_BotHacks( gentity_t *ent ) {
 	strength
 	*/
 
-	if ( rnd < 0.2 || BG_WeaponMods( ent->client->ps.weapon ) & ( 1 << WM_LASER ) || BG_WeaponMods( ent->client->ps.weapon ) & ( 1 << WM_SCOPE )  && ent->client->pers.nsPC.accuracy < 7 ) {
+	if ( rnd < 0.2 || BG_WeaponMods( ent->client->ps.weapon ) & ( 1 << WM_LASER ) || ( BG_WeaponMods( ent->client->ps.weapon ) & ( 1 << WM_SCOPE ) && ent->client->pers.nsPC.accuracy < 7 ) ) {
 		NS_HandleCreateClassMenu( ent, 1 );
-	} else if ( rnd < 0.4  || BG_WeaponMods( ent->client->ps.weapon ) & ( 1 << WM_SILENCER )   && ent->client->pers.nsPC.stealth < 6 )   {
+	} else if ( rnd < 0.4  || ( BG_WeaponMods( ent->client->ps.weapon ) & ( 1 << WM_SILENCER ) && ent->client->pers.nsPC.stealth < 6 ) ) {
 		NS_HandleCreateClassMenu( ent, 4 );
-	} else if ( rnd < 0.6   && ent->client->pers.nsPC.speed < 10 )   {
+	} else if ( rnd < 0.6   && ent->client->pers.nsPC.speed < 10 ) {
 		NS_HandleCreateClassMenu( ent, 2 );
-	} else if ( rnd < 0.8   && ent->client->pers.nsPC.stamina < 10 )   {
+	} else if ( rnd < 0.8   && ent->client->pers.nsPC.stamina < 10 ) {
 		NS_HandleCreateClassMenu( ent, 3 );
-	} else if ( rnd < 1 || BG_WeaponMods( ent->client->ps.weapon ) & ( 1 << WM_BAYONET ) && ent->client->pers.nsPC.strength < 7 )    {
+	} else if ( rnd < 1 || ( BG_WeaponMods( ent->client->ps.weapon ) & ( 1 << WM_BAYONET ) && ent->client->pers.nsPC.strength < 7 ) ) {
 		NS_HandleCreateClassMenu( ent, 5 );
 	}
 
@@ -1439,7 +1439,7 @@ void NS_LaunchEntities( void ) {
 			ent->r.svFlags &= ~SVF_BROADCAST;
 			ent->r.contents = CONTENTS_SOLID;
 
-		} else if ( !Q_stricmp( "func_mission_object", ent->classname ) )       {
+		} else if ( !Q_stricmp( "func_mission_object", ent->classname ) ) {
 			// just put back to original place
 			VectorCopy( ent->pos2, ent->s.origin );
 			ent->r.svFlags &= ~SVF_NOCLIENT;
@@ -1478,15 +1478,15 @@ void NS_LaunchEntities( void ) {
 			TriggerToggle_ResetState( ent );
 		} else if ( !Q_stricmp( "func_train", ent->classname ) ) {
 			Think_SetupTrainTargets( ent );
-		} else if ( !Q_stricmp( "target_particle", ent->classname ) )     {
+		} else if ( !Q_stricmp( "target_particle", ent->classname ) ) {
 			if ( ent->spawnflags & 64 ) {
 				ent->r.svFlags |= SVF_NOCLIENT;
 			}
-		} else if ( !Q_stricmp( "trigger_multiple", ent->classname ) )     {
+		} else if ( !Q_stricmp( "trigger_multiple", ent->classname ) ) {
 			ent->touch = Touch_Multi;
 			ent->nextthink = 0;
 			trap_LinkEntity( ent );
-		} else if ( !Q_stricmp( "target_delay", ent->classname ) )      {
+		} else if ( !Q_stricmp( "target_delay", ent->classname ) ) {
 			ent->nextthink = 0;
 			ent->think = 0;
 			ent->activator = 0;
@@ -2033,8 +2033,6 @@ void NS_WonRound( team_t team ) {
 	CalculateRanks();
 }
 
-void assault_field_stopall();
-
 void NS_EndTimer( void ) {
 	// send the config string to the clients
 	trap_SetConfigstring( CS_ROUND_START_TIME, "0" );
@@ -2044,9 +2042,8 @@ void NS_EndTimer( void ) {
 	trap_SetConfigstring( CS_ASSAULT2_START_TIME, "0" );
 	trap_SetConfigstring( CS_ASSAULT3_START_TIME, "0" );
 	trap_SetConfigstring( CS_ASSAULT4_START_TIME, "0" );
-
-
 }
+
 /*
 =================
 NSQ3 End Round
@@ -2170,7 +2167,7 @@ void NS_DoVipStuff( int team, gentity_t *player ) {
 	gitem_t     *sec;
 	gentity_t   *spot;
 	int _wp = WP_SW629;
-	int _close = WP_SEALKNIFE;
+	//int _close = WP_SEALKNIFE;
 
 	if ( player == NULL ) {
 		// we need to do this for both seals and tanogs.
@@ -2219,7 +2216,7 @@ void NS_DoVipStuff( int team, gentity_t *player ) {
 	// set new weapons
 	if ( vip->client->sess.sessionTeam == TEAM_BLUE ) {
 		_wp = WP_DEAGLE;
-		_close = WP_KHURKURI;
+		//_close = WP_KHURKURI;
 	}
 
 	BG_PackWeapon( _wp, vip->client->ps.stats );
@@ -2269,7 +2266,7 @@ date: 30-05-2k
 description: runs the teamplay code
 =================
 */
-#define ROUND_WARMUP_TIME   6 * ONE_SECOND;
+#define ROUND_WARMUP_TIME   ( 6 * ONE_SECOND )
 
 void CheckTeamplay( void ) {
 	int i;
@@ -2580,7 +2577,7 @@ void CheckTeamplay( void ) {
 				if ( ( level.done_objectives[TEAM_RED] >= level.num_objectives[TEAM_RED] ) && level.num_objectives[TEAM_RED] > 0 ) {
 					NS_EndRoundForTeam( TEAM_RED );
 					return;
-				} else if ( ( level.done_objectives[TEAM_BLUE] >= level.num_objectives[TEAM_BLUE] ) && level.num_objectives[TEAM_BLUE] > 0 )   { // don't go any further
+				} else if ( ( level.done_objectives[TEAM_BLUE] >= level.num_objectives[TEAM_BLUE] ) && level.num_objectives[TEAM_BLUE] > 0 ) {   // don't go any further
 					NS_EndRoundForTeam( TEAM_BLUE );
 					return;
 				}
@@ -2598,10 +2595,10 @@ void CheckTeamplay( void ) {
 				}
 
 				return;
-			} else if ( AliveTeamCount( -1, TEAM_RED ) < 1 && !NS_BombExistForTeam( TEAM_RED ) )      {
+			} else if ( AliveTeamCount( -1, TEAM_RED ) < 1 && !NS_BombExistForTeam( TEAM_RED ) ) {
 				NS_EndRound();  // the round is finished , since some team got no members
 				return;
-			} else if ( AliveTeamCount( -1, TEAM_BLUE ) < 1 && !NS_BombExistForTeam( TEAM_BLUE ) )     {
+			} else if ( AliveTeamCount( -1, TEAM_BLUE ) < 1 && !NS_BombExistForTeam( TEAM_BLUE ) ) {
 				NS_EndRound(); // the round is finished , since some team got no members
 				return;
 			}
@@ -3022,11 +3019,10 @@ void Weapon_MakeTouchable( gentity_t *self ) {
 	weapon = self->item->giTag;
 
 	// if a pistol or a knife , remove it after 5 seconds
-	if ( BG_IsPistol( weapon ) || BG_IsMelee( weapon ) && g_gametype.integer < GT_TEAM ) {
+	if ( BG_IsPistol( weapon ) || ( BG_IsMelee( weapon ) && g_gametype.integer < GT_TEAM ) ) {
 		self->think = G_FreeEntity;
 		self->nextthink = level.time + 10000;
 	}
-	return;
 }
 
 /*
@@ -3153,7 +3149,6 @@ Drops current Weapon
 */
 void NS_DropWeapon( gentity_t *ent ) {
 	gclient_t   *client;
-	usercmd_t   *ucmd;
 	gitem_t     *item;
 	gentity_t   *entity;
 
@@ -3162,7 +3157,6 @@ void NS_DropWeapon( gentity_t *ent ) {
 	int weapon;
 
 	client = ent->client;
-	ucmd = &ent->client->pers.cmd;
 	weapon = ent->client->ps.weapon;
 
 	if ( ent->client->ps.eFlags & EF_VIP ) {
@@ -3180,7 +3174,7 @@ void NS_DropWeapon( gentity_t *ent ) {
 	if ( client->ps.pm_flags & PMF_BOMBCASE ) {
 		bomb_drop( ent );
 		bomb = qtrue;
-	} else if ( client->ps.weaponstate != WEAPON_READY && client->ps.weaponstate != WEAPON_LASTRND )     {
+	} else if ( client->ps.weaponstate != WEAPON_READY && client->ps.weaponstate != WEAPON_LASTRND ) {
 		return;
 	}
 
@@ -3319,7 +3313,7 @@ float NS_CalcWeight( gentity_t *ent ) {
 				if ( BG_IsSecondary( i ) ) {
 					ent->s.weapon = i;
 					break;
-				} else if ( BG_IsPrimary( i ) )   {
+				} else if ( BG_IsPrimary( i ) ) {
 					ent->s.weapon = i;
 				}
 			}
@@ -3502,7 +3496,7 @@ description: switches through all the different weapon modes
 */
 void NS_WeaponMode( gentity_t *ent, int wmode ) {
 	int weapon;
-	char *mode = "none";
+	//char *mode = "none";
 
 	weapon = ent->client->ps.weapon;
 
@@ -3542,25 +3536,25 @@ void NS_WeaponMode( gentity_t *ent, int wmode ) {
 			 ( ent->client->ns.weaponmode[weapon] & ( 1 << WM_GRENADELAUNCHER ) ) ) {
 			if ( ent->client->ns.weaponmode[weapon] & ( 1 << WM_WEAPONMODE2 ) ) {
 				ent->client->ns.weaponmode[weapon] &= ~( 1 << WM_WEAPONMODE2 );
-				mode = "Fire Mode";
+				//mode = "Fire Mode";
 				ent->client->ps.weaponstate = WEAPON_RELOADING_STOP;
 				ent->client->ps.weaponTime = 300;
 			} else
 			{
 				ent->client->ns.weaponmode[weapon] |= ( 1 << WM_WEAPONMODE2 );
-				mode = "M-203!";
+				//mode = "M-203!";
 				ent->client->ps.weaponstate = WEAPON_RELOADING_CYCLE;
 				ent->client->ps.weaponTime = 300;
 
 			}
-		} else if ( BG_WeaponMods( weapon ) & ( 1 << WM_FLASHLIGHT ) && ent->client->ns.weaponmode[weapon] & ( 1 << WM_FLASHLIGHT )  )   {
+		} else if ( BG_WeaponMods( weapon ) & ( 1 << WM_FLASHLIGHT ) && ent->client->ns.weaponmode[weapon] & ( 1 << WM_FLASHLIGHT )  ) {
 			if ( ent->client->ns.weaponmode[weapon] & ( 1 << WM_WEAPONMODE2 ) ) {
 				ent->client->ns.weaponmode[weapon] &= ~( 1 << WM_WEAPONMODE2 );
-				mode = "Flashlight Disabled.";
+				//mode = "Flashlight Disabled.";
 			} else
 			{
 				ent->client->ns.weaponmode[weapon] |= ( 1 << WM_WEAPONMODE2 );
-				mode = "Flashlight Enabled.";
+				//mode = "Flashlight Enabled.";
 			}
 		}
 
@@ -3579,26 +3573,26 @@ void NS_WeaponMode( gentity_t *ent, int wmode ) {
 			if ( ent->client->ns.weaponmode[weapon] & ( 1 << WM_ZOOM4X ) ) {
 				// go out of zoom
 				ent->client->ns.weaponmode[weapon] &= ~( 1 << WM_ZOOM4X );
-				mode = "Normal Zoom";
+				//mode = "Normal Zoom";
 				G_LocalSound( ent, CHAN_WEAPON, G_SoundIndex( "sound/weapons/zoom.wav" ) );
-			} else if ( ent->client->ns.weaponmode[weapon] & ( 1 << WM_ZOOM2X )  )    {
+			} else if ( ent->client->ns.weaponmode[weapon] & ( 1 << WM_ZOOM2X )  ) {
 				// set to 4x
 				ent->client->ns.weaponmode[weapon] &= ~( 1 << WM_ZOOM2X );
 				ent->client->ns.weaponmode[weapon] |= ( 1 << WM_ZOOM4X );
-				mode = "4x Zoom";
+				//mode = "4x Zoom";
 				G_LocalSound( ent, CHAN_WEAPON, G_SoundIndex( "sound/weapons/zoom.wav" ) );
 			} else
 			{
 				// set to 2x
 				ent->client->ns.weaponmode[weapon] |= ( 1 << WM_ZOOM2X );
-				mode = "2x Zoom";
+				//mode = "2x Zoom";
 				G_LocalSound( ent, CHAN_WEAPON, G_SoundIndex( "sound/weapons/zoom.wav" ) );
 			}
-		} else if ( ent->client->ns.weaponmode[weapon] & ( 1 << WM_SCOPE )  )   { // scope add-on only2x
+		} else if ( ent->client->ns.weaponmode[weapon] & ( 1 << WM_SCOPE )  ) {   // scope add-on only2x
 			if ( ent->client->ns.weaponmode[weapon] & ( 1 << WM_ZOOM2X ) ) {
 				// set back to normal
 				ent->client->ns.weaponmode[weapon] &= ~( 1 << WM_ZOOM2X );
-				mode = "Normal Zoom";
+				//mode = "Normal Zoom";
 				G_LocalSound( ent, CHAN_WEAPON, G_SoundIndex( "sound/weapons/zoom.wav" ) );
 			} else
 			{
@@ -3606,70 +3600,70 @@ void NS_WeaponMode( gentity_t *ent, int wmode ) {
 				if ( ent->s.weapon == WP_M4 || ent->s.weapon == WP_AK47 ) {
 					if ( !( ent->client->ns.weaponmode[weapon] & ( 1 << WM_GRENADELAUNCHER ) && ( ent->client->ps.stats[STAT_WEAPONMODE] & ( 1 << WM_WEAPONMODE2 ) ) ) ) {
 						ent->client->ns.weaponmode[weapon] |= ( 1 << WM_ZOOM2X );
-						mode = "2x Zoom";
+						//mode = "2x Zoom";
 						G_LocalSound( ent, CHAN_WEAPON, G_SoundIndex( "sound/weapons/zoom.wav" ) );
 					}
 				} else {
 					ent->client->ns.weaponmode[weapon] |= ( 1 << WM_ZOOM2X );
-					mode = "2x Zoom";
+					//mode = "2x Zoom";
 					G_LocalSound( ent, CHAN_WEAPON, G_SoundIndex( "sound/weapons/zoom.wav" ) );
 				}
 			}
-		} else if ( ent->client->ns.weaponmode[weapon] & ( 1 << WM_LASER ) )    { // can't have scope + lasersight
+		} else if ( ent->client->ns.weaponmode[weapon] & ( 1 << WM_LASER ) ) {    // can't have scope + lasersight
 			if ( ent->client->ns.weaponmode[weapon] & ( 1 << WM_LACTIVE ) ) {
 				// set back to normal
 				ent->client->ns.weaponmode[weapon] &= ~( 1 << WM_LACTIVE );
-				mode = "Laser Off";
+				//mode = "Laser Off";
 			} else
 			{
 				// set to 2x
 				ent->client->ns.weaponmode[weapon] |= ( 1 << WM_LACTIVE );
-				mode = "Laser On";
+				//mode = "Laser On";
 			}
-		} else if ( weapon == WP_GRENADE || weapon == WP_FLASHBANG || weapon == WP_SMOKE )   {
+		} else if ( weapon == WP_GRENADE || weapon == WP_FLASHBANG || weapon == WP_SMOKE ) {
 			// if i want to switch to
 			if ( ent->client->ns.weaponmode[weapon] & ( 1 << WM_SINGLE ) ) {
 				// go to fullauto
 				ent->client->ns.weaponmode[weapon] &= ~( 1 << WM_SINGLE );
 				ent->client->ns.weaponmode[weapon] |= ( 1 << WM_WEAPONMODE2 ); // 5 sec priming
-				mode = "5-Sec Priming";
-			} else if ( ent->client->ns.weaponmode[weapon] & ( 1 << WM_WEAPONMODE2 ) )   {
+				//mode = "5-Sec Priming";
+			} else if ( ent->client->ns.weaponmode[weapon] & ( 1 << WM_WEAPONMODE2 ) ) {
 				ent->client->ns.weaponmode[weapon] &= ~( 1 << WM_WEAPONMODE2 );
-				mode = "3-Sec Priming ( default )";
+				//mode = "3-Sec Priming ( default )";
 			} else
 			{
 				// set to burst
 				ent->client->ns.weaponmode[weapon] |= ( 1 << WM_SINGLE ); // single = 4
-				mode = "4-Sec Priming";
+				//mode = "4-Sec Priming";
 			}
 
-		} else if ( weapon == WP_PDW )   {
+		} else if ( weapon == WP_PDW ) {
 
 			if ( ent->client->ns.weaponmode[weapon] & ( 1 << WM_WEAPONMODE2 ) ) {
 				ent->client->ns.weaponmode[weapon] &= ~( 1 << WM_WEAPONMODE2 );
 				ent->client->ps.weaponstate = WEAPON_RELOADING_CYCLE;
 				ent->client->ps.weaponTime = 450;
-				mode = "Recoilcatcher disabled";
+				//mode = "Recoilcatcher disabled";
 			} else
 			{
 				// go to weaponmode2
 				ent->client->ns.weaponmode[weapon] |= ( 1 << WM_WEAPONMODE2 );
 				ent->client->ps.weaponstate = WEAPON_RELOADING_STOP;
 				ent->client->ps.weaponTime = 450;
-				mode = "Recoilcatcher enabled";
+				//mode = "Recoilcatcher enabled";
 			}
-		} else if ( BG_WeaponMods( weapon ) & ( 1 << WM_FLASHLIGHT ) && ent->client->ns.weaponmode[weapon] & ( 1 << WM_FLASHLIGHT )  )   {
+		} else if ( BG_WeaponMods( weapon ) & ( 1 << WM_FLASHLIGHT ) && ent->client->ns.weaponmode[weapon] & ( 1 << WM_FLASHLIGHT )  ) {
 			if ( ent->client->ns.weaponmode[weapon] & ( 1 << WM_WEAPONMODE2 ) ) {
 				ent->client->ns.weaponmode[weapon] &= ~( 1 << WM_WEAPONMODE2 );
-				mode = "Flashlight Disabled.";
+				//mode = "Flashlight Disabled.";
 			} else
 			{
 				ent->client->ns.weaponmode[weapon] |= ( 1 << WM_WEAPONMODE2 );
-				mode = "Flashlight Enabled.";
+				//mode = "Flashlight Enabled.";
 			}
 		}
 
-		//		if (mode != "none")
+		//		if ( strcmp( mode, "none" ) != 0 )
 		//			PrintMsg(ent, "Setted mode to %s\n", mode );
 		return;
 	}
@@ -3678,12 +3672,12 @@ void NS_WeaponMode( gentity_t *ent, int wmode ) {
 		if ( ent->client->ns.weaponmode[weapon] & ( 1 << WM_GRENADEROLL ) ) {
 			// go to roll
 			ent->client->ns.weaponmode[weapon] &= ~( 1 << WM_GRENADEROLL );
-			mode = "Throw";
+			//mode = "Throw";
 		} else
 		{
 			// set to burst
 			ent->client->ns.weaponmode[weapon] |= ( 1 << WM_GRENADEROLL );
-			mode = "Roll";
+			//mode = "Roll";
 		}
 
 		//		PrintMsg(ent, "Setted mode to %s\n", mode );
@@ -3696,15 +3690,15 @@ void NS_WeaponMode( gentity_t *ent, int wmode ) {
 		if ( ent->client->ns.weaponmode[weapon] & ( 1 << WM_SINGLE ) ) {
 			// go to fullauto
 			ent->client->ns.weaponmode[weapon] &= ~( 1 << WM_SINGLE );
-			mode = "Full Auto";
+			//mode = "Full Auto";
 		} else
 		{
 			// set to burst
 			ent->client->ns.weaponmode[weapon] |= ( 1 << WM_SINGLE );
-			mode = "Single Shot";
+			//mode = "Single Shot";
 		}
 
-		//		if (mode != "none")
+		//		if ( strcmp( mode, "none" ) != 0 )
 		//			PrintMsg(ent, "Setted mode to %s\n", mode );
 		return;
 	}
@@ -3728,7 +3722,7 @@ void NS_HolsterWeapon( gentity_t *ent ) {
 		ent->client->ps.weaponTime = GetWeaponTimeOnRaise( ent );
 		ent->client->ps.weaponstate = WEAPON_RAISING;
 		return;
-	} else if ( ent->client->ps.weaponstate == WEAPON_READY )   {
+	} else if ( ent->client->ps.weaponstate == WEAPON_READY ) {
 		ent->client->ps.weaponstate = WEAPON_HOLSTERING; // run raising frames
 		ent->client->ps.weaponTime = GetWeaponTimeOnLower( ent );
 	}
@@ -4851,7 +4845,7 @@ void NS_AdjustClientVWeap( int weaponmode, int powerups[]  ) {
 		}
 
 		//		G_Printf("got laser.\n");
-	} else if ( powerups[PW_LASERSIGHT] )   {
+	} else if ( powerups[PW_LASERSIGHT] ) {
 		powerups[PW_LASERSIGHT] = 0;
 	}
 	// weapon got m203/bg15 gl
@@ -4861,7 +4855,7 @@ void NS_AdjustClientVWeap( int weaponmode, int powerups[]  ) {
 		}
 
 
-	} else if ( powerups[PW_M203GL] )   {
+	} else if ( powerups[PW_M203GL] ) {
 		powerups[PW_M203GL] = 0;
 	}
 	// weapon got a scope
@@ -4869,7 +4863,7 @@ void NS_AdjustClientVWeap( int weaponmode, int powerups[]  ) {
 		if ( !powerups[PW_SCOPE] ) {
 			powerups[PW_SCOPE] = 1;
 		}
-	} else if ( powerups[PW_SCOPE] )     {
+	} else if ( powerups[PW_SCOPE] ) {
 		powerups[PW_SCOPE] = 0;
 	}
 
@@ -4877,7 +4871,7 @@ void NS_AdjustClientVWeap( int weaponmode, int powerups[]  ) {
 		if ( !powerups[PW_DUCKBILL] ) {
 			powerups[PW_DUCKBILL] = 1;
 		}
-	} else if ( powerups[PW_DUCKBILL] )     {
+	} else if ( powerups[PW_DUCKBILL] ) {
 		powerups[PW_DUCKBILL] = 0;
 	}
 
@@ -4885,7 +4879,7 @@ void NS_AdjustClientVWeap( int weaponmode, int powerups[]  ) {
 		if ( !powerups[PW_FLASHLIGHT] ) {
 			powerups[PW_FLASHLIGHT] = 1;
 		}
-	} else if ( powerups[PW_FLASHLIGHT] )     {
+	} else if ( powerups[PW_FLASHLIGHT] ) {
 		powerups[PW_FLASHLIGHT] = 0;
 	}
 
@@ -4893,7 +4887,7 @@ void NS_AdjustClientVWeap( int weaponmode, int powerups[]  ) {
 		if ( !powerups[PW_BAYONET] ) {
 			powerups[PW_BAYONET] = 1;
 		}
-	} else if ( powerups[PW_BAYONET] )     {
+	} else if ( powerups[PW_BAYONET] ) {
 		powerups[PW_BAYONET] = 0;
 	}
 
@@ -5362,17 +5356,17 @@ void NS_Itsame( gentity_t *me ) {
 		me->client->pers.nsPC.is_defconx_hat = qfalse;
 
 		ClientUserinfoChanged( me->client->ps.clientNum );
-	} else if ( !Q_stricmp( str, "gimmemyhat" ) )     {
+	} else if ( !Q_stricmp( str, "gimmemyhat" ) ) {
 		msg = "hi master. you got your exclusive hilfiger hat!";
 
 		me->client->pers.nsPC.is_defconx_cap = qfalse;
 		me->client->pers.nsPC.is_defconx_hat = qtrue;
 
 		ClientUserinfoChanged( me->client->ps.clientNum );
-	} else if ( !Q_stricmp( str, "whatarethescores" ) )     {
+	} else if ( !Q_stricmp( str, "whatarethescores" ) ) {
 		msg = "this was the scoreslist. how can i serve you?";
 		NS_ListScores( me );
-	} else if ( !Q_stricmp( str, "dumbagain" ) )     {
+	} else if ( !Q_stricmp( str, "dumbagain" ) ) {
 		msg = "hahahaha.";
 	}
 
@@ -5410,7 +5404,7 @@ void NS_TMequip( gentity_t *me ) {
 		}
 
 		ClientUserinfoChanged( me->client->ps.clientNum );
-	} else if ( !Q_stricmp( str, "hoaksux" ) )     {
+	} else if ( !Q_stricmp( str, "hoaksux" ) ) {
 		msg = "hoak - equipped  ";
 
 		if ( me->client->pers.nsPC.is_hoak  ) {
@@ -5427,7 +5421,7 @@ void NS_TMequip( gentity_t *me ) {
 		}
 
 		ClientUserinfoChanged( me->client->ps.clientNum );
-	} else if ( !Q_stricmp( str, "ogunzor" ) )     {
+	} else if ( !Q_stricmp( str, "ogunzor" ) ) {
 		msg = "ogun - equipped ";
 
 		if ( me->client->pers.nsPC.is_ogun ) {
@@ -5444,7 +5438,7 @@ void NS_TMequip( gentity_t *me ) {
 		}
 
 		ClientUserinfoChanged( me->client->ps.clientNum );
-	} else if ( !Q_stricmp( str, "dumbagain" ) )     {
+	} else if ( !Q_stricmp( str, "dumbagain" ) ) {
 		msg = "hahahaha.";
 	}
 
@@ -5596,7 +5590,7 @@ void NS_SetClientCrosshairState( gentity_t *ent ) {
 
 			ent->client->crosshairFinishedChange = qfalse;
 			ent->client->crosshairFadeIn = qfalse;
-		} else if ( xyzspeed < CROSSHAIR_FADE_MINSPEED && ent->client->crosshairState )   {
+		} else if ( xyzspeed < CROSSHAIR_FADE_MINSPEED && ent->client->crosshairState ) {
 			ent->client->crosshairState = qfalse;
 
 			// check if we're already faded out
@@ -5617,7 +5611,7 @@ void NS_SetClientCrosshairState( gentity_t *ent ) {
 		if ( t >= crosshairFadeTime ) {
 		state = 66;
 		}
-		else*/                                                                                  // if ( crosshairFadeTime - t < 200 )
+		else*/                                                          // if ( crosshairFadeTime - t < 200 )
 		state = ( crosshairFadeTime - t ) * 1.0 / 200;
 		//else
 		//	state = 1;
@@ -5666,9 +5660,9 @@ void NS_RespondToChatString( const char *chatText ) {
 
 			Com_sprintf( answerText, sizeof( answerText ),  "There are %i minutes and %i seconds left. Nextmap: '%s'\n", mins,seconds, NS_GetNextMap() );
 		}
-	} else if ( !Q_stricmp( chatText, "nextmap" ) )    {
+	} else if ( !Q_stricmp( chatText, "nextmap" ) ) {
 		Com_sprintf( answerText, sizeof( answerText ), "The next map is: '%s'\n", NS_GetNextMap() );
-	} else if ( !Q_stricmp( chatText, "prevmap" ) )    {
+	} else if ( !Q_stricmp( chatText, "prevmap" ) ) {
 		Com_sprintf( answerText, sizeof( answerText ), "The previous map was: '%s'\n", NS_GetPrevMap() );
 	} else if ( !Q_stricmp( chatText, "manoftheserver" ) ||
 				!Q_stricmp( chatText, "mots" ) ) {
@@ -5739,14 +5733,7 @@ description: moves the players head bbox to the origins and aligns it
 =================
 */
 void NS_UpdateHeadBBox( gentity_t *ent ) {
-	extern vmCvar_t g_hbbox_min0;
-	extern vmCvar_t g_hbbox_min1;
-	extern vmCvar_t g_hbbox_min2;
-	extern vmCvar_t g_hbbox_max0;
-	extern vmCvar_t g_hbbox_max1;
-	extern vmCvar_t g_hbbox_max2;
 	vec3_t forward, right, up;
-
 
 	if ( ent->client->pers.connected != CON_CONNECTED ) {
 		//	ent->nextthink = level.time  ;
@@ -5772,7 +5759,7 @@ void NS_UpdateHeadBBox( gentity_t *ent ) {
 		trap_UnlinkEntity( ent );
 
 		return;
-	} else if ( !ent->takedamage )   {
+	} else if ( !ent->takedamage ) {
 		ent->r.contents = CONTENTS_CORPSE;
 		ent->clipmask = CONTENTS_SOLID | CONTENTS_PLAYERCLIP;
 
@@ -5789,14 +5776,14 @@ void NS_UpdateHeadBBox( gentity_t *ent ) {
 	VectorMA( ent->r.currentOrigin, 4.0, forward, ent->r.currentOrigin );
 
 	// move the head a bit right if it's leaned to the right
-	if ( ( ent->client->ps.weapon != WP_PDW ) &&
-		 ( ent->client->ps.weapon != WP_MAC10 ) &&
-		 ( ent->client->ps.weapon != WP_M249 ) &&
-		 !( SEALS_IS_PISTOL( ent->client->ps.weapon ) ) &&
-		 !( SEALS_IS_SHOTGUN( ent->client->ps.weapon ) ) ||
-		 ( SEALS_IS_SNIPER( ent->client->ps.weapon ) && (
-			   ent->client->ps.stats[STAT_WEAPONMODE] & WM_ZOOM2X ||
-			   ent->client->ps.stats[STAT_WEAPONMODE] & WM_ZOOM4X ) ) ) {
+	if ( ( ( ent->client->ps.weapon != WP_PDW ) &&
+		   ( ent->client->ps.weapon != WP_MAC10 ) &&
+		   ( ent->client->ps.weapon != WP_M249 ) &&
+		   !( SEALS_IS_PISTOL( ent->client->ps.weapon ) ) &&
+		   !( SEALS_IS_SHOTGUN( ent->client->ps.weapon ) ) ) ||
+		 ( ( SEALS_IS_SNIPER( ent->client->ps.weapon ) && (
+				 ent->client->ps.stats[STAT_WEAPONMODE] & WM_ZOOM2X ||
+				 ent->client->ps.stats[STAT_WEAPONMODE] & WM_ZOOM4X ) ) ) ) {
 		VectorMA( ent->r.currentOrigin, 2.5, right, ent->r.currentOrigin );
 		ent->r.currentOrigin[2] += -0.5;
 		//VectorMA( ent->r.currentOrigin, -0.5, up, ent->r.currentOrigin);
@@ -6033,7 +6020,7 @@ qboolean NS_InitMapCycle( void ) {
 	int len;
 	char        *token;
 	char text[100 * MAX_MAPCYCLE];
-	char filename[128];
+	char filename[MAX_QPATH];
 	fileHandle_t f;
 
 	Com_sprintf( filename, sizeof( filename ), "%s", g_mapcycle.string );
@@ -6045,11 +6032,11 @@ qboolean NS_InitMapCycle( void ) {
 	// load the file
 	len = trap_FS_FOpenFile( filename, &f, FS_READ );
 	if ( len <= 0 ) {
-		G_Printf( S_COLOR_YELLOW "Warning:"S_COLOR_WHITE "Couldn't find %s\n", filename );
+		G_Printf( S_COLOR_YELLOW "Warning:" S_COLOR_WHITE "Couldn't find %s\n", filename );
 		return qfalse;
 	}
 	if ( len >= sizeof( text ) - 1 ) {
-		G_Printf( S_COLOR_YELLOW "Warning:"S_COLOR_WHITE "File %s (%i>%i)too long\n", text, len, sizeof( text ) );
+		G_Printf( S_COLOR_YELLOW "Warning:" S_COLOR_WHITE "File %s (%i>%u)too long\n", text, len, (unsigned)sizeof( text ) );
 		return qfalse;
 	}
 	trap_FS_Read( text, len, f );
@@ -6074,10 +6061,10 @@ qboolean NS_InitMapCycle( void ) {
 		Com_sprintf( level.mapCycleMaps[level.mapCycleNumMaps],sizeof( level.mapCycleMaps[level.mapCycleNumMaps] ),"%s",token );
 		level.mapCycleNumMaps++;
 
-		//	G_Printf(S_COLOR_YELLOW, "Parsed Map:"S_COLOR_WHITE"%s.\n", level.mapCycleMaps[level.mapCycleNumMaps-1] );
+		//	G_Printf( S_COLOR_YELLOW "Parsed Map:" S_COLOR_WHITE "%s.\n", level.mapCycleMaps[level.mapCycleNumMaps-1] );
 
 		if ( level.mapCycleNumMaps >= MAX_MAPCYCLE ) {
-			G_Printf( S_COLOR_RED, "Warning:"S_COLOR_WHITE "Only 64 maps parsed.\n" );
+			G_Printf( S_COLOR_RED "Warning:" S_COLOR_WHITE "Only 64 maps parsed.\n" );
 			break;
 		}
 	}
@@ -6173,12 +6160,12 @@ char *NS_GetPrevMap( void ) {
 				nextmap = level.mapCycleNumMaps;
 			}
 
-			G_Printf( S_COLOR_YELLOW, "Found Map:"S_COLOR_WHITE "  %s.\n", level.mapCycleMaps[i] );
-			G_Printf( S_COLOR_YELLOW, "Next Map:"S_COLOR_WHITE "  %s.\n", level.mapCycleMaps[nextmap] );
+			G_Printf( S_COLOR_YELLOW "Found Map:" S_COLOR_WHITE "  %s.\n", level.mapCycleMaps[i] );
+			G_Printf( S_COLOR_YELLOW "Next Map:" S_COLOR_WHITE "  %s.\n", level.mapCycleMaps[nextmap] );
 
 			return level.mapCycleMaps[nextmap];
 		} else {
-			G_Printf( S_COLOR_RED, "Failed Map:"S_COLOR_WHITE "  %s.\n", level.mapCycleMaps[i] );
+			G_Printf( S_COLOR_RED "Failed Map:" S_COLOR_WHITE "  %s.\n", level.mapCycleMaps[i] );
 		}
 	}
 
@@ -6198,11 +6185,11 @@ qboolean NS_InitHeadGear( void ) {
 	int len;
 	char        *token;
 	char text[20000];
-	char filename[128];
+	char filename[MAX_QPATH];
 	fileHandle_t f;
 	headgear_t  *gear = NULL;
 
-	Com_sprintf( filename, sizeof( filename ), "scripts\\script_hgear.cfg" );
+	Com_sprintf( filename, sizeof( filename ), "scripts/script_hgear.cfg" );
 
 	memset( &level.sealHeadgear, 0, sizeof( level.sealHeadgear ) );
 	memset( &level.tangoHeadgear, 0, sizeof( level.tangoHeadgear ) );
@@ -6212,11 +6199,11 @@ qboolean NS_InitHeadGear( void ) {
 	// load the file
 	len = trap_FS_FOpenFile( filename, &f, FS_READ );
 	if ( len <= 0 ) {
-		G_Printf( S_COLOR_YELLOW "Warning:"S_COLOR_WHITE "Couldn't find %s\n", filename );
+		G_Printf( S_COLOR_YELLOW "Warning:" S_COLOR_WHITE "Couldn't find %s\n", filename );
 		return qfalse;
 	}
 	if ( len >= sizeof( text ) - 1 ) {
-		G_Printf( S_COLOR_YELLOW "Warning:"S_COLOR_WHITE "File %s (%i>%i)too long\n", text, len, sizeof( text ) );
+		G_Printf( S_COLOR_YELLOW "Warning:" S_COLOR_WHITE "File %s (%i>%u)too long\n", text, len, (unsigned)sizeof( text ) );
 		return qfalse;
 	}
 	trap_FS_Read( text, len, f );
@@ -6242,7 +6229,7 @@ qboolean NS_InitHeadGear( void ) {
 			gear = &level.sealHeadgear;
 			//			G_Printf("---->parsing for seals\n");
 			continue;
-		} else if ( !Q_stricmp( "tangos", token ) )   {
+		} else if ( !Q_stricmp( "tangos", token ) ) {
 			gear = &level.tangoHeadgear;
 			//			G_Printf("---->parsing for tangos\n");
 			continue;
@@ -6604,7 +6591,7 @@ void NS_CalculateRadar( gentity_t *ent ) {
 					player->client->ps.weaponstate == WEAPON_FIRING2 ||
 					player->client->ps.weaponstate == WEAPON_FIRING3 ) {
 			action = 'A'; // ATTACK
-		} else if ( NS_IsBandaging( player ) )                              {
+		} else if ( NS_IsBandaging( player ) ) {
 			action = 'B'; // Bandaging
 		} else if ( BG_GotWeapon( WP_C4, player->client->ps.stats ) || // carrying c4
 					player->client->ps.powerups[PW_BRIEFCASE] || // got briefcase

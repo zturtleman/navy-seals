@@ -828,10 +828,10 @@ void FindIntermissionPoint( void );
 void SetLeader( int team, int client );
 void CheckTeamLeader( int team );
 void G_RunThink( gentity_t *ent );
-void QDECL G_LogPrintf( const char *fmt, ... );
+void QDECL G_LogPrintf( const char *fmt, ... ) __attribute__ ( ( format( printf, 1, 2 ) ) );
 void SendScoreboardMessageToAllClients( void );
-void QDECL G_Printf( const char *fmt, ... );
-void QDECL G_Error( const char *fmt, ... );
+void QDECL G_Printf( const char *fmt, ... ) __attribute__ ( ( format( printf, 1, 2 ) ) );
+void QDECL G_Error( const char *fmt, ... ) __attribute__ ( ( format( printf, 1, 2 ) ) );
 
 //
 // g_client.c
@@ -886,7 +886,7 @@ void Svcmd_AbortPodium_f( void );
 extern level_locals_t level;
 extern gentity_t g_entities[MAX_GENTITIES];
 
-#define FOFS( x ) ( (int)&( ( (gentity_t *)0 )->x ) )
+#define FOFS( x ) ( (size_t)&( ( (gentity_t *)0 )->x ) )
 
 extern vmCvar_t g_gametype;
 extern vmCvar_t g_dedicated;
@@ -962,4 +962,3 @@ extern int i_sCountDown;
 extern int GameState;
 extern int LTS_Rounds;
 // Navy Seals --
-

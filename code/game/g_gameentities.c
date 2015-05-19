@@ -478,7 +478,7 @@ void model_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 
 	if ( inflictor && !Q_stricmp( inflictor->classname, "reallead" ) ) {
 		VectorCopy( inflictor->movedir, dir );
-	} else if ( inflictor && BG_IsGrenade( inflictor->s.weapon ) )   {
+	} else if ( inflictor && BG_IsGrenade( inflictor->s.weapon ) ) {
 		VectorSubtract( inflictor->r.currentOrigin, origin, dir );
 		// push the center of mass higher than the origin so players
 		// get knocked into the air more
@@ -541,13 +541,13 @@ void SP_vip_spawn( gentity_t *ent ) {
 	vipSpawns++;
 
 	if ( ent->wait && !level.vipTime ) {
-		G_Printf( "Vip has to stay alive... %i seconds\n", ent->wait );
+		G_Printf( "Vip has to stay alive... %i seconds\n", (int)ent->wait );
 
 		if ( ent->ns_team == 0 ) {
 			level.vip[TEAM_RED] = VIP_STAYALIVE;
-		} else if ( ent->ns_team == 1 )   {
+		} else if ( ent->ns_team == 1 ) {
 			level.vip[TEAM_BLUE] = VIP_STAYALIVE;
-		} else if ( ent->ns_team >= 2 || ent->ns_team < 0 )   {
+		} else if ( ent->ns_team >= 2 || ent->ns_team < 0 ) {
 			G_Error( "%s: team > 1?", ent->classname );
 			return;
 		}
@@ -628,9 +628,9 @@ void SP_vip_rescue( gentity_t *self ) {
 
 	if ( self->ns_team == 0 ) {
 		level.vip[TEAM_RED] = VIP_ESCAPE;
-	} else if ( self->ns_team == 1 )   {
+	} else if ( self->ns_team == 1 ) {
 		level.vip[TEAM_BLUE] = VIP_ESCAPE;
-	} else if ( self->ns_team >= 2 )   {
+	} else if ( self->ns_team >= 2 ) {
 		G_Error( "%s: team > 1?", self->classname );
 		return;
 	}
@@ -1120,7 +1120,7 @@ void assault_field_think( gentity_t *ent ) {
 			// taken one assault field
 			if ( level.clients[i].ns.rewards & REWARD_3ASSAULT_TAKEN ) { // 3 taken?
 				client->ns.rewards |= REWARD_4ASSAULT_TAKEN;      // add 4 taken
-			} else if ( level.clients[i].ns.rewards & REWARD_2ASSAULT_TAKEN )                                                                       { // 2 taken?
+			} else if ( level.clients[i].ns.rewards & REWARD_2ASSAULT_TAKEN ) {                                                                       // 2 taken?
 				client->ns.rewards |= REWARD_3ASSAULT_TAKEN;      // add 3 taken
 			}
 			if ( level.clients[i].ns.rewards & REWARD_ASSAULT_TAKEN ) {
@@ -1211,7 +1211,7 @@ void SP_assault_field( gentity_t *self ) {
 
 	if ( self->ns_team == BRUSH_TEAM_RED ) {
 		level.fields[TEAM_RED]++;
-	} else if ( self->ns_team == BRUSH_TEAM_BLUE )   {
+	} else if ( self->ns_team == BRUSH_TEAM_BLUE ) {
 		level.fields[TEAM_BLUE]++;
 	} else {
 		G_Error( "Wrong Team for %s\n", self->classname );
@@ -1295,7 +1295,7 @@ void doorlock_use( gentity_t *self, gentity_t *other, trace_t *trace ) {
 
 		// door is unlocked now.
 		target->pain_debounce_time = qfalse;
-	} else if ( other->client->sess.sessionTeam == TEAM_BLUE && self->ns_team == 2 )   {
+	} else if ( other->client->sess.sessionTeam == TEAM_BLUE && self->ns_team == 2 ) {
 		PrintMsg( other, "This door has been " S_COLOR_GREEN "opened" S_COLOR_WHITE ".\n" );
 
 		// door is unlocked now.
@@ -1869,7 +1869,7 @@ void SP_func_explosive( gentity_t *ent ) {
 	// classnames
 	if ( ent->spawnflags & 1 ) {
 		ent->classname = "func_explosive_wood";
-	} else if ( ent->spawnflags & 2 )   {
+	} else if ( ent->spawnflags & 2 ) {
 		ent->classname = "func_explosive_metal";
 	} else if ( ent->spawnflags & 4 ) {
 		ent->classname = "func_explosive_stone";

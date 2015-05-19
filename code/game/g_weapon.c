@@ -178,7 +178,7 @@ qboolean CheckMeleeAttack( gentity_t *ent, qboolean longrange ) {
 		tent->s.weapon = WP_MK23;
 		*/
 		return qfalse;
-	} else if ( traceEnt->client && tr.endpos )   {
+	} else if ( traceEnt->client && tr.endpos ) {
 		if ( traceEnt->takedamage && traceEnt->client && random() < 0.3 ) {
 			tent = G_TempEntity( tr.endpos, EV_MISSILE_HIT );
 			tent->s.otherEntityNum = traceEnt->s.number;
@@ -320,7 +320,6 @@ void ShotgunPattern( vec3_t origin, int seed, gentity_t *ent, int pellets, int d
 
 void Weapon_Shotgun( gentity_t *ent, int caliber, int damageperpellet, int pellets ) {
 	int i = 0;
-	extern vmCvar_t g_test;
 
 	ent->client->ns.rounds[ent->s.weapon]--;
 	// workaround for shotgun recoil
@@ -334,37 +333,37 @@ void Weapon_Shotgun( gentity_t *ent, int caliber, int damageperpellet, int pelle
 	}
 	wshotty = qfalse;
 
+#if 0
 	// only do shotgun knockback when not crouching
-	/*	if (!(ent->client->ps.pm_flags & PMF_DUCKED) && sqrt( ent->client->ps.velocity[2] * ent->client->ps.velocity[2]) < 5)
-	{
-	vec3_t	kvel;
-	float	mass;
-	// get it from the strength of the shotgun
-	float knockback = damageperpellet * pellets / 25.0;
-	float	final_knockback;
-	mass = 200 + ent->client->pers.nsPC.strength * 15;
-	final_knockback = ( ( 1200 * knockback ) / mass );
+	if ( !( ent->client->ps.pm_flags & PMF_DUCKED ) && sqrt( ent->client->ps.velocity[2] * ent->client->ps.velocity[2] ) < 5 ) {
+		vec3_t kvel;
+		float mass;
+		// get it from the strength of the shotgun
+		float knockback = damageperpellet * pellets / 25.0;
+		float final_knockback;
+		mass = 200 + ent->client->pers.nsPC.strength * 15;
+		final_knockback = ( ( 1200 * knockback ) / mass );
 
-	// reverse
-	forward[0] *= -1;
-	forward[1] *= -1;
-	forward[2] *= -1;
+		// reverse
+		forward[0] *= -1;
+		forward[1] *= -1;
+		forward[2] *= -1;
 
-	VectorScale (forward, final_knockback, kvel);
-	VectorAdd (ent->client->ps.velocity, kvel, ent->client->ps.velocity);
+		VectorScale( forward, final_knockback, kvel );
+		VectorAdd( ent->client->ps.velocity, kvel, ent->client->ps.velocity );
 
-	// set the timer so that the other client can't cancel
-	// out the movement immediately
-	if ( !ent->client->ps.pm_time ) {
-	int		t;
+		// set the timer so that the other client can't cancel
+		// out the movement immediately
+		if ( !ent->client->ps.pm_time ) {
+			int t;
 
-	t = knockback * 1.5;
+			t = knockback * 1.5;
 
-	ent->client->ps.pm_time = t;
-	ent->client->ps.pm_flags |= PMF_TIME_KNOCKBACK;
+			ent->client->ps.pm_time = t;
+			ent->client->ps.pm_flags |= PMF_TIME_KNOCKBACK;
+		}
 	}
-	}
-	*/
+#endif
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -479,7 +478,7 @@ void bomb_explode( gentity_t *ent ) {
 }
 
 int bomb_getDiffTime( gentity_t *ent, int defender_tec ) { // defender = person who planted bomb
-	                                                      // attacker = person who disarms bomb
+	                                                       // attacker = person who disarms bomb
 	int attacker_tec = ent->client->pers.nsPC.technical;
 	int diff = defender_tec - attacker_tec;
 
@@ -671,9 +670,10 @@ void bomb_checkremovewire( gentity_t *ent ) {
 void bomb_drop( gentity_t *ent ) {
 	gentity_t *bomb = ent->client->ns.bomb_world;
 
-	//  _  _   _  _   _  _
-	//  \\// _ \\// _ \\//
-	//  //\\   //\\   //\\
+	/*  _  _   _  _   _  _
+	    \\// _ \\// _ \\//
+	    //\\   //\\   //\\
+	*/
 
 	if ( !bomb || !ent->client ) {
 		return;
@@ -694,8 +694,6 @@ void bomb_drop( gentity_t *ent ) {
 // trying to defuse.
 //
 void bomb_touch( gentity_t *ent, gentity_t *other, trace_t *trace ) {
-	int technical = 0;
-
 	if ( !other->client ) {
 		return;
 	}
@@ -703,8 +701,6 @@ void bomb_touch( gentity_t *ent, gentity_t *other, trace_t *trace ) {
 	if ( !( other->client->buttons & BUTTON_USE ) ) {
 		return;
 	}
-
-	technical = other->client->pers.nsPC.technical;
 
 	// this means that the bomb is already beeing defused by another player.
 	if ( ent->count ) {
@@ -929,7 +925,6 @@ Flashbang
 gentity_t *fire_flashbang( gentity_t *self, vec3_t start, vec3_t dir, int firestrength );
 
 void weapon_flashbang_throw( gentity_t *ent ) {
-	gentity_t   *m;
 	vec3_t start;
 
 	VectorCopy( ent->s.pos.trBase, start );
@@ -945,7 +940,7 @@ void weapon_flashbang_throw( gentity_t *ent ) {
 	}
 	VectorNormalize( forward );
 
-	m = fire_flashbang( ent, start, forward, ent->client->ps.weaponTime * -1 );
+	fire_flashbang( ent, start, forward, ent->client->ps.weaponTime * -1 );
 
 	NS_BotRadioMsg( ent, "outgrenade" );
 }
@@ -980,6 +975,7 @@ void weapon_smoke_throw( gentity_t *ent ) {
 	m = fire_smoke( ent, start, forward, /*this sucks, that we can't modify ps state another q3engine hack*/ ent->client->ps.weaponTime * -1 );
 
 	//	VectorAdd( m->s.pos.trDelta, ent->client->ps.velocity, m->s.pos.trDelta );	// "real" physics
+	(void)m; // slience compiler warning about unused variable
 
 	NS_BotRadioMsg( ent, "outgrenade" );
 }
@@ -1002,6 +998,7 @@ void weapon_grenade_throw( gentity_t *ent ) {
 	m = fire_grenade( ent, start, forward, /*this sucks, that we can't modify ps state another q3engine hack*/ ent->client->ps.weaponTime * -1 );
 
 	//	VectorAdd( m->s.pos.trDelta, ent->client->ps.velocity, m->s.pos.trDelta );	// "real" physics
+	(void)m; // slience compiler warning about unused variable
 
 	NS_BotRadioMsg( ent, "outgrenade" );
 }
@@ -1021,19 +1018,20 @@ void weapon_m203gl_fire( gentity_t *ent ) {
 	VectorMA( muzzle, 4, right, newmuzzle );
 	VectorMA( newmuzzle, -2, up, newmuzzle );
 
-	if ( ent->client->crosshairFinishedChange && !ent->client->crosshairFadeIn ) { /*
-		 float r,u;
+#if 0
+	if ( ent->client->crosshairFinishedChange && !ent->client->crosshairFadeIn ) {
+		float r,u;
 
-		 r = -3.5 + random() * 7;
-		 u = -3.5 + random() * 7;
+		r = -3.5 + random() * 7;
+		u = -3.5 + random() * 7;
 
-		 forward[PITCH] += u;
-		 forward[YAW] += r;
-		 /*
-		 VectorMA( newmuzzle, r, right, newmuzzle );
-		 VectorMA( newmuzzle, u, up, newmuzzle );
-		 */
+		forward[PITCH] += u;
+		forward[YAW] += r;
+
+		//VectorMA( newmuzzle, r, right, newmuzzle );
+		//VectorMA( newmuzzle, u, up, newmuzzle );
 	}
+#endif
 	m = fire_40mmgrenade( ent, newmuzzle, forward, SEALS_40MMGREN_SPEED );
 
 	VectorAdd( m->s.pos.trDelta, ent->client->ps.velocity, m->s.pos.trDelta );  // "real" physics
@@ -1291,7 +1289,6 @@ void Fire_Lead( gentity_t *ent, int caliber, int damage ) {
 	trace_t trace,trace2;
 	gentity_t   *traceEnt;
 	int i;
-	int hits;
 	int unlinked;
 	gentity_t   *unlinkedEntities[6];
 	vec3_t tracefrom;
@@ -1307,7 +1304,7 @@ void Fire_Lead( gentity_t *ent, int caliber, int damage ) {
 
 	//	G_Printf("maxrange: %f\n",max_range );
 	unlinked = 0;
-	hits = wallhits = 0;
+	wallhits = 0;
 
 	ignoreent = ent->s.number;
 	if ( !BG_IsShotgun( ent->client->ps.weapon ) ) {
@@ -1931,7 +1928,7 @@ FireWeapon
 void FireWeapon( gentity_t *ent ) {
 	gitem_t *weapon;
 	vec3_t knockvec;
-	float kbfact = 0.0f;
+	float kbfact;
 
 	weapon = BG_FindItemForWeapon( ent->s.weapon );
 
@@ -1951,6 +1948,9 @@ void FireWeapon( gentity_t *ent ) {
 		knockvec[2] = -forward[2];
 
 		kbfact = ( 800 - g_gravity.value ) / 800.0 * ( 0.7 + 0.3 * ( 150.0 - ent->client->pers.nsPC.strength * 10.0 ) / 150.0 );
+	} else {
+		VectorClear( knockvec );
+		kbfact = 0.0f;
 	}
 
 	// fire the specific weapon

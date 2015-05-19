@@ -183,13 +183,13 @@ int Pickup_Weapon( gentity_t *ent, gentity_t *other ) {
 		}
 
 		return g_weaponRespawn.integer;
-	} else if ( ent->item->giAmmoTag == AM_GRENADES )    { // give grenades
+	} else if ( ent->item->giAmmoTag == AM_GRENADES ) {    // give grenades
 		if ( other->client->ps.ammo[AM_GRENADES] < 2 ) {
 			other->client->ps.ammo[AM_GRENADES]++;
 		}
 
 		return g_weaponRespawn.integer;
-	} else if ( ent->item->giAmmoTag == AM_SMOKE )   { // give grenades
+	} else if ( ent->item->giAmmoTag == AM_SMOKE ) {   // give grenades
 		if ( other->client->ps.ammo[AM_SMOKE] < 2 ) {
 			other->client->ps.ammo[AM_SMOKE]++;
 		}
@@ -411,7 +411,7 @@ qboolean BotCanItemBeGrabbed( int gametype, const entityState_t *ent, const play
 			} else {
 				return qfalse;
 			}
-		} else if ( item->giTag == WP_GRENADE )   {
+		} else if ( item->giTag == WP_GRENADE ) {
 			if ( ps->ammo[AM_GRENADES] < 2 ) {
 				return qtrue;
 			} else {
@@ -517,11 +517,11 @@ void Touch_Item( gentity_t *ent, gentity_t *other, trace_t *trace ) {
 		if ( !BotCanItemBeGrabbed( g_gametype.integer, &ent->s, &other->client->ps ) ) {
 			return;
 		}
-	} else if ( ent->item->giTag == PW_BRIEFCASE_RETURN && ent->item->giType == IT_TEAM )   {
+	} else if ( ent->item->giTag == PW_BRIEFCASE_RETURN && ent->item->giType == IT_TEAM ) {
 		if ( other->client->ps.powerups[PW_BRIEFCASE] <= 0 ) {
 			return;
 		}
-	} else if ( !( other->client->buttons & BUTTON_USE ) || ( other->client->oldbuttons & BUTTON_USE )  )      {
+	} else if ( !( other->client->buttons & BUTTON_USE ) || ( other->client->oldbuttons & BUTTON_USE )  ) {
 		return;
 	}
 	if ( !BG_CanItemBeGrabbed( g_gametype.integer, &ent->s, &other->client->ps ) && !NS_IsBot( other ) ) {

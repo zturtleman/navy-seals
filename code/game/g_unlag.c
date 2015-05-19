@@ -66,7 +66,7 @@ void G_UpdateClientAntiLag( gentity_t* ent ) {
 
 		if ( newtime > level.time ) {
 			newtime = level.time;
-		} else if ( newtime <= level.previousTime )   {
+		} else if ( newtime <= level.previousTime ) {
 			newtime = level.previousTime + 1;
 		}
 	}
@@ -279,7 +279,7 @@ void G_ApplyAntiLag( gentity_t* ref )
 		}
 
 		// Dont bring them back in time unless requested
-		if ( !( ref->r.svFlags & SVF_BOT ) & ref->client->pers.antiLag ) {
+		if ( !( ref->r.svFlags & SVF_BOT ) && ref->client->pers.antiLag ) {
 			// Apply the antilag to this player
 			G_ApplyClientAntiLag( other, reftime );
 		}

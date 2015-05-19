@@ -598,14 +598,9 @@ void G_RunMissile( gentity_t *ent ) {
 	vec3_t origin;
 	trace_t tr;
 	int passent;
-	qboolean inwater = qfalse;
 
 	// get current position
 	BG_EvaluateTrajectory( &ent->s.pos, level.time, origin );
-
-	if ( trap_PointContents( origin,-1 ) & MASK_WATER ) {
-		inwater = qtrue;
-	}
 
 	// if this missile bounced off an invulnerability sphere
 	if ( ent->target_ent ) {
@@ -696,7 +691,7 @@ gentity_t *fire_grenade( gentity_t *self, vec3_t start, vec3_t dir, int firestre
 	// 3sec default priming
 	if ( self->client->ns.weaponmode[self->client->ps.weapon] & ( 1 << WM_SINGLE ) ) {
 		bolt->nextthink = level.time + 4000; // 3sec default priming
-	} else if ( self->client->ns.weaponmode[self->client->ps.weapon] & ( 1 << WM_WEAPONMODE2 ) )                                                                   {
+	} else if ( self->client->ns.weaponmode[self->client->ps.weapon] & ( 1 << WM_WEAPONMODE2 ) ) {
 		bolt->nextthink = level.time + 5000;
 	}
 
@@ -834,7 +829,7 @@ gentity_t *fire_smoke( gentity_t *self, vec3_t start, vec3_t dir, int firestreng
 	// 3sec default priming
 	if ( self->client->ns.weaponmode[self->client->ps.weapon] & ( 1 << WM_SINGLE ) ) {
 		bolt->nextthink = level.time + 2000; // 3sec default priming
-	} else if ( self->client->ns.weaponmode[self->client->ps.weapon] & ( 1 << WM_WEAPONMODE2 ) )                                                                   {
+	} else if ( self->client->ns.weaponmode[self->client->ps.weapon] & ( 1 << WM_WEAPONMODE2 ) ) {
 		bolt->nextthink = level.time + 1000;
 	}
 
@@ -913,7 +908,7 @@ gentity_t *fire_flashbang( gentity_t *self, vec3_t start, vec3_t dir, int firest
 	// 3sec default priming
 	if ( self->client->ns.weaponmode[self->client->ps.weapon] & ( 1 << WM_SINGLE ) ) {
 		bolt->nextthink = level.time + 2000; // 3sec default priming
-	} else if ( self->client->ns.weaponmode[self->client->ps.weapon] & ( 1 << WM_WEAPONMODE2 ) )                                                                   {
+	} else if ( self->client->ns.weaponmode[self->client->ps.weapon] & ( 1 << WM_WEAPONMODE2 ) ) {
 		bolt->nextthink = level.time + 1000;
 	}
 
@@ -1063,7 +1058,7 @@ vec3_t lMins = { -0.5, -0.5, -0.5 };
 vec3_t lMaxs = { 0.5, 0.5, 0.5 };
 void Lead_Impact( gentity_t *lead, trace_t *trace ) {
 	gentity_t       *other, *tent,*tent2;
-	qboolean hitClient = qfalse;
+	//qboolean hitClient = qfalse;
 	trace_t tr;
 	vec3_t start;
 	vec3_t dir;
@@ -1133,7 +1128,7 @@ void Lead_Impact( gentity_t *lead, trace_t *trace ) {
 
 			if ( LogAccuracyHit( other, &g_entities[lead->s.otherEntityNum2 - 1] ) ) {
 				g_entities[lead->s.otherEntityNum2 - 1].client->accuracy_hits++;
-				hitClient = qtrue;
+				//hitClient = qtrue;
 			}
 
 #ifdef DEBUG_LEAD
@@ -1398,7 +1393,7 @@ void Lead_Impact( gentity_t *lead, trace_t *trace ) {
 #endif
 				G_FreeEntity( lead );
 				return;
-			} else if ( is_func_explosive( other )  && !other->fly_sound_debounce_time )   {
+			} else if ( is_func_explosive( other )  && !other->fly_sound_debounce_time ) {
 #ifdef DEBUG_LEAD
 				G_Printf( "Lead %i spawned mark on func_explosive\n", lead->s.number );
 #endif
@@ -1545,12 +1540,10 @@ gentity_t *fire_reallead( gentity_t *self, vec3_t start,vec3_t dir, int weapon, 
 	gentity_t   *bolt;
 	vec3_t end;
 	trace_t tr;
-	float dist;
+	//float dist;
 
 	VectorMA( start, 8920, dir, end );
 	trap_Trace( &tr, start, NULL,NULL,end, self->s.number, MASK_SOLID );
-
-	dist = Distance( start, tr.endpos );
 
 	bolt = G_Spawn();
 #ifdef DEBUG_LEAD
@@ -1597,16 +1590,16 @@ gentity_t *fire_reallead( gentity_t *self, vec3_t start,vec3_t dir, int weapon, 
 
 	VectorCopy( dir,  bolt->movedir );
 
+#if 0
+	dist = Distance( start, tr.endpos );
+
 	// if zooming and a great distance we CAN go into camera mode
-
-	/*
-
-	if ( dist >= 1000 && BG_IsZooming( self->client->ns.weaponmode[self->s.weapon] ) && self->client->ps.weapon == WP_MACMILLAN )
-	bolt->s.otherEntityNum = 1; // follow this bullet
-	else
-	bolt->s.otherEntityNum = 0;
-
-	*/
+	if ( dist >= 1000 && BG_IsZooming( self->client->ns.weaponmode[self->s.weapon] ) && self->client->ps.weapon == WP_MACMILLAN ) {
+		bolt->s.otherEntityNum = 1; // follow this bullet
+	} else {
+		bolt->s.otherEntityNum = 0;
+	}
+#endif
 
 	trap_LinkEntity( bolt );
 

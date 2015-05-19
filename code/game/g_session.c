@@ -56,7 +56,7 @@ void G_WriteClientSessionData( gclient_t *client ) {
 			client->sess.teamLeader
 			);
 
-	var = va( "session%i", client - level.clients );
+	var = va( "session%i", (int)( client - level.clients ) );
 
 	trap_Cvar_Set( var, s );
 }
@@ -71,19 +71,26 @@ Called on a reconnect
 void G_ReadSessionData( gclient_t *client ) {
 	char s[MAX_STRING_CHARS];
 	const char  *var;
+	int teamLeader;
+	int spectatorState;
+	int sessionTeam;
 
-	var = va( "session%i", client - level.clients );
+	var = va( "session%i", (int)( client - level.clients ) );
 	trap_Cvar_VariableStringBuffer( var, s, sizeof( s ) );
 
 	sscanf( s, "%i %i %i %i %i %i %i",
-			&client->sess.sessionTeam,
+			&sessionTeam,
 			&client->sess.spectatorTime,
-			&client->sess.spectatorState,
+			&spectatorState,
 			&client->sess.spectatorClient,
 			&client->sess.wins,
 			&client->sess.losses,
-			&client->sess.teamLeader
+			&teamLeader
 			);
+
+	client->sess.sessionTeam = (team_t)sessionTeam;
+	client->sess.spectatorState = (spectatorState_t)spectatorState;
+	client->sess.teamLeader = (qboolean)teamLeader;
 }
 
 
@@ -154,12 +161,13 @@ G_InitWorldSession
 ==================
 */
 void G_InitWorldSession( void ) {
+#if 0
 	char s[MAX_STRING_CHARS];
 	int gt;
 
-
 	trap_Cvar_VariableStringBuffer( "session", s, sizeof( s ) );
 	gt = atoi( s );
+#endif
 
 	// if the gametype changed since the last session, don't use any
 	// client sessions

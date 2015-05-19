@@ -30,7 +30,7 @@ Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 //
 
 void    trap_Printf( const char *fmt );
-void    trap_Error( const char *fmt ) __attribute__((noreturn));
+void    trap_Error( const char *fmt ) __attribute__( ( noreturn ) );
 int     trap_Milliseconds( void );
 int     trap_Argc( void );
 void    trap_Argv( int n, char *buffer, int bufferLength );
@@ -233,4 +233,3 @@ int     trap_GeneticParentsAndChildSelection( int numranks, float *ranks, int *p
 void    trap_SnapVector( float *v );
 
 #endif
-

@@ -35,7 +35,7 @@ void Team_InitGame( void ) {
 int OtherTeam( int team ) {
 	if ( team == TEAM_RED ) {
 		return TEAM_BLUE;
-	} else if ( team == TEAM_BLUE )  {
+	} else if ( team == TEAM_BLUE ) {
 		return TEAM_RED;
 	}
 	return team;
@@ -45,9 +45,9 @@ const char *TeamName( int team ) {
 
 	if ( team == TEAM_RED ) {
 		return S_COLOR_BLUE "Seals"S_COLOR_WHITE;
-	} else if ( team == TEAM_BLUE )  {
+	} else if ( team == TEAM_BLUE ) {
 		return S_COLOR_RED "Tangos"S_COLOR_WHITE;
-	} else if ( team == TEAM_SPECTATOR )  {
+	} else if ( team == TEAM_SPECTATOR ) {
 		return "SPECTATOR";
 	}
 	return "FREE";
@@ -57,9 +57,9 @@ const char *OtherTeamName( int team ) {
 
 	if ( team == TEAM_BLUE ) {
 		return S_COLOR_BLUE "Seals"S_COLOR_WHITE;
-	} else if ( team == TEAM_RED )  {
+	} else if ( team == TEAM_RED ) {
 		return S_COLOR_RED "Tangos"S_COLOR_WHITE;
-	} else if ( team == TEAM_SPECTATOR )  {
+	} else if ( team == TEAM_SPECTATOR ) {
 		return "SPECTATOR";
 	}
 	return "FREE";
@@ -68,9 +68,9 @@ const char *OtherTeamName( int team ) {
 const char *TeamColorString( int team ) {
 	if ( team == TEAM_RED ) {
 		return S_COLOR_BLUE;
-	} else if ( team == TEAM_BLUE )  {
+	} else if ( team == TEAM_BLUE ) {
 		return S_COLOR_RED;
-	} else if ( team == TEAM_SPECTATOR )  {
+	} else if ( team == TEAM_SPECTATOR ) {
 		return S_COLOR_YELLOW;
 	}
 	return S_COLOR_WHITE;
@@ -183,7 +183,7 @@ int Pickup_Team( gentity_t *ent, gentity_t *other ) {
 	if ( !Q_stricmp( ent->classname, "team_briefcase" ) ) {
 		Pickup_Briefcase( ent, other );
 		return -1; // never respawn
-	} else if ( !Q_stricmp( ent->classname, "team_briefcase_return" ) && other->client->ps.powerups[PW_BRIEFCASE] )     {
+	} else if ( !Q_stricmp( ent->classname, "team_briefcase_return" ) && other->client->ps.powerups[PW_BRIEFCASE] ) {
 		Return_Briefcase( ent, other );
 		return 0;
 	}

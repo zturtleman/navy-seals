@@ -331,7 +331,7 @@ Q_EXPORT intptr_t vmMain( int command, int arg0, int arg1, int arg2, int arg3, i
 		G_ShutdownGame( arg0 );
 		return 0;
 	case GAME_CLIENT_CONNECT:
-		return (int)ClientConnect( arg0, arg1, arg2 );
+		return (intptr_t)ClientConnect( arg0, arg1, arg2 );
 	case GAME_CLIENT_THINK:
 		ClientThink( arg0 );
 		return 0;
@@ -443,7 +443,7 @@ void G_FindTeams( void ) {
 	G_Printf( "%i teams with %i entities\n", c, c2 );
 }
 
-void G_RemapTeamShaders() {
+void G_RemapTeamShaders( void ) {
 #ifdef MISSIONPACK
 	char string[1024];
 	float f = level.time * 0.001;
@@ -935,7 +935,7 @@ void CalculateRanks( void ) {
 	level.numNonSpectatorClients = 0;
 	level.numPlayingClients = 0;
 	level.numVotingClients = 0;     // don't count bots
-	for ( i = 0; i < TEAM_NUM_TEAMS; i++ ) {
+	for ( i = 0; i < ARRAY_LEN( level.numteamVotingClients ); i++ ) {
 		level.numteamVotingClients[i] = 0;
 	}
 	for ( i = 0 ; i < level.maxclients ; i++ ) {
@@ -1478,7 +1478,7 @@ void CheckExitRules( void ) {
 				if ( ( level.done_objectives[TEAM_RED] >= level.num_objectives[TEAM_RED] ) && level.num_objectives[TEAM_RED] > 0 ) {
 					NS_EndRoundForTeam( TEAM_RED );
 					return;
-				} else if ( ( level.done_objectives[TEAM_BLUE] >= level.num_objectives[TEAM_BLUE] ) && level.num_objectives[TEAM_BLUE] > 0 )   { // don't go any further
+				} else if ( ( level.done_objectives[TEAM_BLUE] >= level.num_objectives[TEAM_BLUE] ) && level.num_objectives[TEAM_BLUE] > 0 ) {   // don't go any further
 					NS_EndRoundForTeam( TEAM_BLUE );
 					return;
 				}
@@ -1489,10 +1489,10 @@ void CheckExitRules( void ) {
 			if ( level.vip[TEAM_RED] == VIP_STAYALIVE && NS_IsVipAlive( -1, TEAM_RED ) && !g_overrideGoals.integer  ) {
 				level.done_objectives[TEAM_RED]++;
 				return;
-			} else if ( level.vip[TEAM_BLUE] == VIP_STAYALIVE && NS_IsVipAlive( -1, TEAM_BLUE ) && !g_overrideGoals.integer )   {
+			} else if ( level.vip[TEAM_BLUE] == VIP_STAYALIVE && NS_IsVipAlive( -1, TEAM_BLUE ) && !g_overrideGoals.integer ) {
 				level.done_objectives[TEAM_BLUE]++;
 				return;
-			} else if ( level.drawWinner > TEAM_FREE && !g_overrideGoals.integer && AliveTeamCount( -1, TEAM_RED ) > 0 && AliveTeamCount( -1, TEAM_BLUE ) > 0 )       {
+			} else if ( level.drawWinner > TEAM_FREE && !g_overrideGoals.integer && AliveTeamCount( -1, TEAM_RED ) > 0 && AliveTeamCount( -1, TEAM_BLUE ) > 0 ) {
 				PrintMsg( NULL, "Roundtimelimit hit. Winner %s\n", TeamName( level.drawWinner ) );
 				NS_EndRoundForTeam( level.drawWinner );
 			} else
@@ -1790,8 +1790,6 @@ Advances the non-player objects in the world
 void G_RunFrame( int levelTime ) {
 	int i;
 	gentity_t   *ent;
-	int msec;
-	int start, end;
 
 	// if we are waiting for the level to restart, do nothing
 	if ( level.restarted ) {
@@ -1801,7 +1799,6 @@ void G_RunFrame( int levelTime ) {
 	level.framenum++;
 	level.previousTime = level.time;
 	level.time = levelTime;
-	msec = level.time - level.previousTime;
 
 	// get any cvar changes
 	G_UpdateCvars();
@@ -1813,7 +1810,6 @@ void G_RunFrame( int levelTime ) {
 	//
 	// go through all allocated objects
 	//
-	start = level.frameStartTime = trap_Milliseconds();
 	ent = &g_entities[0];
 	for ( i = 0 ; i < level.num_entities ; i++, ent++ ) {
 		if ( !ent->inuse ) {
@@ -1881,9 +1877,7 @@ void G_RunFrame( int levelTime ) {
 
 		G_RunThink( ent );
 	}
-	end = trap_Milliseconds();
 
-	start = trap_Milliseconds();
 	// perform final fixups on the players
 	ent = &g_entities[0];
 	for ( i = 0 ; i < level.maxclients ; i++, ent++ ) {
@@ -1891,7 +1885,6 @@ void G_RunFrame( int levelTime ) {
 			ClientEndFrame( ent );
 		}
 	}
-	end = trap_Milliseconds();
 
 	// see if it is time to do a tournement restart
 	//	CheckTournament();
