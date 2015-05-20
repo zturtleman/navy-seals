@@ -1366,8 +1366,15 @@ void _UI_Refresh( int realtime ) {
 	} else
 #endif
 	if ( Menu_Count() > 0 ) {
+#ifdef NSCO_GOLD
+		// make the click point be in the top left of the cursor
 		float x = uiInfo.uiDC.cursorx - 4;
 		float y = uiInfo.uiDC.cursory - 4;
+#else
+		// make the click point be at the center
+		float x = uiInfo.uiDC.cursorx - 16;
+		float y = uiInfo.uiDC.cursory - 16;
+#endif
 		qhandle_t hShader = uiInfo.uiDC.Assets.cursor;
 
 		// only use cursor_dn shader if UI defined it
@@ -1375,8 +1382,13 @@ void _UI_Refresh( int realtime ) {
 			hShader = uiInfo.uiDC.Assets.cursor_dn;
 		}
 
+#ifdef NSCO_GOLD
+		// only adust position, not the size
 		UI_AdjustFrom640( &x, &y, NULL,NULL );
-		trap_R_DrawStretchPic( x, y, 32, 32, 0, 0, 1, 1, hShader  );
+		trap_R_DrawStretchPic( x, y, 32, 32, 0, 0, 1, 1, hShader );
+#else
+		UI_DrawHandlePic( x, y, 32, 32, hShader );
+#endif
 	}
 
 #ifndef NDEBUG
