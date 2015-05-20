@@ -69,7 +69,11 @@ void CG_DrawLoadingBar( int x, int y, int w, int h ) {
 	float real_width = 0;
 	char *text;
 	vec4_t color;
+#ifdef NSCO_GOLD
 	qhandle_t hShader = trap_R_RegisterShader( "ui/assets/loadingbar.tga" );
+#else
+	qhandle_t hShader = cgs.media.whiteShader;
+#endif
 
 	real_width = (float)( (float)cg.loadingbarState / (float)cg.loadingbarMax );
 
@@ -82,8 +86,15 @@ void CG_DrawLoadingBar( int x, int y, int w, int h ) {
 
 	real_width = real_width * (float)w;
 
+#ifndef NSCO_GOLD
+	trap_R_SetColor( color );
+#endif
 
 	CG_DrawPic( x, y, real_width, h, hShader );
+
+#ifndef NSCO_GOLD
+	trap_R_SetColor( NULL );
+#endif
 
 	// defcon: only show the awaiting for snapshot thingy.
 	if ( cg.infoScreenText[0] ) {
@@ -818,6 +829,7 @@ void CG_DrawInformation( void ) {
 	CG_DrawPic( 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, loadingscreen );
 
 	// draw levelshot
+#ifdef NSCO_GOLD
 	CG_DrawPic( 76, 96, 241, 124, levelshot );
 
 	// blend a detail texture over it
@@ -826,11 +838,28 @@ void CG_DrawInformation( void ) {
 
 	// darw the loading bar
 	CG_DrawLoadingBar( 76, 432, 492, 17 );
+#else
+	CG_DrawPic( 48, 23, 175, 131, levelshot );
+
+	// blend a detail texture over it
+	detail = trap_R_RegisterShader( "levelShotDetail" );
+	CG_DrawPic( 48, 23, 175, 131, detail );
+
+	// darw the loading bar
+	CG_DrawLoadingBar( 16, 448, 604, 16 );
+#endif
+
 #if 1
 	// draw info string information
+#ifdef NSCO_GOLD
 	x = 327;
 	y = 106;
 	textscale = 0.18f;
+#else
+	x = 300;
+	y = 50;
+	textscale = 0.27f;
+#endif
 
 	// don't print server lines if playing a local game
 	trap_Cvar_VariableStringBuffer( "sv_running", buf, sizeof( buf ) );
@@ -916,25 +945,43 @@ void CG_DrawInformation( void ) {
 		}
 	}
 #endif
-	if ( sealBriefingLines > 0 ) {
-		textscale = 0.18f;
 
-		y = 242 + CG_Text_Height( "A", textscale, 0 )  + 3;
+	if ( sealBriefingLines > 0 ) {
+#ifdef NSCO_GOLD
+		x = 80;
+		y = 242;
+		textscale = 0.18f;
+#else
+		x = 16;
+		y = 175;
+		textscale = 0.27f;
+#endif
+		y += CG_Text_Height( "A", textscale, 0 )  + 3;
 
 		for ( value = 0; value <= sealBriefingLines; value++ )
 		{
-			CG_Text_Paint( 80, y, textscale, colorWhite, SealBriefing[value], 0,0,ITEM_TEXTSTYLE_SHADOWED );
+			CG_Text_Paint( x, y, textscale, colorWhite, SealBriefing[value], 0,0,ITEM_TEXTSTYLE_SHADOWED );
 			y += CG_Text_Height( SealBriefing[value], textscale, 0 ) + 3;
 		}
 	}
 	if ( tangoBriefingLines > 0 ) {
-		textscale = 0.18f;
 
-		y = 242 + CG_Text_Height( "A", textscale, 0 ) + 3;
+
+#ifdef NSCO_GOLD
+		x = 328;
+		y = 242;
+		textscale = 0.18f;
+#else
+		x = 336;
+		y = 175;
+		textscale = 0.27f;
+#endif
+
+		y += CG_Text_Height( "A", textscale, 0 ) + 3;
 
 		for ( value = 0; value <= tangoBriefingLines; value++ )
 		{
-			CG_Text_Paint( 328, y, textscale, colorWhite, TangoBriefing[value], 0,0,ITEM_TEXTSTYLE_SHADOWED );
+			CG_Text_Paint( x, y, textscale, colorWhite, TangoBriefing[value], 0,0,ITEM_TEXTSTYLE_SHADOWED );
 			y += CG_Text_Height( TangoBriefing[value], textscale, 0 ) + 3;
 		}
 	}
