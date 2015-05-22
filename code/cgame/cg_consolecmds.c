@@ -557,7 +557,7 @@ void CG_UpdateLooks_f( void ) {
 		trap_Cvar_VariableStringBuffer( "ui_s_skin", skin, sizeof( skin ) );
 
 		trap_Cvar_Set( "model", va( "%s/%s",model,skin ) );
-	} else if ( ps->persistant[PERS_TEAM] == TEAM_BLUE )   {
+	} else if ( ps->persistant[PERS_TEAM] == TEAM_BLUE ) {
 		// update looks
 		trap_Cvar_VariableStringBuffer( "ui_t_e_eyes", var, sizeof( var ) );
 		trap_Cvar_Set( "e_eyes", var );

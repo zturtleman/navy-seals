@@ -176,7 +176,7 @@ static qboolean CG_RainParticleGenerate( cg_atmosphericParticle_t *particle,  fl
 		if ( tr.startsolid ) {           // Stuck in something, skip over it.
 			testpoint[2] += 64;
 			testend[2] = testpoint[2] + MAX_ATMOSPHERIC_HEIGHT;
-		} else if ( tr.fraction == 1 )    {    // Didn't hit anything, we're (probably) outside the world
+		} else if ( tr.fraction == 1 ) {       // Didn't hit anything, we're (probably) outside the world
 			return( qfalse );
 		} else if ( tr.surfaceFlags & SURF_SKY ) { // Hit sky, this is where we start.
 			break;
@@ -237,7 +237,7 @@ static void CG_RainParticleRender( cg_atmosphericParticle_t *particle ) {
 				if ( cg_atmFx.effectwatershader && frac > 0 && frac < 1 ) {
 					CG_EffectMark( cg_atmFx.effectwatershader, start, particle->surfacenormal, frac * 0.5, 8 - frac * 8 );
 				}
-			} else if ( !( particle->surface & ( SURF_NODAMAGE | SURF_NOIMPACT | SURF_NOMARKS | SURF_SKY ) ) )            {
+			} else if ( !( particle->surface & ( SURF_NODAMAGE | SURF_NOIMPACT | SURF_NOMARKS | SURF_SKY ) ) ) {
 				// Solid splash
 				if ( cg_atmFx.effectlandshader && frac > 0 && frac < 1  ) {
 					CG_EffectMark( cg_atmFx.effectlandshader, start, particle->surfacenormal, frac * 0.5, 8 - frac * 8 );
@@ -328,7 +328,7 @@ static qboolean CG_SnowParticleGenerate( cg_atmosphericParticle_t *particle,  fl
 		if ( tr.startsolid ) {           // Stuck in something, skip over it.
 			testpoint[2] += 64;
 			testend[2] = testpoint[2] + MAX_ATMOSPHERIC_HEIGHT;
-		} else if ( tr.fraction == 1 )    {    // Didn't hit anything, we're (probably) outside the world
+		} else if ( tr.fraction == 1 ) {       // Didn't hit anything, we're (probably) outside the world
 			return( qfalse );
 		} else if ( tr.surfaceFlags & SURF_SKY ) { // Hit sky, this is where we start.
 			break;
@@ -506,7 +506,7 @@ static qboolean CG_EffectGustCurrent( vec3_t curr, float *weight, int *num ) {
 			VectorMA( cg_atmFx.baseVec, frac, temp, curr );
 			*weight = cg_atmFx.baseWeight + ( cg_atmFx.gustWeight - cg_atmFx.baseWeight ) * frac;
 			*num = cg_atmFx.baseDrops + ( (float)( cg_atmFx.gustDrops - cg_atmFx.baseDrops ) ) * frac;
-		} else if ( cg.time < cg_atmFx.gustEndTime )    {
+		} else if ( cg.time < cg_atmFx.gustEndTime ) {
 			VectorCopy( cg_atmFx.gustVec, curr );
 			*weight = cg_atmFx.gustWeight;
 			*num = cg_atmFx.gustDrops;
@@ -557,7 +557,7 @@ void CG_AddAtmosphericEffects( void ) {
 			if ( !particle->nextDropTime ) {
 				// Stop rain being synchronized
 				particle->nextDropTime = rand() % ATMOSPHERIC_DROPDELAY;
-			} else if ( currnum < curr || particle->nextDropTime > cg.time )    {
+			} else if ( currnum < curr || particle->nextDropTime > cg.time ) {
 				continue;
 			}
 			if ( !cg_atmFx.ParticleGenerate( particle, currweight ) ) {
@@ -664,7 +664,7 @@ void CG_EnviromentParse( char       *text_p ) {
 				cg_atmFx.ParticleRender = &CG_RainParticleRender;
 
 				cg_atmFx.baseVec[2] = cg_atmFx.gustVec[2] = -ATMOSPHERIC_RAIN_SPEED;
-			} else if ( !Q_stricmp( token, "snow" ) )   {
+			} else if ( !Q_stricmp( token, "snow" ) ) {
 				type = "snow";
 				cg_atmFx.ParticleCheckVisible = &CG_RainParticleCheckVisible;
 				cg_atmFx.ParticleGenerate = &CG_SnowParticleGenerate;
@@ -676,42 +676,42 @@ void CG_EnviromentParse( char       *text_p ) {
 				return;
 			}
 			continue;
-		} else if ( !Q_stricmp( token, "basetimes" ) )    {
+		} else if ( !Q_stricmp( token, "basetimes" ) ) {
 			token = COM_Parse( &text_p );
 			bmin = atof( token );
 
 			token = COM_Parse( &text_p );
 			bmax = atof( token );
 			continue;
-		} else if ( !Q_stricmp( token, "timetomove" ) )    {
+		} else if ( !Q_stricmp( token, "timetomove" ) ) {
 			token = COM_Parse( &text_p );
 			cmin = atof( token );
 
 			token = COM_Parse( &text_p );
 			cmax = atof( token );
 			continue;
-		} else if ( !Q_stricmp( token, "gusttimes" ) )    {
+		} else if ( !Q_stricmp( token, "gusttimes" ) ) {
 			token = COM_Parse( &text_p );
 			gmin = atof( token );
 
 			token = COM_Parse( &text_p );
 			gmax = atof( token );
 			continue;
-		} else if ( !Q_stricmp( token, "basevector" ) )    {
+		} else if ( !Q_stricmp( token, "basevector" ) ) {
 			token = COM_Parse( &text_p );
 			cg_atmFx.baseVec[0] = atof( token );
 
 			token = COM_Parse( &text_p );
 			cg_atmFx.baseVec[1] = atof( token );
 			continue;
-		} else if ( !Q_stricmp( token, "gustvector" ) )    {
+		} else if ( !Q_stricmp( token, "gustvector" ) ) {
 			token = COM_Parse( &text_p );
 			cg_atmFx.gustVec[0] = atof( token );
 
 			token = COM_Parse( &text_p );
 			cg_atmFx.gustVec[1] = atof( token );
 			continue;
-		} else if ( !Q_stricmp( token, "weight" ) )    {
+		} else if ( !Q_stricmp( token, "weight" ) ) {
 
 			token = COM_Parse( &text_p );
 			cg_atmFx.baseWeight = atof( token );
@@ -719,7 +719,7 @@ void CG_EnviromentParse( char       *text_p ) {
 			token = COM_Parse( &text_p );
 			cg_atmFx.gustWeight = atof( token );
 			continue;
-		} else if ( !Q_stricmp( token, "impacteffects" ) )    {
+		} else if ( !Q_stricmp( token, "impacteffects" ) ) {
 
 			token = COM_Parse( &text_p );
 			if ( !Q_stricmp( token, "true" ) ) {
@@ -736,7 +736,7 @@ void CG_EnviromentParse( char       *text_p ) {
 			}
 
 			continue;
-		} else if ( !Q_stricmp( token, "num_drops" ) )    {
+		} else if ( !Q_stricmp( token, "num_drops" ) ) {
 
 			token = COM_Parse( &text_p );
 			bdrop = atof( token );
@@ -744,7 +744,7 @@ void CG_EnviromentParse( char       *text_p ) {
 			token = COM_Parse( &text_p );
 			gdrop = atof( token );
 			continue;
-		} else if ( !Q_stricmp( token, "height" ) )   {
+		} else if ( !Q_stricmp( token, "height" ) ) {
 			height = atof( COM_Parse( &text_p ) );
 			continue;
 		} else

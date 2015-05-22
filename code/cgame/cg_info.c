@@ -605,28 +605,28 @@ qboolean    CG_ParseBriefingFile(  char *mapstring  ) {
 									CG_Error( "num assaultfields > MAX_ASSAULTFIELDS\n" );
 								}
 								continue;
-							} else if ( !Q_stricmp( token, "viprescue" ) )   {
+							} else if ( !Q_stricmp( token, "viprescue" ) ) {
 								cgs.mi_vipRescue = qtrue;
 
 								if ( cgs.mi_vipTime ) {
 									CG_Error( "VIP type not allowed ( viptime viprescue )\n" );
 								}
 								continue;
-							} else if ( !Q_stricmp( token, "viptime" ) )   {
+							} else if ( !Q_stricmp( token, "viptime" ) ) {
 								cgs.mi_vipTime = qtrue;
 
 								if ( cgs.mi_vipRescue ) {
 									CG_Error( "VIP type not allowed ( viprescue viptime )\n" );
 								}
 								continue;
-							} else if ( !Q_stricmp( token, "blowup" ) )   {
+							} else if ( !Q_stricmp( token, "blowup" ) ) {
 								if ( cgs.mi_bombSpot ) {
 									CG_Error( "Bombmode already set ( blowup blowup )\n" );
 								}
 
 								cgs.mi_bombSpot = qtrue;
 								continue;
-							} else if ( !Q_stricmp( token, "bc" ) )   {
+							} else if ( !Q_stricmp( token, "bc" ) ) {
 								if ( cgs.mi_sealBriefcase ) {
 									CG_Error( "SealBriefcase already set ( bc bc )\n" );
 								}

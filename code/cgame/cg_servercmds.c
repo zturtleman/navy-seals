@@ -549,20 +549,20 @@ static void CG_ConfigStringModified( void ) {
 	} else if ( num >= CS_PLAYERS && num < CS_PLAYERS + MAX_CLIENTS ) {
 		CG_NewClientInfo( num - CS_PLAYERS );
 		CG_BuildSpectatorString();
-	} else if ( num == CS_SHADERSTATE )   {
+	} else if ( num == CS_SHADERSTATE ) {
 		CG_ShaderStateChanged();
 	} else if ( num == CS_ROUND_START_TIME ) {
 		cgs.levelRoundStartTime = atoi( str );
 	} else if ( num == CS_VIP_START_TIME ) {
 		cgs.levelVipStartTime = atoi( str );
-	} else if ( num == CS_ASSAULT_START_TIME )   {
+	} else if ( num == CS_ASSAULT_START_TIME ) {
 		if ( !Q_stricmp( str, "taken" ) ) {
 			cgs.assaultFieldsCaptured[0] = qtrue;
 		} else
 		{
 			cgs.levelAssaultStartTime[0] = atoi( str );
 		}
-	} else if ( num == CS_ASSAULT2_START_TIME )   {
+	} else if ( num == CS_ASSAULT2_START_TIME ) {
 		if ( !Q_stricmp( str, "taken" ) ) {
 			cgs.assaultFieldsCaptured[1] = qtrue;
 		} else
@@ -577,14 +577,14 @@ static void CG_ConfigStringModified( void ) {
 		{
 			cgs.levelAssaultStartTime[2] = atoi( str );
 		}
-	} else if ( num == CS_ASSAULT4_START_TIME )   {
+	} else if ( num == CS_ASSAULT4_START_TIME ) {
 		if ( !Q_stricmp( str, "taken" ) ) {
 			cgs.assaultFieldsCaptured[3] = qtrue;
 		} else
 		{
 			cgs.levelAssaultStartTime[3] = atoi( str );
 		}
-	} else if ( num == CS_BOMB_START_TIME )   {
+	} else if ( num == CS_BOMB_START_TIME ) {
 
 		cgs.levelBombStartTime = atoi( str );
 	}
@@ -783,7 +783,7 @@ static void CG_MapRestart( void ) {
 #if 0
 	if ( cg.warmup == 0 /* && cgs.gametype == GT_TOURNAMENT */ ) {
 		trap_S_StartLocalSound( cgs.media.countFightSound, CHAN_ANNOUNCER );
-		CG_CenterPrint( "FIGHT!", 120, GIANTCHAR_WIDTH*2 );
+		CG_CenterPrint( "FIGHT!", 120, GIANTCHAR_WIDTH * 2 );
 	}
 #endif
 }

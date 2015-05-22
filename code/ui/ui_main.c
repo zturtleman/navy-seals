@@ -1913,15 +1913,15 @@ static void UI_DrawTeamName( rectDef_t *rect, float scale, vec4_t color, qboolea
 	}
 }
 
-static void UI_DrawTeamMember(rectDef_t *rect, float scale, vec4_t color, qboolean blue, int num, int textStyle) {
+static void UI_DrawTeamMember( rectDef_t *rect, float scale, vec4_t color, qboolean blue, int num, int textStyle ) {
 	// 0 - None
 	// 1 - Human
 	// 2..NumCharacters - Bot
-	int value = trap_Cvar_VariableValue(va(blue ? "ui_blueteam%i" : "ui_redteam%i", num));
+	int value = trap_Cvar_VariableValue( va( blue ? "ui_blueteam%i" : "ui_redteam%i", num ) );
 	const char *text;
-	if (value <= 0) {
+	if ( value <= 0 ) {
 		text = "Closed";
-	} else if (value == 1) {
+	} else if ( value == 1 ) {
 		text = "Human";
 	} else {
 		value -= 2;
@@ -1931,7 +1931,7 @@ static void UI_DrawTeamMember(rectDef_t *rect, float scale, vec4_t color, qboole
 		}
 		text = uiInfo.aliasList[value].name;
 	}
-	Text_Paint(rect->x, rect->y, scale, color, text, 0, 0, textStyle);
+	Text_Paint( rect->x, rect->y, scale, color, text, 0, 0, textStyle );
 }
 
 static void UI_DrawMapPreview( rectDef_t *rect, float scale, vec4_t color, qboolean net ) {
@@ -3309,7 +3309,7 @@ static void UI_OwnerDraw( float x, float y, float w, float h, float text_x, floa
 	case UI_BLUETEAM4:
 	case UI_BLUETEAM5:
 	case UI_BLUETEAM6:
-		UI_DrawTeamMember(&rect, scale, color, qtrue, ownerDraw - UI_BLUETEAM1 + 1, textStyle);
+		UI_DrawTeamMember( &rect, scale, color, qtrue, ownerDraw - UI_BLUETEAM1 + 1, textStyle );
 		break;
 	case UI_REDTEAM1:
 	case UI_REDTEAM2:
@@ -3317,7 +3317,7 @@ static void UI_OwnerDraw( float x, float y, float w, float h, float text_x, floa
 	case UI_REDTEAM4:
 	case UI_REDTEAM5:
 	case UI_REDTEAM6:
-		UI_DrawTeamMember(&rect, scale, color, qfalse, ownerDraw - UI_REDTEAM1 + 1, textStyle);
+		UI_DrawTeamMember( &rect, scale, color, qfalse, ownerDraw - UI_REDTEAM1 + 1, textStyle );
 		break;
 	case UI_NETSOURCE:
 		UI_DrawNetSource( &rect, scale, color, textStyle );

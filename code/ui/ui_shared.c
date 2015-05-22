@@ -257,7 +257,7 @@ void String_Init() {
 PC_SourceWarning
 =================
 */
-static __attribute__ ((format (printf, 2, 3))) void PC_SourceWarning( int handle, char *format, ... ) {
+static __attribute__ ( ( format( printf, 2, 3 ) ) ) void PC_SourceWarning( int handle, char *format, ... ) {
 	int line;
 	char filename[128];
 	va_list argptr;
@@ -280,7 +280,7 @@ static __attribute__ ((format (printf, 2, 3))) void PC_SourceWarning( int handle
 PC_SourceError
 =================
 */
-static __attribute__ ((format (printf, 2, 3))) void PC_SourceError( int handle, char *format, ... ) {
+static __attribute__ ( ( format( printf, 2, 3 ) ) ) void PC_SourceError( int handle, char *format, ... ) {
 	int line;
 	char filename[128];
 	va_list argptr;

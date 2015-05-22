@@ -1468,7 +1468,7 @@ void CG_AddWeaponWithPowerups( refEntity_t gun, weaponInfo_t    *weapon,int i_eq
 			trap_R_AddRefEntityToScene( &equipment );
 		}
 
-	} else if ( i_equipment & ( 1 << PW_FLASHLIGHT ) )   { //
+	} else if ( i_equipment & ( 1 << PW_FLASHLIGHT ) ) {   //
 		memset( &equipment, 0, sizeof( equipment ) );
 		VectorCopy( gun.lightingOrigin, equipment.lightingOrigin );
 		equipment.shadowPlane = gun.shadowPlane;
@@ -2317,34 +2317,34 @@ void CG_MWheel_f( int prev ) {
 			if ( BG_IsPrimary( i ) ) {
 				cg.Inventory[PRIMARY][ cg.Inventorypos[PRIMARY] ] = i;
 				cg.Inventorypos[PRIMARY]++;
-			} else if ( BG_IsSecondary( i ) )   {
+			} else if ( BG_IsSecondary( i ) ) {
 				cg.Inventory[SECONDARY][ cg.Inventorypos[SECONDARY] ] = i;
 				cg.Inventorypos[SECONDARY]++;
-			} else if ( BG_IsMelee( i ) )   {
+			} else if ( BG_IsMelee( i ) ) {
 				cg.Inventory[MELEE][ cg.Inventorypos[MELEE] ] = i;
 				cg.Inventorypos[MELEE]++;
-			} else if ( i == WP_GRENADE )   {
+			} else if ( i == WP_GRENADE ) {
 				trap_Cvar_VariableStringBuffer( "inven_ammo_mk26", var, sizeof( var ) );
 				count = atoi( var );
 				if ( count > 0 ) {
 					cg.Inventory[EXPLO][ cg.Inventorypos[EXPLO] ] = i;
 					cg.Inventorypos[EXPLO]++;
 				}
-			} else if ( i == WP_FLASHBANG )   {
+			} else if ( i == WP_FLASHBANG ) {
 				trap_Cvar_VariableStringBuffer( "inven_ammo_flash", var, sizeof( var ) );
 				count = atoi( var );
 				if ( count > 0 ) {
 					cg.Inventory[EXPLO][ cg.Inventorypos[EXPLO] ] = i;
 					cg.Inventorypos[EXPLO]++;
 				}
-			} else if ( i == WP_SMOKE )   {
+			} else if ( i == WP_SMOKE ) {
 				trap_Cvar_VariableStringBuffer( "inven_ammo_smoke", var, sizeof( var ) );
 				count = atoi( var );
 				if ( count > 0 ) {
 					cg.Inventory[EXPLO][ cg.Inventorypos[EXPLO] ] = i;
 					cg.Inventorypos[EXPLO]++;
 				}
-			} else if ( i == WP_C4 )   {
+			} else if ( i == WP_C4 ) {
 				cg.Inventory[MISC][ cg.Inventorypos[MISC] ] = i;
 				cg.Inventorypos[MISC]++;
 			}
@@ -2508,34 +2508,34 @@ void CG_Weapon_f( void ) {
 			if ( BG_IsPrimary( i ) ) {
 				cg.Inventory[PRIMARY][ cg.Inventorypos[PRIMARY] ] = i;
 				cg.Inventorypos[PRIMARY]++;
-			} else if ( BG_IsSecondary( i ) )   {
+			} else if ( BG_IsSecondary( i ) ) {
 				cg.Inventory[SECONDARY][ cg.Inventorypos[SECONDARY] ] = i;
 				cg.Inventorypos[SECONDARY]++;
-			} else if ( BG_IsMelee( i ) )   {
+			} else if ( BG_IsMelee( i ) ) {
 				cg.Inventory[MELEE][ cg.Inventorypos[MELEE] ] = i;
 				cg.Inventorypos[MELEE]++;
-			} else if ( i == WP_GRENADE )   {
+			} else if ( i == WP_GRENADE ) {
 				trap_Cvar_VariableStringBuffer( "inven_ammo_mk26", var, sizeof( var ) );
 				count = atoi( var );
 				if ( count > 0 ) {
 					cg.Inventory[EXPLO][ cg.Inventorypos[EXPLO] ] = i;
 					cg.Inventorypos[EXPLO]++;
 				}
-			} else if ( i == WP_FLASHBANG )   {
+			} else if ( i == WP_FLASHBANG ) {
 				trap_Cvar_VariableStringBuffer( "inven_ammo_flash", var, sizeof( var ) );
 				count = atoi( var );
 				if ( count > 0 ) {
 					cg.Inventory[EXPLO][ cg.Inventorypos[EXPLO] ] = i;
 					cg.Inventorypos[EXPLO]++;
 				}
-			} else if ( i == WP_SMOKE )   {
+			} else if ( i == WP_SMOKE ) {
 				trap_Cvar_VariableStringBuffer( "inven_ammo_smoke", var, sizeof( var ) );
 				count = atoi( var );
 				if ( count > 0 ) {
 					cg.Inventory[EXPLO][ cg.Inventorypos[EXPLO] ] = i;
 					cg.Inventorypos[EXPLO]++;
 				}
-			} else if ( i == WP_C4 )   {
+			} else if ( i == WP_C4 ) {
 				cg.Inventory[MISC][ cg.Inventorypos[MISC] ] = i;
 				cg.Inventorypos[MISC]++;
 			}
@@ -2748,7 +2748,7 @@ void CG_FireWeapon( centity_t *cent, qboolean othermode ) {
 				}
 			}
 		}
-	} else if ( cent->currentState.eFlags & EF_SILENCED )   {
+	} else if ( cent->currentState.eFlags & EF_SILENCED ) {
 		for ( c = 0 ; c < 4 ; c++ ) {
 			if ( !weap->sil_flashSound[c] ) {
 				break;
@@ -3155,7 +3155,7 @@ void CG_SurfaceEffect( vec3_t origin, vec3_t dir, int surface, int weapon, float
 			}
 		}
 		return;
-	} else if ( surface == BHOLE_SNOW || surface == BHOLE_DIRT || surface == BHOLE_SAND )   {
+	} else if ( surface == BHOLE_SNOW || surface == BHOLE_DIRT || surface == BHOLE_SAND ) {
 		int max = 14 + random() * 6;
 
 		VectorMA( origin, 0.5, dir, origin );
@@ -3218,7 +3218,7 @@ void CG_SurfaceEffect( vec3_t origin, vec3_t dir, int surface, int weapon, float
 			}
 		}
 		return;
-	} else if ( surface == BHOLE_WOOD || surface == BHOLE_GLASS || surface == BHOLE_SOFT )    {
+	} else if ( surface == BHOLE_WOOD || surface == BHOLE_GLASS || surface == BHOLE_SOFT ) {
 		int max = 1 + random() * 2;
 
 		if ( surface == BHOLE_SOFT ) {
@@ -3245,7 +3245,7 @@ void CG_SurfaceEffect( vec3_t origin, vec3_t dir, int surface, int weapon, float
 
 			if ( surface == BHOLE_WOOD ) {
 				bp = CG_MakeExplosion( origin, dir, cgs.media.woodSplinter, 0, cg_particleTime.integer + random() * 1000, qfalse );
-			} else if ( surface == BHOLE_GLASS )   {
+			} else if ( surface == BHOLE_GLASS ) {
 				bp = CG_MakeExplosion( origin, dir, cgs.media.glassSplinter, 0, cg_particleTime.integer + random() * 1000, qfalse );
 			} else if ( surface == BHOLE_SOFT ) {
 				bp = CG_MakeExplosion( origin, dir, cgs.media.softSplinter, 0, cg_particleTime.integer + random() * 1000, qfalse );
@@ -3329,7 +3329,7 @@ void CG_SurfaceEffect( vec3_t origin, vec3_t dir, int surface, int weapon, float
 
 			if ( surface == BHOLE_GLASS ) {
 				randombrown[0] = randombrown[1] = randombrown[2] = 0.1 + random() / 3;
-			} else if ( surface == BHOLE_SOFT )   {
+			} else if ( surface == BHOLE_SOFT ) {
 				randombrown[0] = 0.45 + random() / 4; //we'll create our brown
 				randombrown[1] = 0.5 + random() / 4;
 				randombrown[2] = 0.4 + random() / 4;
@@ -3604,13 +3604,13 @@ void CG_MissileHitWall( int weapon, int clientNum, vec3_t origin, vec3_t dir, in
 		if ( ( cg.DeafTime < cg.time ) ) {
 			trap_S_StartSound( origin, ENTITYNUM_WORLD, CHAN_AUTO, cgs.media.bulletHitKevlar[rndnum] );
 		}
-	} else if ( soundtype == 2 )   {
+	} else if ( soundtype == 2 ) {
 		int rndnum = (int)( random() * 3 );
 
 		if ( cg.DeafTime < cg.time ) {
 			trap_S_StartSound( origin, ENTITYNUM_WORLD, CHAN_AUTO, cgs.media.bulletHitHelmet[rndnum] );
 		}
-	} else if ( BG_IsGrenade( weapon ) )     {
+	} else if ( BG_IsGrenade( weapon ) ) {
 		if ( cg.DeafTime < cg.time ) {
 			trap_S_StartSound( origin, ENTITYNUM_WORLD, CHAN_AUTO, sfx );
 		}
@@ -3665,7 +3665,7 @@ void CG_MissileHitWall( int weapon, int clientNum, vec3_t origin, vec3_t dir, in
 			le->lightColor[2] = 1;
 			le->refEntity.renderfx |= RF_EXPANDING;
 			le->radius = 64;
-		} else if ( weapon == WP_GRENADE || weapon == WP_AK47 * 3 || weapon == WP_M4 * 3 )        {
+		} else if ( weapon == WP_GRENADE || weapon == WP_AK47 * 3 || weapon == WP_M4 * 3 ) {
 			le = CG_MakeExplosion( origin, dir, mod, shader, duration, isSprite );
 			le->light = 0;
 			le->lightColor[0] = 0;
@@ -4667,7 +4667,7 @@ void CG_PredictFireLead( void ) {
 			 cg_entities[trace.entityNum].currentState.eType == ET_DOOR ) {
 
 			entityNum = 0;
-		} else if ( cg_entities[trace.entityNum].currentState.eType != ET_FUNCEXPLOSIVE )   {
+		} else if ( cg_entities[trace.entityNum].currentState.eType != ET_FUNCEXPLOSIVE ) {
 			break;
 		}
 
@@ -5477,7 +5477,7 @@ void AxistoAngles( vec3_t axis[3], vec3_t angles ) {
 	} else {
 		if ( axis[0][0] ) {
 			yaw = ( atan2( axis[0][1], axis[0][0] ) * 180 / M_PI );
-		} else if ( axis[0][1] > 0 )   {
+		} else if ( axis[0][1] > 0 ) {
 			yaw = 90;
 		} else {
 			yaw = 270;
@@ -5712,14 +5712,14 @@ void CG_WeaponAnimation( playerState_t *ps ) {
 		// gl attached.
 		if ( ps->weaponstate == WEAPON_RELOADING_STOP ) {
 			cent->pe.weapAnim = WANIM_SPIN2; // back to normal mode
-		} else if ( ps->stats[STAT_WEAPONMODE] & ( 1 << WM_WEAPONMODE2 ) )                                                              {
+		} else if ( ps->stats[STAT_WEAPONMODE] & ( 1 << WM_WEAPONMODE2 ) ) {
 			if ( ps->weaponstate == WEAPON_READY ) {
 				cent->pe.weapAnim = WANIM_IDLE_EMPTY; // idle gl
-			} else if ( ps->weaponstate == WEAPON_RELOADING_CYCLE )                                                        {
+			} else if ( ps->weaponstate == WEAPON_RELOADING_CYCLE ) {
 				cent->pe.weapAnim = WANIM_THROW;    // to gl
-			} else if ( ps->weaponstate == WEAPON_RELOADING )                                                    {
+			} else if ( ps->weaponstate == WEAPON_RELOADING ) {
 				cent->pe.weapAnim = WANIM_SPIN1; // reload gl
-			} else if ( ps->weaponstate == WEAPON_FIRING )                                                     {
+			} else if ( ps->weaponstate == WEAPON_FIRING ) {
 				cent->pe.weapAnim = WANIM_ATTACKMODE23; // fire gl
 			}
 		}
@@ -5747,7 +5747,7 @@ void CG_WeaponAnimation( playerState_t *ps ) {
 				break;
 			}
 		}
-	} else if ( cg.ns_ironsightState == IS_IDLE )   {
+	} else if ( cg.ns_ironsightState == IS_IDLE ) {
 		if ( ps->weaponstate == WEAPON_RELOADING || ps->weaponstate == WEAPON_RELOADING_EMPTY ) {
 
 		}
@@ -5784,7 +5784,7 @@ void CG_WeaponAnimation( playerState_t *ps ) {
 
 		CG_RunWeaponLerpFrame( ci, &cent->pe.hand_weapon, 28, cent->pe.weapAnim, 1.0f, ps, cent );
 		hand.hModel = cgs.media.bombCaseModel;
-	} else if ( ps->stats[STAT_WEAPONMODE] & ( 1 << WM_GRENADELAUNCHER ) )   {
+	} else if ( ps->stats[STAT_WEAPONMODE] & ( 1 << WM_GRENADELAUNCHER ) ) {
 		CG_RunWeaponLerpFrame( ci, &cent->pe.hand_weapon, ps->weapon, cent->pe.weapAnim, CG_GetSpeedScaleForWeaponSwitch( ps, cent ), ps, cent );
 		hand.hModel = weapon->glModel;
 	} else

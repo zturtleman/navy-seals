@@ -296,7 +296,7 @@ void CG_BloodOnWallMark( vec3_t end, vec3_t normal, int damage, qboolean brain )
 
 	if ( i > max ) {
 		i = max;
-	} else if ( i < 0 )  {
+	} else if ( i < 0 ) {
 		i = 0;
 	}
 
@@ -577,7 +577,7 @@ void NS_CG_LaunchFuncExplosive( centity_t *cent ) {
 				break;
 			}
 			//fire_metalgib(self, origin, dir);
-		}  else if ( spawnflags & 4 )   {
+		}  else if ( spawnflags & 4 ) {
 			sfx = cgs.media.sfxMetal[ (int)( random() * 3 ) ];
 			random = (int)( random() * 2 );
 
@@ -767,31 +767,31 @@ void CG_QCmd_HandleMenu( void ) {
 	if ( trap_Key_IsDown( '1' ) ) {
 		trap_SendConsoleCommand( va( "%s ; %s",cg_qcmd_cmd1.string, cg_qcmd_close.string ) );
 		cg.viewCmd = qfalse; return;
-	} else if ( trap_Key_IsDown( '2' ) )   {
+	} else if ( trap_Key_IsDown( '2' ) ) {
 		trap_SendConsoleCommand( va( "%s ; %s ;", cg_qcmd_cmd2.string, cg_qcmd_close.string ) );
 		cg.viewCmd = qfalse; return;
-	} else if ( trap_Key_IsDown( '3' ) )   {
+	} else if ( trap_Key_IsDown( '3' ) ) {
 		trap_SendConsoleCommand( va( "%s ; %s ;", cg_qcmd_cmd3.string, cg_qcmd_close.string ) );
 		cg.viewCmd = qfalse; return;
-	} else if ( trap_Key_IsDown( '4' ) )   {
+	} else if ( trap_Key_IsDown( '4' ) ) {
 		trap_SendConsoleCommand( va( "%s ; %s ;", cg_qcmd_cmd4.string, cg_qcmd_close.string ) );
 		cg.viewCmd = qfalse; return;
-	} else if ( trap_Key_IsDown( '5' ) )   {
+	} else if ( trap_Key_IsDown( '5' ) ) {
 		trap_SendConsoleCommand( va( "%s ; %s ;", cg_qcmd_cmd5.string, cg_qcmd_close.string ) );
 		cg.viewCmd = qfalse; return;
-	} else if ( trap_Key_IsDown( '6' ) )   {
+	} else if ( trap_Key_IsDown( '6' ) ) {
 		trap_SendConsoleCommand( va( "%s ; %s ;", cg_qcmd_cmd6.string, cg_qcmd_close.string ) );
 		cg.viewCmd = qfalse; return;
-	} else if ( trap_Key_IsDown( '7' ) )   {
+	} else if ( trap_Key_IsDown( '7' ) ) {
 		trap_SendConsoleCommand( va( "%s ; %s ;", cg_qcmd_cmd7.string, cg_qcmd_close.string ) );
 		cg.viewCmd = qfalse; return;
-	} else if ( trap_Key_IsDown( '8' ) )   {
+	} else if ( trap_Key_IsDown( '8' ) ) {
 		trap_SendConsoleCommand( va( "%s ; %s ;", cg_qcmd_cmd8.string, cg_qcmd_close.string ) );
 		cg.viewCmd = qfalse; return;
-	} else if ( trap_Key_IsDown( '9' ) )   {
+	} else if ( trap_Key_IsDown( '9' ) ) {
 		trap_SendConsoleCommand( va( "%s ; %s ;", cg_qcmd_cmd9.string, cg_qcmd_close.string ) );
 		cg.viewCmd = qfalse; return;
-	} else if ( trap_Key_IsDown( '0' ) )   {
+	} else if ( trap_Key_IsDown( '0' ) ) {
 		trap_SendConsoleCommand( va( "%s ; %s ;", cg_qcmd_cmd0.string, cg_qcmd_close.string ) );
 		cg.viewCmd = qfalse;
 		return;
@@ -1244,7 +1244,7 @@ static int CG_DrawStatusBar_Grenades( int y ) {
 		if ( y2 == 52 ) {
 			CG_DrawPic3( base_x + 28, y + 2, 20, 20, ammo_40mm );
 			CG_DrawSmallField( base_x + 28 - 20, y + 2, 1, ammo );
-		} else if ( y2 == 100 )   {
+		} else if ( y2 == 100 ) {
 			CG_DrawPic3( base_x + 76, y + 2, 20, 20, ammo_40mm );
 			CG_DrawSmallField( base_x + 76 - 20, y + 2, 1, ammo );
 		} else
@@ -1721,13 +1721,13 @@ static void CG_DrawWeaponStatus2( int x,int y, float scale ) {
 		 ps->weaponstate == WEAPON_BANDAGING_END ||
 		 ps->weaponstate == WEAPON_BANDAGING ) {
 		mode = "Bandaging"; /*
-	    else if ( (weapon == WP_M4 || weapon == WP_AK47) && (weaponmode & ( 1 << WM_GRENADELAUNCHER ) ) && ( weaponmode & ( 1 << WM_WEAPONMODE2 ) ) )
-	    {
-	    mode = "";
-	    }*/
-	} else if ( ( weapon == WP_M4 || weapon == WP_AK47 ) && ( weaponmode & ( 1 << WM_BAYONET ) ) && ( weaponmode & ( 1 << WM_WEAPONMODE2 ) ) )             {
+		else if ( (weapon == WP_M4 || weapon == WP_AK47) && (weaponmode & ( 1 << WM_GRENADELAUNCHER ) ) && ( weaponmode & ( 1 << WM_WEAPONMODE2 ) ) )
+		{
+		mode = "";
+		}*/
+	} else if ( ( weapon == WP_M4 || weapon == WP_AK47 ) && ( weaponmode & ( 1 << WM_BAYONET ) ) && ( weaponmode & ( 1 << WM_WEAPONMODE2 ) ) ) {
 		mode = "Stab Mode";
-	} else if ( BG_IsGrenade( weapon ) )   {
+	} else if ( BG_IsGrenade( weapon ) ) {
 		int sec = 3;
 
 		if ( weapon == WP_FLASHBANG ) {
@@ -1764,7 +1764,7 @@ static void CG_DrawWeaponStatus2( int x,int y, float scale ) {
 		} else {
 			mode = "Full Auto";
 		}
-	} else if ( !BG_IsMelee( weapon ) )     {
+	} else if ( !BG_IsMelee( weapon ) ) {
 		mode = "Single Shot";
 	} else {
 		return;
@@ -1826,14 +1826,14 @@ static void CG_DrawWeaponStatusIcon( int x, int y, int width, int height ) {
 		} else {
 			shader = firemode[4];
 		}
-	} else if ( weapon == WP_M4 || weapon == WP_M249 || weapon == WP_M14 || weapon == WP_MAC10 || weapon == WP_AK47 || weapon == WP_MP5 || weapon == WP_PDW )   {
+	} else if ( weapon == WP_M4 || weapon == WP_M249 || weapon == WP_M14 || weapon == WP_MAC10 || weapon == WP_AK47 || weapon == WP_MP5 || weapon == WP_PDW ) {
 		// if i want to switch to
 		if ( weaponmode & ( 1 << WM_SINGLE ) ) {
 			shader = firemode[0];
 		} else {
 			shader = firemode[1];
 		}
-	} else if ( !BG_IsMelee( weapon ) )     {
+	} else if ( !BG_IsMelee( weapon ) ) {
 		shader = firemode[0];
 	}
 
@@ -2025,7 +2025,7 @@ void CG_DrawDefconHud( void ) {
 
 	qhandle_t background = trap_R_RegisterShader( "gfx/2d/hud/defcon/background.tga" ),
 			  frame = trap_R_RegisterShader( "gfx/2d/hud/defcon/frame.tga" ),
-			  //outline = trap_R_RegisterShader( "gfx/2d/hud/defcon/outline.tga" ),
+	//outline = trap_R_RegisterShader( "gfx/2d/hud/defcon/outline.tga" ),
 			  stamina[3];
 
 	stamina[0]  =   trap_R_RegisterShader( "gfx/2d/hud/defcon/stamina_button1.tga" );

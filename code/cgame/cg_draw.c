@@ -2714,7 +2714,7 @@ static void CG_DrawWarmup( void ) {
 				y += 16;
 			}
 		}
-	} else if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_BLUE )   { // seals
+	} else if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_BLUE ) {   // seals
 		int value;
 		extern char TangoBriefing[ 128 ][ MAX_CHARS_PER_LINE ];
 		extern int tangoBriefingLines;

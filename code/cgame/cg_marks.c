@@ -444,7 +444,7 @@ void CG_AddMarks( void ) {
 
 			CG_ImpactMark( mp->markShader, mp->org, mp->plane, 20,fade,fade,fade,fade,qtrue, radius, qtrue );
 			continue;
-		} else if ( mp->markShader == cgs.media.ns_bloodPool )   {
+		} else if ( mp->markShader == cgs.media.ns_bloodPool ) {
 			t = mp->time + ( cg_addMarks.integer * 1000 ) - cg.time;
 
 			if ( t < MARK_FADE_TIME ) {

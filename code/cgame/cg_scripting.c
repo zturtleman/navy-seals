@@ -195,7 +195,7 @@ qboolean ClientScript_Operate( char value1[256], int function, char value2[256] 
 			}
 
 			return 1; // it's the same
-		} else if ( ClientScript_IsNumber( value1 ) && atof( value1 ) == atof( value2 ) )   { // the same
+		} else if ( ClientScript_IsNumber( value1 ) && atof( value1 ) == atof( value2 ) ) {   // the same
 			if ( function == OP_NOTSAME ) {
 				return 0;
 			}
@@ -282,7 +282,7 @@ void ClientScript_GetScriptCommand( char value[256], const char *token ) {
 		} else {
 			strcpy( value, "<empty>" );
 		}
-	} else if ( token[0] == 'r' && token[1] == 'a' && token[2] == 'n' && token[3] == 'd' )   {
+	} else if ( token[0] == 'r' && token[1] == 'a' && token[2] == 'n' && token[3] == 'd' ) {
 		float mod;
 
 		token += 4;
@@ -294,7 +294,7 @@ void ClientScript_GetScriptCommand( char value[256], const char *token ) {
 		}
 
 		strcpy( value, va( "%f", random() * mod ) );
-	} else if ( !Q_stricmp( token, "getkey" ) )    {
+	} else if ( !Q_stricmp( token, "getkey" ) ) {
 		int key;
 		//char cha;
 		ClientScript_GetValue( value, ClientScript_NextToken(), qtrue );
@@ -305,19 +305,19 @@ void ClientScript_GetScriptCommand( char value[256], const char *token ) {
 			return;
 		}
 		Com_sprintf( value,size,"%c",key );
-	} else if ( !Q_stricmp( token, "chasing" ) )    {
+	} else if ( !Q_stricmp( token, "chasing" ) ) {
 		if ( cg.predictedPlayerState.pm_flags & PMF_FOLLOW ) {
 			strcpy( value, "1" );
 		} else {
 			strcpy( value, "0" );
 		}
-	} else if ( !Q_stricmp( token, "spectator" ) )    {
+	} else if ( !Q_stricmp( token, "spectator" ) ) {
 		if ( cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_SPECTATOR || cg.predictedPlayerState.pm_type == PM_SPECTATOR || cg.predictedPlayerState.pm_type == PM_NOCLIP ) {
 			strcpy( value, "1" );
 		} else {
 			strcpy( value, "0" );
 		}
-	} else if ( !Q_stricmp( token, "clips" ) )     {
+	} else if ( !Q_stricmp( token, "clips" ) ) {
 		gitem_t *item = BG_FindItemForWeapon( cg.predictedPlayerState.weapon );
 
 		if ( !item ) {
@@ -325,7 +325,7 @@ void ClientScript_GetScriptCommand( char value[256], const char *token ) {
 			return;
 		}
 		strcpy( value, va( "%i", cg.predictedPlayerState.ammo[ BG_FindItemForWeapon( cg.predictedPlayerState.weapon )->giAmmoTag ] ) );
-	} else if ( !Q_stricmp( token, "weapon" ) )     {
+	} else if ( !Q_stricmp( token, "weapon" ) ) {
 		gitem_t *item = BG_FindItemForWeapon( cg.predictedPlayerState.weapon );
 
 		if ( !item ) {
@@ -333,7 +333,7 @@ void ClientScript_GetScriptCommand( char value[256], const char *token ) {
 			return;
 		}
 		strcpy( value, BG_FindItemForWeapon( cg.predictedPlayerState.weapon )->pickup_name );
-	} else if ( !Q_stricmp( token, "health" ) )     {
+	} else if ( !Q_stricmp( token, "health" ) ) {
 		strcpy( value, va( "%i", cg.predictedPlayerState.stats[STAT_HEALTH] ) );
 	} else if ( !Q_stricmp( token, "rounds" ) ) {
 		strcpy( value, va( "%i", cg.predictedPlayerState.stats[STAT_ROUNDS] ) );
@@ -350,7 +350,7 @@ void ClientScript_GetScriptCommand( char value[256], const char *token ) {
 			return;
 		}
 		strcpy( value, va( "%i", cg.predictedPlayerState.stats[atoi( token )] ) );
-	} else if ( token[0] == 'p' && token[1] == 'e' && token[2] == 'r' && token[3] == 's' )   {
+	} else if ( token[0] == 'p' && token[1] == 'e' && token[2] == 'r' && token[3] == 's' ) {
 		token += 4;
 
 		if ( atoi( token ) >= MAX_PERSISTANT ) {
@@ -359,7 +359,7 @@ void ClientScript_GetScriptCommand( char value[256], const char *token ) {
 			return;
 		}
 		strcpy( value, va( "%i", cg.predictedPlayerState.persistant[atoi( token )] ) );
-	} else if ( !Q_stricmp( token, "pm_type" ) )     {
+	} else if ( !Q_stricmp( token, "pm_type" ) ) {
 		strcpy( value, va( "%i", cg.predictedPlayerState.pm_type ) );
 	} else if ( !Q_stricmp( token, "time" ) ) {
 		strcpy( value, va( "%i", cg.time ) );
@@ -694,7 +694,7 @@ Is there a linebrake char at the beginning or at the end?
 qboolean ClientScript_Linebreak( const char *token ) {
 	if ( token[0] == '#' ) {
 		return qtrue;
-	} else if ( token[strlen( token ) - 1] == '#' )  {
+	} else if ( token[strlen( token ) - 1] == '#' ) {
 		return qtrue;
 	}
 
@@ -732,7 +732,7 @@ void ClientScript_GetCommand( char cmd[512] ) {
 			return;
 		}
 		goto copy;
-	} else if ( Q_stricmp( token, "{" ) != 0 )   {
+	} else if ( Q_stricmp( token, "{" ) != 0 ) {
 		NSSL_Printf( "Wrong syntax: '%s' expected '{'\n", token );
 		return;
 	}
@@ -1294,7 +1294,7 @@ void ClientScript_ProcessWhileLoop( int num ) {
 		} else {
 			scriptLoopTable[num].inuse = qfalse;
 		}
-	} else if ( function == OP_SAME )   {
+	} else if ( function == OP_SAME ) {
 		if ( atof( cvarResult ) == scriptLoopTable[num].value ) {
 			ClientScript_ExecText( cmd ); // execute it
 		} else {
@@ -1657,7 +1657,7 @@ finish_operation:
 		}
 
 		goto logic_operation;
-	} else if ( !Q_stricmp( token, ")" ) )    {
+	} else if ( !Q_stricmp( token, ")" ) ) {
 		return ( result >= numOperators );
 	} else {
 		// go back one token so we can properly continue parsing

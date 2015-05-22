@@ -229,7 +229,7 @@ void CG_FragmentBounceMark( localEntity_t *le, trace_t *trace ) {
 			CG_DirectImpactMark( shader, trace->endpos, trace->plane.normal, random() * 360,
 								 1,1,1,0.6 + random() / 3, qfalse,  radius, qfalse, -1 );
 		}
-	} else if ( le->leMarkType == LEMT_BLEEDER )   {
+	} else if ( le->leMarkType == LEMT_BLEEDER ) {
 
 
 		CG_ImpactMark( shader, trace->endpos, trace->plane.normal, random() * 360,
@@ -382,7 +382,7 @@ void CG_AddFragment( localEntity_t *le ) {
 			CG_BloodTrail( le );
 		} else if ( le->leBounceSoundType == LEBS_BLEEDER ) {
 			CG_BleederTrail( le );  // smaller!
-		} else if ( le->leBounceSoundType == LEBS_SPARK )                                          {
+		} else if ( le->leBounceSoundType == LEBS_SPARK ) {
 			CG_SparkTrail( le );
 		}
 
@@ -441,7 +441,7 @@ static void CG_AddParticle( localEntity_t *le ) {
 
 	if ( !( le->leFlags & LEF_PUFF_DONT_SCALE ) ) {
 		re->radius = le->radius * ( ( /*1.0 -*/ c ) );
-	} else if ( re->radius <= 0 || !re->radius )   {
+	} else if ( re->radius <= 0 || !re->radius ) {
 		re->radius = le->radius;
 	}
 
@@ -585,7 +585,7 @@ static void CG_AddShrapnel( localEntity_t *le ) {
 		ent.shaderRGBA[3] = 300 * c;
 
 		trap_R_AddRefEntityToScene( &ent );
-	} else if ( le->leMarkType == LEMT_BLOOD )    {
+	} else if ( le->leMarkType == LEMT_BLOOD ) {
 		refEntity_t ent;
 
 		memset( &ent, 0, sizeof( ent ) );

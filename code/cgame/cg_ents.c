@@ -436,7 +436,7 @@ static void CG_Item( centity_t *cent ) {
 	if ( item->giType == IT_WEAPON ) {
 		ent.hModel = cg_weapons[item->giTag].viewweaponModel;
 		cent->lerpOrigin[2] -= 3; // bring to ground
-	} else if ( item->giTag == PW_BRIEFCASE )   {
+	} else if ( item->giTag == PW_BRIEFCASE ) {
 		cent->lerpOrigin[2] -= 10;
 		ent.hModel = cgs.media.briefcaseModel;
 	} else {
@@ -519,7 +519,7 @@ static void CG_Flare( centity_t *cent, vec3_t lerpOrigin, float size, float r, f
 		cent->miscTime = 0;
 		//		CG_Printf("Flare out of screen.\n");
 		return;
-	} else if ( dot > -0.60 )   {
+	} else if ( dot > -0.60 ) {
 		cent->miscTime = 0;
 		//		CG_Printf("Flare out of screen.\n");
 		return;
@@ -720,7 +720,7 @@ static void CG_Flare( centity_t *cent, vec3_t lerpOrigin, float size, float r, f
 			return;
 		}
 
-	} else if ( dot > -0.925 )   {
+	} else if ( dot > -0.925 ) {
 		return;
 	}
 
@@ -732,47 +732,47 @@ static void CG_Flare( centity_t *cent, vec3_t lerpOrigin, float size, float r, f
 			ent.radius = 2.5;
 			ent.customShader = cgs.media.flare_flare_green;
 			ent.shaderRGBA[3] = 100;
-		} else if ( i == 2 )   {
+		} else if ( i == 2 ) {
 			ent.radius = 5;
 			ent.customShader = cgs.media.flare_circle_green;
 			ent.shaderRGBA[3] = 60;
-		} else if ( i == 3 )   {
+		} else if ( i == 3 ) {
 			ent.radius = 3.7f;
 			ent.customShader = cgs.media.flare_circle_green;
 			ent.shaderRGBA[3] = 80;
-		} else if ( i == 4 )   {
+		} else if ( i == 4 ) {
 			ent.radius = 3;
 			ent.customShader = cgs.media.flare_circle_orange;
 			ent.shaderRGBA[3] = 120;
-		} else if ( i == 5 )   {
+		} else if ( i == 5 ) {
 			ent.radius = 2;
 			ent.customShader = cgs.media.flare_flare_turkis;
 			ent.shaderRGBA[3] = 230;
-		} else if ( i == 6 )   {
+		} else if ( i == 6 ) {
 			ent.radius = 4;
 			ent.customShader = cgs.media.flare_flare_turkis;
 			ent.shaderRGBA[3] = 100;
-		} else if ( i == 7 )   {
+		} else if ( i == 7 ) {
 			ent.radius = 6;
 			ent.customShader = cgs.media.flare_circle_orange;
 			ent.shaderRGBA[3] = 140;
-		} else if ( i == 7 )   {
+		} else if ( i == 7 ) {
 			ent.radius = 8;
 			ent.customShader = cgs.media.flare_circle_fadein;
 			ent.shaderRGBA[3] = 200;
-		} else if ( i == 8 )   {
+		} else if ( i == 8 ) {
 			ent.radius = 4;
 			ent.customShader = cgs.media.flare_flare_turkis;
 			ent.shaderRGBA[3] = 140;
-		} else if ( i == 9 )   {
+		} else if ( i == 9 ) {
 			ent.radius = 12;
 			ent.customShader = cgs.media.flare_circle_blue;
 			ent.shaderRGBA[3] = 200;
-		} else if ( i == 10 )   {
+		} else if ( i == 10 ) {
 			ent.radius = 8;
 			ent.customShader = cgs.media.flare_circle_fadein;
 			ent.shaderRGBA[3] = 180;
-		} else if ( i == 11 )   {
+		} else if ( i == 11 ) {
 			ent.radius = 16;
 			ent.customShader = cgs.media.flare_circle_rainbow;
 			ent.shaderRGBA[3] = 240;
@@ -841,12 +841,12 @@ static void CG_WaterBulletTrail( centity_t *ent ) {
 		BG_EvaluateTrajectory( &es->pos, t, lastPos );
 
 		smoke = CG_SmokePuff( lastPos, up,
-		4,
-		1, 1, 1, 0.33f,
-		1000,
-		cg.time,
-		0, 0,
-		cgs.media.smokePuffShader );
+							  4,
+							  1, 1, 1, 0.33f,
+							  1000,
+							  cg.time,
+							  0, 0,
+							  cgs.media.smokePuffShader );
 		// use the optimized local entity add
 		smoke->leType = LE_SCALE_FADE;
 	}
@@ -1348,7 +1348,7 @@ Also called by client movement prediction code
 void CG_AdjustPositionForMover( const vec3_t in, int moverNum, int fromTime, int toTime, vec3_t out ) {
 	centity_t   *cent;
 	vec3_t oldOrigin, origin, deltaOrigin;
-	vec3_t oldAngles, angles;//, deltaAngles;
+	vec3_t oldAngles, angles; //, deltaAngles;
 
 	if ( moverNum <= 0 || moverNum >= ENTITYNUM_MAX_NORMAL ) {
 		VectorCopy( in, out );

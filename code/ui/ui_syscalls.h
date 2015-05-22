@@ -30,7 +30,7 @@ Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 //
 
 void            trap_Print( const char *string );
-void            trap_Error( const char *string ) __attribute__((noreturn));
+void            trap_Error( const char *string ) __attribute__( ( noreturn ) );
 int             trap_Milliseconds( void );
 void            trap_Cvar_Register( vmCvar_t *vmCvar, const char *varName, const char *defaultValue, int flags );
 void            trap_Cvar_Update( vmCvar_t *vmCvar );
@@ -114,4 +114,3 @@ qboolean        trap_VerifyCDKey( const char *key, const char *chksum );
 int             trap_Key_GetModelCount( void );
 
 #endif
-

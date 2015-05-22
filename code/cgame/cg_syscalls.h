@@ -34,7 +34,7 @@ Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 void        trap_Print( const char *fmt );
 
 // abort the game
-void        trap_Error( const char *fmt ) __attribute__((noreturn));
+void        trap_Error( const char *fmt ) __attribute__( ( noreturn ) );
 
 // milliseconds should only be used for performance tuning, never
 // for anything game related.  Get time from the CG_DrawActiveFrame parameter
@@ -99,7 +99,7 @@ int         trap_CM_MarkFragments( int numPoints, const vec3_t *points,
 // moves and the listener moves
 void        trap_S_StartSound( vec3_t origin, int entityNum, int entchannel, sfxHandle_t sfx );
 //void		trap_S_StartSoundExtended( vec3_t origin, float volume, float rolloff, float pitch, int entityNum, int entchannel, sfxHandle_t sfx );
-#define     trap_S_StartSoundExtended( origin, volume, rolloff, pitch, entityNum, entchannel, sfx ) do { trap_S_StartSound( origin, entityNum, entchannel, sfx ), (void)(volume), (void)(rolloff), (void)(pitch); } while ( 0 )
+#define     trap_S_StartSoundExtended( origin, volume, rolloff, pitch, entityNum, entchannel, sfx ) do { trap_S_StartSound( origin, entityNum, entchannel, sfx ), (void)( volume ), (void)( rolloff ), (void)( pitch ); } while ( 0 )
 void        trap_S_StopLoopingSound( int entnum );
 
 // a local sound is always played full volume
@@ -203,4 +203,3 @@ void trap_CIN_SetExtents( int handle, int x, int y, int w, int h );
 void trap_SnapVector( float *v );
 
 #endif
-

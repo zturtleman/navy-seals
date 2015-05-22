@@ -2375,9 +2375,9 @@ void CG_DoWeaponConfig( char **args, int parameter ) {
 		if ( Q_stricmp( name, "setPrimaryWeapon" ) == 0 ) {
 
 			trap_Cvar_Set( "inven_Primary", va( "%i", parameter ) );
-		} else if ( Q_stricmp( name, "setSecondaryWeapon" ) == 0 )       {
+		} else if ( Q_stricmp( name, "setSecondaryWeapon" ) == 0 ) {
 			trap_Cvar_Set( "inven_Secondary", va( "%i",parameter ) );
-		} else if ( Q_stricmp( name, "setItem" ) == 0 )     {
+		} else if ( Q_stricmp( name, "setItem" ) == 0 ) {
 			char *cvarname = "cvarnone";
 			char var[MAX_TOKEN_CHARS];
 			int Value;
@@ -2409,12 +2409,12 @@ void CG_DoWeaponConfig( char **args, int parameter ) {
 			}
 
 			trap_Cvar_Set( cvarname, va( "%i",Value ) );
-		} else if ( Q_stricmp( name, "removeAllSecondary" ) == 0 )     {
+		} else if ( Q_stricmp( name, "removeAllSecondary" ) == 0 ) {
 			Com_Printf( "removed all Secondary\n" );
-		} else if ( Q_stricmp( name, "quitCGmenu" ) == 0 )     {
+		} else if ( Q_stricmp( name, "quitCGmenu" ) == 0 ) {
 			CG_EventHandling( CGAME_EVENT_NONE );
 			trap_Key_SetCatcher( 0 );
-		} else if ( Q_stricmp( name, "updateInventory" ) == 0 )     {
+		} else if ( Q_stricmp( name, "updateInventory" ) == 0 ) {
 			char *command;
 
 			int primary ;

@@ -921,7 +921,7 @@ void CG_EntityEvent( centity_t *cent, vec3_t position ) {
 					CG_NewbieMessage( S_COLOR_GREEN "The Briefcase has been stolen.\nTry to kill the carrier..", SCREEN_HEIGHT * 0.60, cg_newbeeHeight.value );
 
 
-				} else if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_RED && !cg.ns_newbiehelp.w_briefcaseTaken_Seal )   {
+				} else if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_RED && !cg.ns_newbiehelp.w_briefcaseTaken_Seal ) {
 					cg.ns_newbiehelp.w_briefcaseTaken_Seal = qtrue;
 					CG_NewbieMessage( S_COLOR_GREEN "The Briefcase has been stolen by your Team.\nDefend the carrier at all cost.", SCREEN_HEIGHT * 0.60, cg_newbeeHeight.value );
 					// seal player

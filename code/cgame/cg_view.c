@@ -307,7 +307,7 @@ static void CG_OffsetThirdPersonView( void ) {
 		if ( cmd.forwardmove < 0 ) {
 			cg.cameraZoom += STEP_CAMERA_ZOOM;
 
-		} else if ( cmd.forwardmove > 0 )   {
+		} else if ( cmd.forwardmove > 0 ) {
 			cg.cameraZoom -= STEP_CAMERA_ZOOM;
 
 		}
@@ -325,7 +325,7 @@ static void CG_OffsetThirdPersonView( void ) {
 			if ( cg.cameraAngle > 360 ) {
 				cg.cameraAngle -= 360;
 			}
-		} else if ( cmd.rightmove > 0 )   {
+		} else if ( cmd.rightmove > 0 ) {
 			cg.cameraAngle -= STEP_CAMERA_ZOOM;
 		}
 
@@ -337,7 +337,7 @@ static void CG_OffsetThirdPersonView( void ) {
 		sideScale = sin( cg.cameraAngle / 180 * M_PI );
 		VectorMA( view, -cg.cameraZoom * forwardScale, forward, view );
 		VectorMA( view, -cg.cameraZoom * sideScale, right, view );
-	} else if ( cg.deathCam )   {
+	} else if ( cg.deathCam ) {
 		if ( cg.deathZoom < 80 ) {
 			cg.deathZoom += ( cg.time - cg.oldTime ) / 12;
 		}
@@ -801,15 +801,15 @@ static int CG_CalcViewValues( void ) {
 	if ( cg.renderingThirdPerson ) {
 		// back away from character
 		CG_OffsetThirdPersonView();
-	} else if ( cgs.gametype == GT_TEAM && cg.snap->ps.stats[STAT_HEALTH] <= 0 )   {
+	} else if ( cgs.gametype == GT_TEAM && cg.snap->ps.stats[STAT_HEALTH] <= 0 ) {
 		cg.renderingThirdPerson = qtrue;
 		cg.deathCam = qtrue;
 		CG_OffsetThirdPersonView();
-	} else if ( cg.cameraSpectator /* || cg.snap->ps.pm_flags & PMF_FOLLOW */ )   {
+	} else if ( cg.cameraSpectator /* || cg.snap->ps.pm_flags & PMF_FOLLOW */ ) {
 		cg.renderingThirdPerson = qtrue;
 		cg.cameraSpectator = qtrue;
 		CG_OffsetThirdPersonView();
-	} else if ( cg.cameraActive /* || ( cg.snap->ps.pm_flags & PMF_FOLLOW ) */ )   {
+	} else if ( cg.cameraActive /* || ( cg.snap->ps.pm_flags & PMF_FOLLOW ) */ ) {
 		cg.cameraActive = qtrue;
 		cg.cameraOrigin[2] += DEFAULT_VIEWHEIGHT;
 
@@ -1067,7 +1067,7 @@ void CG_DrawActiveFrame( int serverTime, stereoFrame_t stereoView, qboolean demo
 			CG_InvenSelect();
 			cg.InventoryTime = 0;
 		}
-	} else if ( cg.InventoryTime != 0 )     {
+	} else if ( cg.InventoryTime != 0 ) {
 		cg.InventoryTime = 0;
 	}
 
@@ -1145,7 +1145,7 @@ void CG_DrawActiveFrame( int serverTime, stereoFrame_t stereoView, qboolean demo
 			}
 
 			cg.button3pushed = qtrue;
-		} else if ( !CG_ButtonPushed( BUTTON_WEAPON2 ) )   {
+		} else if ( !CG_ButtonPushed( BUTTON_WEAPON2 ) ) {
 			cg.button3pushed = qfalse;
 		}
 	} else {
