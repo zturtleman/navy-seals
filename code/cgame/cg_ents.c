@@ -799,23 +799,21 @@ CG_WaterBulletTrail
 */
 void CG_RealBloodTrail( vec3_t start, vec3_t end, float spacing );
 static void CG_WaterBulletTrail( centity_t *ent ) {
-	int step;
+	//int step, t, startTime;
 	vec3_t origin, lastPos;
-	int t;
-	int startTime, contents;
+	int contents;
 	int lastContents;
 	entityState_t   *es;
-	vec3_t up;
+	//vec3_t up = { 0, 0, 0 };
 
-	up[0] = 0;
-	up[1] = 0;
-	up[2] = 0;
 
-	step = 35;
 
 	es = &ent->currentState;
+#if 0
+	step = 35;
 	startTime = ent->trailTime;
 	t = step * ( ( startTime + step ) / step );
+#endif
 
 	BG_EvaluateTrajectory( &es->pos, cg.time, origin );
 	contents = CG_PointContents( origin, -1 );
@@ -838,21 +836,21 @@ static void CG_WaterBulletTrail( centity_t *ent ) {
 		return;
 	}
 
-	/*
+#if 0
 	for ( ; t <= ent->trailTime ; t += step ) {
-	BG_EvaluateTrajectory( &es->pos, t, lastPos );
+		BG_EvaluateTrajectory( &es->pos, t, lastPos );
 
-
-	smoke = CG_SmokePuff( lastPos, up,
-	4,
-	1, 1, 1, 0.33f,
-	1000,
-	cg.time,
-	0, 0,
-	cgs.media.smokePuffShader );
-	// use the optimized local entity add
-	smoke->leType = LE_SCALE_FADE;
-	}*/
+		smoke = CG_SmokePuff( lastPos, up,
+		4,
+		1, 1, 1, 0.33f,
+		1000,
+		cg.time,
+		0, 0,
+		cgs.media.smokePuffShader );
+		// use the optimized local entity add
+		smoke->leType = LE_SCALE_FADE;
+	}
+#endif
 	// add trails
 	if ( ent->currentState.powerups & ( 1 << 1 ) ) {
 		/// blood trail
@@ -866,7 +864,6 @@ static void CG_WaterBulletTrail( centity_t *ent ) {
 		// misc trail.
 	}
 }
-/*
 
 /*
 ===============
@@ -1172,6 +1169,7 @@ static void CG_Missile( centity_t *cent ) {
 
 				//smoke->leFlags = LEF_PUFF_DONT_FADE;
 				//smoke->endTime = cg.time + 1000;
+				(void)smoke; // slience compiler warning about unused variable
 
 				cent->trailTime = cg.time + SEALS_SMOKENADETIME;
 			}
@@ -1350,7 +1348,7 @@ Also called by client movement prediction code
 void CG_AdjustPositionForMover( const vec3_t in, int moverNum, int fromTime, int toTime, vec3_t out ) {
 	centity_t   *cent;
 	vec3_t oldOrigin, origin, deltaOrigin;
-	vec3_t oldAngles, angles, deltaAngles;
+	vec3_t oldAngles, angles;//, deltaAngles;
 
 	if ( moverNum <= 0 || moverNum >= ENTITYNUM_MAX_NORMAL ) {
 		VectorCopy( in, out );
@@ -1371,7 +1369,7 @@ void CG_AdjustPositionForMover( const vec3_t in, int moverNum, int fromTime, int
 	BG_EvaluateTrajectory( &cent->currentState.apos, toTime, angles );
 
 	VectorSubtract( origin, oldOrigin, deltaOrigin );
-	VectorSubtract( angles, oldAngles, deltaAngles );
+	//VectorSubtract( angles, oldAngles, deltaAngles );
 
 	VectorAdd( in, deltaOrigin, out );
 

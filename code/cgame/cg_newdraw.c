@@ -54,6 +54,7 @@ void CG_SetPrintString( int type, const char *p ) {
 	}
 }
 static void CG_DrawPlayerArmorIcon( rectDef_t *rect, qboolean draw2D ) {
+#if 0
 	centity_t   *cent;
 	playerState_t   *ps;
 	vec3_t angles;
@@ -66,8 +67,8 @@ static void CG_DrawPlayerArmorIcon( rectDef_t *rect, qboolean draw2D ) {
 	cent = &cg_entities[cg.snap->ps.clientNum];
 	ps = &cg.snap->ps;
 
-	if ( draw2D || !cg_draw3dIcons.integer && cg_drawIcons.integer ) {
-		//	CG_DrawPic( rect->x, rect->y + rect->h/2 + 1, rect->w, rect->h, cgs.media.armorIcon );
+	if ( ( draw2D || !cg_draw3dIcons.integer ) && cg_drawIcons.integer ) {
+		CG_DrawPic( rect->x, rect->y + rect->h / 2 + 1, rect->w, rect->h, cgs.media.armorIcon );
 	} else if ( cg_draw3dIcons.integer ) {
 		VectorClear( angles );
 		origin[0] = 90;
@@ -75,19 +76,14 @@ static void CG_DrawPlayerArmorIcon( rectDef_t *rect, qboolean draw2D ) {
 		origin[2] = -10;
 		angles[YAW] = ( cg.time & 2047 ) * 360 / 2048.0;
 
-		// CG_Draw3DModel( rect->x, rect->y, rect->w, rect->h, cgs.media.armorModel, 0, origin, angles );
+		CG_Draw3DModel( rect->x, rect->y, rect->w, rect->h, cgs.media.armorModel, 0, origin, angles );
 	}
-
+#endif
 }
 
 static void CG_DrawPlayerArmorValue( rectDef_t *rect, float scale, vec4_t color, qhandle_t shader, int textStyle ) {
 	char num[16];
 	int value;
-	centity_t   *cent;
-	playerState_t   *ps;
-
-	cent = &cg_entities[cg.snap->ps.clientNum];
-	ps = &cg.snap->ps;
 
 	value = cg.snap->ps.stats[STAT_ROUNDS];
 
@@ -105,6 +101,7 @@ static void CG_DrawPlayerArmorValue( rectDef_t *rect, float scale, vec4_t color,
 	}
 }
 
+#if 0
 static float healthColors[4][4] = {
 	//		{ 0.2, 1.0, 0.2, 1.0 } , { 1.0, 0.2, 0.2, 1.0 }, {0.5, 0.5, 0.5, 1} };
 	{ 1, 0.69f, 0, 1.0f },                                          // normal
@@ -112,6 +109,7 @@ static float healthColors[4][4] = {
 	{0.5f, 0.5f, 0.5f, 1},                                          // weapon firing
 	{ 1, 1, 1, 1 }
 };                                              // health > 100
+#endif
 
 
 static void CG_DrawPlayerAmmoValue( rectDef_t *rect, float scale, vec4_t color, qhandle_t shader, int textStyle ) {
@@ -606,7 +604,7 @@ static void CG_Text_Paint_Limit( float *maxX, float x, float y, float scale, vec
 		}
 		count = 0;
 		while ( s && *s && count < len ) {
-			glyph = &font->glyphs[*s];
+			glyph = &font->glyphs[*s & 255];
 			if ( Q_IsColorString( s ) ) {
 				memcpy( newColor, g_color_table[ColorIndex( *( s + 1 ) )], sizeof( newColor ) );
 				newColor[3] = color[3];
@@ -1390,7 +1388,7 @@ static void CG_DrawCrosshairEntity( rectDef_t *rect, float scale, vec4_t color, 
 		vec_color[2] = 1;
 
 		name = va( "%s", cgs.clientinfo[ cg.crosshairClientNum ].name );
-	} else if ( cgs.gametype >= GT_TEAM )   {
+	} else if ( cgs.gametype >= GT_TEAM ) {
 		if ( cg.crosshairClientNum >= MAX_CLIENTS &&
 			 cg_entities[cg.crosshairClientNum].currentState.eType == ET_DOOR ) {
 			vec_color[0] = 1;
@@ -1403,7 +1401,7 @@ static void CG_DrawCrosshairEntity( rectDef_t *rect, float scale, vec4_t color, 
 				cg.ns_newbiehelp.w_doorSpotted = 1;
 				CG_NewbieMessage( S_COLOR_GREEN "You're infront of a door,\npress and hold your USE key to open it.", SCREEN_HEIGHT * 0.60, cg_newbeeHeight.value );
 			}
-		} else if ( cgs.clientinfo[ cg.crosshairClientNum ].team == cg.snap->ps.persistant[PERS_TEAM] )   {
+		} else if ( cg.crosshairClientNum < MAX_CLIENTS && cgs.clientinfo[ cg.crosshairClientNum ].team == cg.snap->ps.persistant[PERS_TEAM] ) {
 			vec_color[0] = 1;
 			vec_color[1] = 1;
 			vec_color[2] = 1;
@@ -1413,49 +1411,49 @@ static void CG_DrawCrosshairEntity( rectDef_t *rect, float scale, vec4_t color, 
 				cg.ns_newbiehelp.w_friendSpotted = 1;
 				CG_NewbieMessage( S_COLOR_GREEN "You've spotted a team-mate.", SCREEN_HEIGHT * 0.60, cg_newbeeHeight.value );
 			}
-		} else if ( cg.crosshairClientNum >= MAX_CLIENTS && cg_entities[ cg.crosshairClientNum ].currentState.eType == ET_ELEVBUT0 )   {
+		} else if ( cg.crosshairClientNum >= MAX_CLIENTS && cg_entities[ cg.crosshairClientNum ].currentState.eType == ET_ELEVBUT0 ) {
 			vec_color[0] = 1;
 			vec_color[1] = 1;
 			vec_color[2] = 1;
 
 			name = va( S_COLOR_YELLOW "Use:"S_COLOR_WHITE " Level 0" );
-		} else if ( cg.crosshairClientNum >= MAX_CLIENTS && cg_entities[ cg.crosshairClientNum ].currentState.eType == ET_ELEVBUT1 )   {
+		} else if ( cg.crosshairClientNum >= MAX_CLIENTS && cg_entities[ cg.crosshairClientNum ].currentState.eType == ET_ELEVBUT1 ) {
 			vec_color[0] = 1;
 			vec_color[1] = 1;
 			vec_color[2] = 1;
 
 			name = va( S_COLOR_YELLOW "Use:"S_COLOR_WHITE " Level 1" );
-		} else if ( cg.crosshairClientNum >= MAX_CLIENTS && cg_entities[ cg.crosshairClientNum ].currentState.eType == ET_ELEVBUT2 )   {
+		} else if ( cg.crosshairClientNum >= MAX_CLIENTS && cg_entities[ cg.crosshairClientNum ].currentState.eType == ET_ELEVBUT2 ) {
 			vec_color[0] = 1;
 			vec_color[1] = 1;
 			vec_color[2] = 1;
 
 			name = va( S_COLOR_YELLOW "Use:"S_COLOR_WHITE " Level 2" );
-		} else if ( cg.crosshairClientNum >= MAX_CLIENTS && cg_entities[ cg.crosshairClientNum ].currentState.eType == ET_ELEVBUT3 )   {
+		} else if ( cg.crosshairClientNum >= MAX_CLIENTS && cg_entities[ cg.crosshairClientNum ].currentState.eType == ET_ELEVBUT3 ) {
 			vec_color[0] = 1;
 			vec_color[1] = 1;
 			vec_color[2] = 1;
 
 			name = va( S_COLOR_YELLOW "Use:"S_COLOR_WHITE " Level 3" );
-		} else if ( cg.crosshairClientNum >= MAX_CLIENTS && cg_entities[ cg.crosshairClientNum ].currentState.eType == ET_ELEVBUT4 )   {
+		} else if ( cg.crosshairClientNum >= MAX_CLIENTS && cg_entities[ cg.crosshairClientNum ].currentState.eType == ET_ELEVBUT4 ) {
 			vec_color[0] = 1;
 			vec_color[1] = 1;
 			vec_color[2] = 1;
 
 			name = va( S_COLOR_YELLOW "Use:"S_COLOR_WHITE " Level 4" );
-		} else if ( cg.crosshairClientNum >= MAX_CLIENTS && cg_entities[ cg.crosshairClientNum ].currentState.eType == ET_ELEVBUT5 )   {
+		} else if ( cg.crosshairClientNum >= MAX_CLIENTS && cg_entities[ cg.crosshairClientNum ].currentState.eType == ET_ELEVBUT5 ) {
 			vec_color[0] = 1;
 			vec_color[1] = 1;
 			vec_color[2] = 1;
 
 			name = va( S_COLOR_YELLOW "Use:"S_COLOR_WHITE " Level 5" );
-		} else if ( cg.crosshairClientNum >= MAX_CLIENTS && cg_entities[ cg.crosshairClientNum ].currentState.eType == ET_ELEVBUT6 )   {
+		} else if ( cg.crosshairClientNum >= MAX_CLIENTS && cg_entities[ cg.crosshairClientNum ].currentState.eType == ET_ELEVBUT6 ) {
 			vec_color[0] = 1;
 			vec_color[1] = 1;
 			vec_color[2] = 1;
 
 			name = va( S_COLOR_YELLOW "Use:"S_COLOR_WHITE " Level 6" );
-		} else if ( cg.crosshairClientNum >= MAX_CLIENTS && cg_entities[ cg.crosshairClientNum ].currentState.eType == ET_ELEVBUT7 )   {
+		} else if ( cg.crosshairClientNum >= MAX_CLIENTS && cg_entities[ cg.crosshairClientNum ].currentState.eType == ET_ELEVBUT7 ) {
 			vec_color[0] = 1;
 			vec_color[1] = 1;
 			vec_color[2] = 1;
@@ -1470,13 +1468,14 @@ static void CG_DrawCrosshairEntity( rectDef_t *rect, float scale, vec4_t color, 
 
 #if SEALS_DRAW_NOT_ENEMY_NAME
 			return;
-#endif
+#else
 			name = va( S_COLOR_RED "Enemy:"S_COLOR_WHITE " %s", cgs.clientinfo[ cg.crosshairClientNum ].name );
 
 			if ( !cg.ns_newbiehelp.w_enemySpotted ) {
 				cg.ns_newbiehelp.w_enemySpotted = 1;
 				CG_NewbieMessage( S_COLOR_GREEN "You've spotted an enemy.", SCREEN_HEIGHT * 0.60, cg_newbeeHeight.value );
 			}
+#endif
 		}
 
 	} else {
@@ -1505,7 +1504,7 @@ static void CG_DrawWeaponStatus( rectDef_t *rect, float scale, vec4_t color, qha
 		mode = "Bandaging";
 	} else if ( ( weapon == WP_M4 || weapon == WP_AK47 ) && ( weaponmode & ( 1 << WM_GRENADELAUNCHER ) ) && ( weaponmode & ( 1 << WM_WEAPONMODE2 ) ) ) {
 		mode = "GrenadeLauncher";
-	} else if ( ( weapon == WP_M4 || weapon == WP_AK47 ) && ( weaponmode & ( 1 << WM_BAYONET ) ) && ( weaponmode & ( 1 << WM_WEAPONMODE2 ) ) )      {
+	} else if ( ( weapon == WP_M4 || weapon == WP_AK47 ) && ( weaponmode & ( 1 << WM_BAYONET ) ) && ( weaponmode & ( 1 << WM_WEAPONMODE2 ) ) ) {
 		mode = "Stab Mode";
 	} /*
 	  else if ( (weapon == WP_PSG1 || weapon == WP_MACMILLAN ) && (( weaponmode & ( 1 << WM_ZOOM4X) )||( weaponmode & ( 1 << WM_ZOOM2X) )) ) // got 4x zoom
@@ -1534,7 +1533,7 @@ static void CG_DrawWeaponStatus( rectDef_t *rect, float scale, vec4_t color, qha
 			} else if ( weaponmode & ( 1 << WM_WEAPONMODE2 ) ) {
 				sec = 1;
 			}
-		} else if ( weapon == WP_SMOKE )    {
+		} else if ( weapon == WP_SMOKE ) {
 			if ( weaponmode & ( 1 << WM_SINGLE ) ) {
 				sec = 2;
 			} else if ( weaponmode & ( 1 << WM_WEAPONMODE2 ) ) {
@@ -1566,7 +1565,7 @@ static void CG_DrawWeaponStatus( rectDef_t *rect, float scale, vec4_t color, qha
 		} else {
 			mode = "Full Auto";
 		}
-	} else if ( !BG_IsMelee( weapon ) )     {
+	} else if ( !BG_IsMelee( weapon ) ) {
 		mode = "Single Shot";
 	}
 
@@ -1935,7 +1934,7 @@ CG_HideRadioMenus
 ==================
 
 */
-void CG_HideRadioMenu() {
+void CG_HideRadioMenu( void ) {
 	Menus_CloseByName( "ingame_radio" );
 }
 
@@ -1945,7 +1944,7 @@ CG_ShowRadioMenus
 ==================
 
 */
-void CG_ShowRadioMenus() {
+void CG_ShowRadioMenus( void ) {
 	Menus_OpenByName( "ingame_radio" );
 }
 
@@ -1996,11 +1995,11 @@ void CG_KeyEvent( int key, qboolean down ) {
 				if ( cg_hudStyle.integer == 1 ) {
 					trap_Cvar_Set( "cg_hud1PosX", va( "%i", x ) );
 					trap_Cvar_Set( "cg_hud1PosY", va( "%i", y ) );
-				} else if ( cg_hudStyle.integer == 2 )   {
+				} else if ( cg_hudStyle.integer == 2 ) {
 					trap_Cvar_Set( "cg_hud2PosX", va( "%i", x ) );
 					trap_Cvar_Set( "cg_hud2PosY", va( "%i", y ) );
 				}
-			} else if ( key == K_MOUSE2 )   {
+			} else if ( key == K_MOUSE2 ) {
 				CG_EventHandling( CGAME_EVENT_NONE );
 				trap_Key_SetCatcher( 0 );
 			}
@@ -2012,7 +2011,7 @@ void CG_KeyEvent( int key, qboolean down ) {
 			if ( key == K_MOUSE1 ) {
 				trap_Cvar_Set( "cg_radarX", va( "%i",cgs.cursorX ) );
 				trap_Cvar_Set( "cg_radarY", va( "%i",cgs.cursorY ) );
-			} else if ( key == K_MOUSE2 )   {
+			} else if ( key == K_MOUSE2 ) {
 				CG_EventHandling( CGAME_EVENT_NONE );
 				trap_Key_SetCatcher( 0 );
 			}

@@ -190,6 +190,8 @@ void CG_FragmentBounceMark( localEntity_t *le, trace_t *trace ) {
 	if ( le->leMarkType == LEMT_BLOOD ||
 		 le->leMarkType == LEMT_BLEEDER ) {
 		radius = 0.75 + random() * 2.5 + random() * 2.5  + random();
+	} else {
+		radius = 0.0f;
 	}
 
 
@@ -783,11 +785,6 @@ static void CG_AddFallScaleFade( localEntity_t *le ) {
 CG_AddExplosion
 ================
 */
-/*
-================
-CG_AddExplosion
-================
-*/
 static void CG_AddExplosion( localEntity_t *ex ) {
 	refEntity_t *ent;
 	int r;
@@ -807,10 +804,10 @@ static void CG_AddExplosion( localEntity_t *ex ) {
 	if ( r ) {
 		int i, j;
 		float dt = ( (float) ( cg.time - ex->startTime ) ) / ( (float) ( ex->endTime - ex->startTime ) );
-		vec3_t r;
-		r[0] = ent->oldorigin[0] * dt;
-		r[1] = ent->oldorigin[1] * dt;
-		r[2] = ent->oldorigin[2] * dt;
+		//vec3_t r;
+		//r[0] = ent->oldorigin[0] * dt;
+		//r[1] = ent->oldorigin[1] * dt;
+		//r[2] = ent->oldorigin[2] * dt;
 		//AnglesToAxis(r, ent->axis);
 		//VectorScale(cg.refdef.viewaxis[0], -1, ent->axis[0]);
 		VectorSubtract( cg.refdef.vieworg, ent->origin, ent->axis[0] );

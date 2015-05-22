@@ -217,7 +217,7 @@ static qboolean    CG_ParseAnimationFile( const char *filename, clientInfo_t *ci
 			}
 			ci->footprintFrameTimer.step_backr = atoi( token );
 			continue;
-		} else if ( !Q_stricmp( token, "headoffset" ) )  {
+		} else if ( !Q_stricmp( token, "headoffset" ) ) {
 			for ( i = 0 ; i < 3 ; i++ ) {
 				token = COM_Parse( &text_p );
 				if ( !token ) {
@@ -476,7 +476,7 @@ static qboolean CG_RegisterClientModelname( clientInfo_t *ci, const char *modelN
 	if ( !Q_stricmp( headName, "vip_seal" ) || !Q_stricmp( headName, "vip_tango" ) ) {
 		Com_sprintf( filename, sizeof( filename ), "models/players/heads/head_vip_%s.md3", cgs.vipType );
 	} else {
-		Com_sprintf( filename, sizeof( filename ), "models/players/heads/head.md3", headName );
+		Com_sprintf( filename, sizeof( filename ), "models/players/heads/head.md3" );
 	}
 
 	ci->headModel = trap_R_RegisterPermanentModel( filename );
@@ -633,46 +633,48 @@ static void CG_LoadClientInfo( clientInfo_t *ci ) {
 		}
 	}
 
+#if 0
 	// player style
-	/*	if ( !CG_RegisterClientStyleModels( ci, ci->equipmentMouthName,ci->equipmentEyesName,ci->equipmentHeadName ) )
-	{
-	if ( cg_buildScript.integer ) {
-	CG_Error( "CG_RegisterClientStyleModels( %s %s/%s/%s ) failed", ci->name,ci->equipmentMouthName, ci->equipmentEyesName, ci->equipmentHeadName );
+	if ( !CG_RegisterClientStyleModels( ci, ci->equipmentMouthName,ci->equipmentEyesName,ci->equipmentHeadName ) ) {
+		if ( cg_buildScript.integer ) {
+			CG_Error( "CG_RegisterClientStyleModels( %s %s/%s/%s ) failed", ci->name,ci->equipmentMouthName, ci->equipmentEyesName, ci->equipmentHeadName );
+		}
 	}
-	}*/
 
 	// sounds
-	//	dir = ci->modelName;
-	//	fallback = DEFAULT_MODEL;
+	dir = ci->modelName;
+	fallback = DEFAULT_MODEL;
 
-	/*
 	for ( i = 0 ; i < MAX_CUSTOM_SOUNDS ; i++ ) {
-	s = cg_customSoundNames[i];
-	if ( !s ) {
-	break;
+		s = cg_customSoundNames[i];
+		if ( !s ) {
+			break;
+		}
+		ci->sounds[i] = trap_S_RegisterSound( va( "sound/player/%s/%s", dir, s + 1 ),qfalse );
+		if ( !ci->sounds[i] ) { // loadup defaults!
+			ci->sounds[i] = trap_S_RegisterSound( va( "sound/player/sarge/%s", s + 1 ),qfalse );
+		}
 	}
-	ci->sounds[i] = trap_S_RegisterSound( va("sound/player/%s/%s", dir, s + 1),qfalse );
-	if ( !ci->sounds[i] ) { // loadup defaults!
-	ci->sounds[i] = trap_S_RegisterSound( va("sound/player/sarge/%s", s + 1),qfalse );
-	}
-	}
-	*/
+#endif
 
 	ci->deferred = qfalse;
 
 	//	CG_Printf("%i equipment (loaded clientinfo)\n", ci->playerEquipment );
 
+#if 0
 	// reset any existing players and bodies, because they might be in bad
 	// frames for this new model
-	/*	clientNum = ci - cgs.clientinfo;
+	clientNum = ci - cgs.clientinfo;
 	for ( i = 0 ; i < MAX_GENTITIES ; i++ ) {
-	if ( cg_entities[i].currentState.clientNum == clientNum
-	&& cg_entities[i].currentState.eType == ET_PLAYER ) {
-	CG_ResetPlayerEntity( &cg_entities[i] );
+		if ( cg_entities[i].currentState.clientNum == clientNum
+			 && cg_entities[i].currentState.eType == ET_PLAYER ) {
+			CG_ResetPlayerEntity( &cg_entities[i] );
+		}
 	}
-	}*/
+#endif
 }
 
+#if 0
 /*
 ======================
 CG_CopyClientInfoModel
@@ -712,6 +714,7 @@ static void CG_CopyClientInfoModel( clientInfo_t *from, clientInfo_t *to ) {
 	memcpy( to->animations, from->animations, sizeof( to->animations ) );
 	//	memcpy( to->sounds, from->sounds, sizeof( to->sounds ) );
 }
+#endif
 
 /*
 ======================
@@ -751,9 +754,6 @@ CG_ScanForExistingClientInfo
 static qboolean CG_ScanForExistingClientInfo( clientInfo_t *ci ) {
 	int i;
 	clientInfo_t    *match;
-	int clientNum = -1;
-
-	clientNum = ci - cgs.clientinfo;
 
 	if ( !Q_stricmp( ci->modelName, "vip_male" ) ) {
 		for ( i = 0; i < MAX_PLAYER_MODELS; i++ )
@@ -811,7 +811,7 @@ seal:
 
 			return qtrue;
 		}
-	} else if ( ci->team == TEAM_BLUE )   {
+	} else if ( ci->team == TEAM_BLUE ) {
 tango:
 		for ( i = 0; i < MAX_PLAYER_MODELS; i++ )
 		{
@@ -859,6 +859,7 @@ tango:
 	return qfalse;
 }
 
+#if 0
 /*
 ======================
 CG_SetDeferredClientInfo
@@ -870,8 +871,6 @@ client's info to use until we have some spare time.
 static void CG_SetDeferredClientInfo( clientInfo_t *ci ) {
 	int i;
 	clientInfo_t    *match;
-
-
 
 	// if someone else is already the same models and skins we
 	// can just load the client info
@@ -934,6 +933,7 @@ static void CG_SetDeferredClientInfo( clientInfo_t *ci ) {
 
 	CG_LoadClientInfo( ci );
 }
+#endif
 
 
 /*
@@ -1144,7 +1144,7 @@ void CG_CachingClient( char *model, char *skin ) {
 
 void CG_CacheAllModels( void ) {
 	int i; //, m;
-	clientInfo_t *ci, *PrevCI = NULL;
+	clientInfo_t *ci;
 
 	cgs.media.SealPlayerModelNames[0] = "s_medium";
 	cgs.media.SealPlayerModelNames[1] = NULL;
@@ -1344,7 +1344,7 @@ static void CG_RunLerpFrame( clientInfo_t *ci, lerpFrame_t *lf, int newAnimation
 		}
 		if ( anim->reversed ) {
 			lf->frame = anim->firstFrame + anim->numFrames - 1 - f;
-		} else if ( anim->flipflop && f >= anim->numFrames )       {
+		} else if ( anim->flipflop && f >= anim->numFrames ) {
 			lf->frame = anim->firstFrame + anim->numFrames - 1 - ( f % anim->numFrames );
 		} else {
 			lf->frame = anim->firstFrame + f;
@@ -1556,9 +1556,9 @@ static void CG_PlayerAngles( centity_t *cent, vec3_t legs[3], vec3_t torso[3], v
 
 	// allow yaw to drift a bit
 	if ( ( cent->currentState.legsAnim & ~ANIM_TOGGLEBIT ) != LEGS_IDLE
-		 || ( cent->currentState.torsoAnim & ~ANIM_TOGGLEBIT ) != TORSO_STAND_RIFLE ||
-		 ( cent->currentState.torsoAnim & ~ANIM_TOGGLEBIT ) != TORSO_STAND_ITEM
-		 || ( cent->currentState.torsoAnim & ~ANIM_TOGGLEBIT ) != TORSO_STAND_PISTOL ) {
+		 || ( ( cent->currentState.torsoAnim & ~ANIM_TOGGLEBIT ) != TORSO_STAND_RIFLE
+			  && ( cent->currentState.torsoAnim & ~ANIM_TOGGLEBIT ) != TORSO_STAND_ITEM
+			  && ( cent->currentState.torsoAnim & ~ANIM_TOGGLEBIT ) != TORSO_STAND_PISTOL ) ) {
 		// if not standing still, always point all in the same direction
 		cent->pe.torso.yawing = qtrue;  // always center
 		cent->pe.torso.pitching = qtrue;    // always center
@@ -1660,6 +1660,7 @@ static void CG_PlayerAngles( centity_t *cent, vec3_t legs[3], vec3_t torso[3], v
 
 //==========================================================================
 
+#if 0
 /*
 ===============
 CG_BreathPuffs
@@ -1704,6 +1705,7 @@ static void CG_BreathPuffs( centity_t *cent, refEntity_t *head ) {
 				  cg.time, 0, LE_MOVE_SCALE_FADE, cgs.media.smokePuffShader );
 	ci->breathPuffTime = cg.time + 2000;
 }
+#endif
 
 /*
 ===============
@@ -1712,7 +1714,6 @@ CG_DustTrail
 */
 static void CG_DustTrail( centity_t *cent ) {
 	int anim;
-	localEntity_t   *dust;
 	vec3_t end, vel;
 	trace_t tr;
 
@@ -1746,14 +1747,14 @@ static void CG_DustTrail( centity_t *cent ) {
 	end[2] -= 16;
 
 	VectorSet( vel, 0, 0, -30 );
-	dust = CG_SmokePuff( end, vel,
-						 24,
-						 .8f, .8f, 0.7f, 0.33f,
-						 500,
-						 cg.time,
-						 0,
-						 0,
-						 cgs.media.dustPuffShader );
+	CG_SmokePuff( end, vel,
+				  24,
+				  .8f, .8f, 0.7f, 0.33f,
+				  500,
+				  cg.time,
+				  0,
+				  0,
+				  cgs.media.dustPuffShader );
 }
 
 #if 0
@@ -1858,10 +1859,12 @@ static void CG_PlayerSprites( centity_t *cent ) {
 		return;
 	}
 
-	/*if ( cent->currentState.eFlags & EF_TALK ) {
-	CG_PlayerFloatSprite( cent, cgs.media.balloonShader );
-	return;
-	}*/
+#if 0
+	if ( cent->currentState.eFlags & EF_TALK ) {
+		CG_PlayerFloatSprite( cent, cgs.media.balloonShader );
+		return;
+	}
+#endif
 	if (
 		cent->currentState.eFlags & EF_RADIO_TALK &&
 		cg.snap->ps.persistant[PERS_TEAM] == team
@@ -1900,15 +1903,14 @@ static void CG_PlayerSprites( centity_t *cent ) {
 		return;
 	}
 #endif
-	/*
-	if ( !(cent->currentState.eFlags & EF_DEAD) &&
-	cg.snap->ps.persistant[PERS_TEAM] == team &&
-	cgs.gametype >= GT_TEAM) {
-	if (cg_drawFriend.integer) {
-	CG_PlayerFloatSprite( cent, cgs.media.friendShader );
-	}
-	return;
-	}*/
+#if 0
+	if ( !( cent->currentState.eFlags & EF_DEAD ) &&
+		 cg.snap->ps.persistant[PERS_TEAM] == team &&
+		 cgs.gametype >= GT_TEAM ) {
+		if ( cg_drawFriend.integer ) {
+			CG_PlayerFloatSprite( cent, cgs.media.friendShader );
+		}
+#endif
 }
 
 /*
@@ -1925,7 +1927,7 @@ should it return a full plane instead of a Z?
 void CG_DirectImpactMark( qhandle_t markShader, const vec3_t origin, const vec3_t dir, float orientation, float red, float green, float blue, float alpha, qboolean alphaFade, float radius, qboolean temporary, int entitynum );
 
 static qboolean CG_PlayerShadow( centity_t *cent, vec3_t origin, float radius, float *shadowPlane ) {
-	vec3_t end, mins = {-5, -5, 5}, maxs = {5, 5, 5};
+	vec3_t end; //, mins = {-5, -5, 5}, maxs = {5, 5, 5};
 	trace_t trace;
 	float alpha;
 	vec3_t start;
@@ -2340,6 +2342,8 @@ void CG_Player( centity_t *cent ) {
 
 		cent->lerpOrigin[2] += pmodel_o.value;
 		//	CG_Printf("Alinged %s\n", pmodel_o.string );
+	} else {
+		VectorClear( lO );
 	}
 
 
@@ -2847,6 +2851,6 @@ void CG_ResetPlayerEntity( centity_t *cent ) {
 	}
 
 	if ( cg_debugPosition.integer ) {
-		CG_Printf( "(time %i) %i ResetPlayerEntity yaw=%i, event=(%i, %i)\n", cg.time, cent->currentState.number, cent->pe.torso.yawAngle, ( &cent->currentState )->event, ( &cent->nextState )->event );
+		CG_Printf( "(time %i) %i ResetPlayerEntity yaw=%f, event=(%i, %i)\n", cg.time, cent->currentState.number, cent->pe.torso.yawAngle, ( &cent->currentState )->event, ( &cent->nextState )->event );
 	}
 }

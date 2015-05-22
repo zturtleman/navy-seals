@@ -73,8 +73,6 @@ Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 //
 //  wins/losses are drawn on bot icon now
 
-static qboolean localClient; // true if local client has been displayed
-
 
 //================================================================================
 

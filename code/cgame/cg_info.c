@@ -157,10 +157,7 @@ void CG_LoadingClient( int clientNum ) {
 qboolean    CG_ParseHelpFile( void ) {
 	char        *text_p;
 	int len;
-	//	int			lines = 0;
 	char        *token;
-	//	float		fps;
-	int skip;
 	char text[20000];
 	char filename[128];
 	fileHandle_t f;
@@ -182,7 +179,7 @@ qboolean    CG_ParseHelpFile( void ) {
 		return qfalse;
 	}
 	if ( len >= sizeof( text ) - 1 ) {
-		CG_Printf( "File %s (%i>%i)too long\n", text, len, sizeof( text ) );
+		CG_Printf( "File %s (%i>%u)too long\n", text, len, (unsigned)sizeof( text ) );
 		return qfalse;
 	}
 	trap_FS_Read( text, len, f );
@@ -191,7 +188,6 @@ qboolean    CG_ParseHelpFile( void ) {
 
 	// parse the text
 	text_p = text;
-	skip = 0;   // quite the compiler warning
 
 
 	// parse
@@ -452,10 +448,7 @@ char *CG_GetCamoStringForType( int camoType ) {
 qboolean    CG_ParseBriefingFile(  char *mapstring  ) {
 	char        *text_p;
 	int len;
-	//	int			lines = 0;
 	char        *token;
-	//	float		fps;
-	int skip;
 	char text[20000];
 	char filename[128];
 	fileHandle_t f;
@@ -488,7 +481,7 @@ qboolean    CG_ParseBriefingFile(  char *mapstring  ) {
 		return qfalse;
 	}
 	if ( len >= sizeof( text ) - 1 ) {
-		CG_Printf( "File %s (%i>%i)too long\n", text, len, sizeof( text ) );
+		CG_Printf( "File %s (%i>%u)too long\n", text, len, (unsigned)sizeof( text ) );
 		return qfalse;
 	}
 	trap_FS_Read( text, len, f );
@@ -497,7 +490,6 @@ qboolean    CG_ParseBriefingFile(  char *mapstring  ) {
 
 	// parse the text
 	text_p = text;
-	skip = 0;   // quite the compiler warning
 
 	// parse
 	while ( 1 ) {

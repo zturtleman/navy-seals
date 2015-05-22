@@ -33,7 +33,7 @@
 
 void regerror( char *string )
 {
-    CG_Printf(string);
+    CG_Printf( "%s", string );
 }
 
 #ifdef Q3_VM
@@ -220,7 +220,7 @@ regcomp( char *exp )
     regnpar = 1;
     regsize = 0L;
     regcode = &regdummy;
-    regc(MAGIC);
+    regc((char)MAGIC);
     if (reg(0, &flags) == NULL)
         return(NULL);
 
@@ -237,7 +237,7 @@ regcomp( char *exp )
     regparse = exp;
     regnpar = 1;
     regcode = r->program;
-    regc(MAGIC);
+    regc((char)MAGIC);
     if (reg(0, &flags) == NULL)
         return(NULL);
 
@@ -307,8 +307,10 @@ reg( int paren, int *flagp )
         parno = regnpar;
         regnpar++;
         ret = regnode(OPEN+parno);
-    } else
+    } else {
+        parno = 0;
         ret = NULL;
+    }
 
     /* Pick up the branches, linking them together. */
     br = regbranch(&flags);

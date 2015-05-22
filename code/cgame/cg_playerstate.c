@@ -333,7 +333,7 @@ CG_CheckLocalSounds
 */
 
 void CG_CheckLocalSounds( playerState_t *ps, playerState_t *ops ) {
-	int highScore,/* health,  armor*/ reward;
+	int highScore/*, health, armor , reward*/;
 	char buf[16];
 	int prim, sec;
 	//	sfxHandle_t sfx;
@@ -447,8 +447,8 @@ void CG_CheckLocalSounds( playerState_t *ps, playerState_t *ops ) {
 	}
 
 	// reward sounds
-	reward = qfalse;
-	/*
+	//reward = qfalse;
+#if 0
 	if (ps->persistant[PERS_CAPTURES] != ops->persistant[PERS_CAPTURES]) {
 	pushReward(cgs.media.captureAwardSound, cgs.media.medalCapture, ps->persistant[PERS_CAPTURES]);
 	reward = qtrue;
@@ -491,7 +491,7 @@ void CG_CheckLocalSounds( playerState_t *ps, playerState_t *ops ) {
 	reward = qtrue;
 	//Com_Printf("assist\n");
 	}
-	*/
+#endif
 	// if any of the player event bits changed
 #if 0
 	if ( ps->persistant[PERS_PLAYEREVENTS] != ops->persistant[PERS_PLAYEREVENTS] ) {
@@ -509,7 +509,7 @@ void CG_CheckLocalSounds( playerState_t *ps, playerState_t *ops ) {
 	}
 #endif
 	// check for flag pickup
-	/*
+#if 0
 	if ( cgs.gametype >= GT_TEAM ) {
 	if ((ps->powerups[PW_REDFLAG] != ops->powerups[PW_REDFLAG] && ps->powerups[PW_REDFLAG]) ||
 	(ps->powerups[PW_BLUEFLAG] != ops->powerups[PW_BLUEFLAG] && ps->powerups[PW_BLUEFLAG])
@@ -519,7 +519,7 @@ void CG_CheckLocalSounds( playerState_t *ps, playerState_t *ops ) {
 	trap_S_StartLocalSound( cgs.media.youHaveFlagSound, CHAN_ANNOUNCER );
 	}
 	}
-	*/
+#endif
 
 	// timelimit warnings
 	if ( cgs.levelRoundStartTime > 0 ) {
@@ -615,7 +615,7 @@ void CG_CheckLocalSounds( playerState_t *ps, playerState_t *ops ) {
 	}
 
 	// fraglimit warnings
-	/*
+#if 0
 	else if ( cgs.fraglimit > 0 && cgs.gametype < GT_TEAM) {
 	highScore = cgs.scores1;
 	if ( !( cg.fraglimitWarnings & 4 ) && highScore == (cgs.fraglimit - 1) ) {
@@ -631,7 +631,7 @@ void CG_CheckLocalSounds( playerState_t *ps, playerState_t *ops ) {
 	CG_AddBufferedSound(cgs.media.threeFragSound);
 	}
 	}
-	DISABLED */
+#endif
 }
 
 int CG_ButtonPushed( int button );

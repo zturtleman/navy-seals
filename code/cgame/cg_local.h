@@ -1117,7 +1117,7 @@ typedef struct {
 
 	int cursorX;
 	int cursorY;
-	qboolean eventHandling;
+	int eventHandling; // CGAME_EVENT_* enum value
 	qboolean mouseCaptured;
 	qboolean sizingHud;
 	void *capturedItem;

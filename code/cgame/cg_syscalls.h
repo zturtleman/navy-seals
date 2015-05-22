@@ -99,7 +99,7 @@ int         trap_CM_MarkFragments( int numPoints, const vec3_t *points,
 // moves and the listener moves
 void        trap_S_StartSound( vec3_t origin, int entityNum, int entchannel, sfxHandle_t sfx );
 //void		trap_S_StartSoundExtended( vec3_t origin, float volume, float rolloff, float pitch, int entityNum, int entchannel, sfxHandle_t sfx );
-#define     trap_S_StartSoundExtended( origin, volume, rolloff, pitch, entityNum, entchannel, sfx ) trap_S_StartSound( origin, entityNum, entchannel, sfx )
+#define     trap_S_StartSoundExtended( origin, volume, rolloff, pitch, entityNum, entchannel, sfx ) do { trap_S_StartSound( origin, entityNum, entchannel, sfx ), (void)(volume), (void)(rolloff), (void)(pitch); } while ( 0 )
 void        trap_S_StopLoopingSound( int entnum );
 
 // a local sound is always played full volume

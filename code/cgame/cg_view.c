@@ -569,7 +569,6 @@ static void CG_OffsetFirstPersonView( void ) {
 	// add angles based on damage kick
 	if ( cg.damageTime ) {
 		int returntime = ( cg.damageDuration / 5 ) * 4;
-		int time = cg.damageDuration;
 		int deflecttime = ( cg.damageDuration / 5 );
 
 		ratio = cg.time - cg.damageTime;
@@ -898,7 +897,7 @@ int CG_GetTotalXPforLevel( int level ) {
 	}
 	return total;
 }
-int CG_GetTotalXPforAllLevels() {
+int CG_GetTotalXPforAllLevels( void ) {
 	int value = 0;
 
 	value += CG_GetTotalXPforLevel( cg.snap->ps.persistant[PERS_STRENGTH] );
@@ -968,7 +967,7 @@ Generates and draws a game scene and status information at the given time.
 */
 
 #define KICKBACK_TIME   250
-int CG_GoChase();
+int CG_GoChase( void );
 void CG_QCmd_HandleMenu( void );
 
 void CG_DrawActiveFrame( int serverTime, stereoFrame_t stereoView, qboolean demoPlayback ) {

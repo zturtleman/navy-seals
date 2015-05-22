@@ -140,6 +140,7 @@ static void CG_EjectBrass( centity_t *cent, vec3_t origin, brasstype_t bType, qb
 }
 
 
+#if 0
 static void CG_SmokeGrenade( centity_t *ent, const weaponInfo_t *wi ) {
 	int step;
 	vec3_t origin, lastPos;
@@ -190,6 +191,7 @@ static void CG_SmokeGrenade( centity_t *ent, const weaponInfo_t *wi ) {
 		smoke->leType = LE_SCALE_FADE;
 	}
 }
+#endif
 
 /*
 ==========================
@@ -983,7 +985,7 @@ void CG_RegisterWeapon( int weaponNum ) {
 
 	i = 0;
 
-	while ( strlen( weaponInfo->partTags[i] ) > 0 && i < MAX_WEAPONPARTS )
+	while ( i < MAX_WEAPONPARTS && strlen( weaponInfo->partTags[i] ) > 0 )
 	{
 		COM_StripExtension( item->world_model[0], path, sizeof( path ) );
 
@@ -1936,7 +1938,6 @@ void CG_AddPlayerWeapon( refEntity_t *leftArm, refEntity_t *rightArm, playerStat
 		if ( cent->gunSmokeTime - cg.time > 0 && ( !BG_IsMelee( weaponNum ) && !BG_IsGrenade( weaponNum ) && weaponNum != WP_C4 ) && ( cg_gunSmoke.integer > 1 || cg_gunSmoke.integer == -1 ) ) {
 			if ( cent->currentState.number != cg.snap->ps.clientNum || cg.renderingThirdPerson ) {
 				vec3_t up;
-				localEntity_t *a;
 				memset( &flash, 0, sizeof( flash ) );
 
 				if ( cent->currentState.eFlags & EF_SILENCED &&
@@ -1955,9 +1956,9 @@ void CG_AddPlayerWeapon( refEntity_t *leftArm, refEntity_t *rightArm, playerStat
 
 					t = (float)( (float)( cent->gunSmokeTime - cg.time ) / 2000 );
 
-					a = CG_SmokePuff(  flash.origin, up, cg_gunSmokeTime.integer / 333 + 1,1,1,1,t,cg_gunSmokeTime.integer,cg.time,0,LE_MOVE_SCALE_FADE, cgs.media.smokePuffShader  );
+					CG_SmokePuff(  flash.origin, up, cg_gunSmokeTime.integer / 333 + 1,1,1,1,t,cg_gunSmokeTime.integer,cg.time,0,LE_MOVE_SCALE_FADE, cgs.media.smokePuffShader  );
 				} else {
-					a = CG_SmokePuff(  flash.origin, up, cg_gunSmokeTime.integer / 333 + 1,1,1,1,0.5,cg_gunSmokeTime.integer,cg.time,0,LE_MOVE_SCALE_FADE, cgs.media.smokePuffShader  );
+					CG_SmokePuff(  flash.origin, up, cg_gunSmokeTime.integer / 333 + 1,1,1,1,0.5,cg_gunSmokeTime.integer,cg.time,0,LE_MOVE_SCALE_FADE, cgs.media.smokePuffShader  );
 				}
 
 			}
@@ -2695,8 +2696,8 @@ void CG_ReloadWeapon( centity_t *cent, int last_rnd ) {
 	}
 }
 
-void CG_PredictFireLead();
-void CG_PredictFireShotgun();
+void CG_PredictFireLead( void );
+void CG_PredictFireShotgun( void );
 /*
 ================
 CG_FireWeapon
@@ -2823,10 +2824,8 @@ void CG_FireWeapon( centity_t *cent, qboolean othermode ) {
 
 void CG_GrenadeShrapnel( vec3_t org, vec3_t dir ) {
 	localEntity_t   *le;
-	refEntity_t     *re;
 
 	le = CG_AllocLocalEntity();
-	re = &le->refEntity;
 
 	VectorCopy( org, le->pos.trBase );
 	VectorScale( dir, 800, le->pos.trDelta );
@@ -2843,10 +2842,8 @@ void CG_GrenadeShrapnel( vec3_t org, vec3_t dir ) {
 
 void CG_RocketShrapnel( vec3_t org, vec3_t dir ) {
 	localEntity_t   *le;
-	refEntity_t     *re;
 
 	le = CG_AllocLocalEntity();
-	re = &le->refEntity;
 
 	VectorCopy( org, le->pos.trBase );
 	VectorScale( dir, random() * 400 + 200, le->pos.trDelta );
@@ -2863,10 +2860,8 @@ void CG_RocketShrapnel( vec3_t org, vec3_t dir ) {
 
 void CG_Spark( vec3_t org, vec3_t dir, float width ) {
 	localEntity_t   *le;
-	refEntity_t     *re;
 
 	le = CG_AllocLocalEntity();
-	re = &le->refEntity;
 
 	VectorCopy( org, le->pos.trBase );
 	VectorScale( dir, 125 + crandom() * 30, le->pos.trDelta );
@@ -2884,10 +2879,8 @@ void CG_Spark( vec3_t org, vec3_t dir, float width ) {
 
 void CG_SpawnTracer( vec3_t start, vec3_t end ) {
 	localEntity_t   *le;
-	refEntity_t     *re;
 
 	le = CG_AllocLocalEntity();
-	re = &le->refEntity;
 
 	// rape those vectors
 	VectorCopy( start, le->pos.trBase );
@@ -2902,10 +2895,8 @@ void CG_SpawnTracer( vec3_t start, vec3_t end ) {
 
 void CG_MetalSpark( vec3_t org, vec3_t dir, float width ) {
 	localEntity_t   *le;
-	refEntity_t     *re;
 
 	le = CG_AllocLocalEntity();
-	re = &le->refEntity;
 
 	VectorCopy( org, le->pos.trBase );
 	VectorScale( dir, 200 + crandom() * 50, le->pos.trDelta );
@@ -2962,10 +2953,8 @@ void CG_LightParticles( vec3_t origin, vec4_t hcolor, float limit ) {
 }
 localEntity_t *CG_SpawnParticle( vec3_t org, vec3_t dir, float speed, float bouncefactor, float radius, float r,float g,float b,float a, qboolean size ) {
 	localEntity_t   *le;
-	refEntity_t     *re;
 
 	le = CG_AllocLocalEntity();
-	re = &le->refEntity;
 
 	VectorCopy( org, le->pos.trBase ); // move to origin vector org
 	VectorCopy( org, le->refEntity.origin ); // move to origin vector org
@@ -3001,10 +2990,8 @@ localEntity_t *CG_SpawnParticle( vec3_t org, vec3_t dir, float speed, float boun
 }
 localEntity_t *CG_SpawnBloodParticle( vec3_t org, vec3_t dir, float speed, float bouncefactor, float radius, float r,float g,float b,float a, qboolean size ) {
 	localEntity_t   *le;
-	refEntity_t     *re;
 
 	le = CG_AllocLocalEntity();
-	re = &le->refEntity;
 
 	VectorCopy( org, le->pos.trBase ); // move to origin vector org
 	VectorCopy( org, le->refEntity.origin ); // move to origin vector org
@@ -3040,7 +3027,6 @@ localEntity_t *CG_SpawnBloodParticle( vec3_t org, vec3_t dir, float speed, float
 }
 
 void CG_SurfaceEffect( vec3_t origin, vec3_t dir, int surface, int weapon, float radius ) {
-	int max = 2 + random() * 2;
 	int i = 0;
 
 	// se disabled.
@@ -3130,12 +3116,12 @@ void CG_SurfaceEffect( vec3_t origin, vec3_t dir, int surface, int weapon, float
 		intensity += random() * 4;
 
 		if ( BG_IsShotgun( weapon ) ) {
-			max = 2;
+			//max = 2;
 		} else {
 			trap_R_AddLightToScene( origin, intensity, value, value, value );
 		}
 
-		for ( i = 0; i < 10; i++ )
+		for ( i = 0; i < max; i++ )
 		{
 			spread = 1 + random();
 
@@ -3170,7 +3156,7 @@ void CG_SurfaceEffect( vec3_t origin, vec3_t dir, int surface, int weapon, float
 		}
 		return;
 	} else if ( surface == BHOLE_SNOW || surface == BHOLE_DIRT || surface == BHOLE_SAND )   {
-		max = 14 + random() * 6;
+		int max = 14 + random() * 6;
 
 		VectorMA( origin, 0.5, dir, origin );
 
@@ -3233,7 +3219,7 @@ void CG_SurfaceEffect( vec3_t origin, vec3_t dir, int surface, int weapon, float
 		}
 		return;
 	} else if ( surface == BHOLE_WOOD || surface == BHOLE_GLASS || surface == BHOLE_SOFT )    {
-		max = 1 + random() * 2;
+		int max = 1 + random() * 2;
 
 		if ( surface == BHOLE_SOFT ) {
 			max = 3 + random() * 2;
@@ -3383,7 +3369,7 @@ void CG_SurfaceEffect( vec3_t origin, vec3_t dir, int surface, int weapon, float
 		}
 	} else
 	{
-		max = 5 + random() * 5;
+		int max = 5 + random() * 5;
 
 		if ( BG_IsShotgun( weapon ) ) {
 			max /= 3;
@@ -3757,15 +3743,13 @@ void CG_MissileHitWall( int weapon, int clientNum, vec3_t origin, vec3_t dir, in
 				}
 			} else {
 				for ( i = 0; i < 3; i++ ) {
-					localEntity_t *smoke;
-
 					VectorCopy( origin, org2 );
 
 					org2[0] += 30 - random() * 60;
 					org2[1] += 30 - random() * 60;
 					org2[2] += random() * 5;
 
-					smoke = CG_SmokePuff( org2, up, 150 + random() * 30, 1, 1, 1, 1, 5000 + random() * 2000, cg.time - 1000, cg.time - 1000,LE_MOVE_SCALE_FADE, cgs.media.smokePuffShader );
+					CG_SmokePuff( org2, up, 150 + random() * 30, 1, 1, 1, 1, 5000 + random() * 2000, cg.time - 1000, cg.time - 1000,LE_MOVE_SCALE_FADE, cgs.media.smokePuffShader );
 				}
 			}
 
@@ -3857,11 +3841,10 @@ Caused by an EV_EXPLOSION event, or directly
 */
 void CG_Explosion( vec3_t origin, int c4explo ) {
 	qhandle_t mod;
-	qhandle_t mark;
 	qhandle_t shader;
 	sfxHandle_t sfx;
-	float radius;
-	float mradius;
+	//float radius;
+	//float mradius;
 	float light;
 	vec3_t lightColor;
 	localEntity_t   *le;
@@ -3869,14 +3852,13 @@ void CG_Explosion( vec3_t origin, int c4explo ) {
 	int duration;
 	vec3_t dir;
 	int i, r;
-	float alpha;
+	//float alpha;
 	trace_t trace;
 	int number;
 	qboolean water = ( CG_PointContents( origin, -1 ) & CONTENTS_WATER );
 
-	mark = 0;
-	mradius = 0;
-	radius = 32;
+	//mradius = 0;
+	//radius = 32;
 	sfx = 0;
 	mod = 0;
 	shader = 0;
@@ -3894,10 +3876,10 @@ void CG_Explosion( vec3_t origin, int c4explo ) {
 			shader = cgs.media.waterExplosionShader;
 		}
 		sfx = cgs.media.c4_explode;
-		radius = 128;
+		//radius = 128;
 		light = 600;
 		duration = 1000;
-		mradius = 256 / 2;
+		//mradius = 256 / 2;
 	} else {
 		isSprite = qfalse;
 		mod = cgs.media.sphereFlashModel;
@@ -3906,10 +3888,10 @@ void CG_Explosion( vec3_t origin, int c4explo ) {
 			shader = cgs.media.waterExplosionShader;
 		}
 		sfx = cgs.media.mk26_explode;
-		radius = 32;
+		//radius = 32;
 		light = 400;
 		duration = 1000;
-		mradius = 128 / 2;
+		//mradius = 128 / 2;
 	}
 
 	if ( !water ) {
@@ -3951,14 +3933,15 @@ void CG_Explosion( vec3_t origin, int c4explo ) {
 	}
 
 	// fade the mark out with height
-	alpha = 1.0 - trace.fraction;
+	//alpha = 1.0 - trace.fraction;
 
 	number = random() * 2;
-
 
 	CG_ImpactMark( cgs.media.burnMarkShaders[number], trace.endpos,trace.plane.normal,
 				   random() * 360, 0,0,0,1, qfalse, 128, qfalse );
 }
+
+#if 0
 
 #define BLOOD_MINI      0
 #define BLOOD_SMALL     1
@@ -4015,10 +3998,8 @@ static void CG_BloodParticle( vec3_t org, vec3_t dir, int size ) {
 	le->bounceFactor = 0.1f;
 
 	le->leMarkType = LEMT_BLOOD;
-
-
-
 }
+#endif
 
 /*
 =================
@@ -4237,7 +4218,6 @@ void CG_BounceProjectile( vec3_t start, vec3_t impact, vec3_t dir, vec3_t endout
 void CG_PredictFireLead( void ) {
 	vec3_t end;
 	trace_t trace,trace2;
-	int hits;
 	vec3_t tracefrom, start, temp, forward,right,up;
 	int wallhits, bulletHits;
 	float bulletThickn;
@@ -4250,7 +4230,7 @@ void CG_PredictFireLead( void ) {
 	gitem_t     *item = BG_FindItemForWeapon( cg.predictedPlayerState.weapon );
 	int caliber = item->giAmmoTag;
 
-	hits = wallhits = 0;
+	wallhits = 0;
 
 	if ( BG_WeaponMods( cg.predictedPlayerState.weapon ) & WM_GRENADELAUNCHER ) {
 		// no prediction if firing a grenade
@@ -5164,10 +5144,8 @@ models/players/visor/animation.cfg, etc
 qboolean    CG_ParseWeaponAnimationFile( const char *filename, int weapon_num ) {
 	char        *text_p;
 	int len;
-	//	int			lines = 0;
 	char        *token;
 	float fps;
-	int skip;
 	char text[20000];
 	fileHandle_t f;
 	int animation = WANIM_UNKNOWN;
@@ -5187,7 +5165,6 @@ qboolean    CG_ParseWeaponAnimationFile( const char *filename, int weapon_num ) 
 
 	// parse the text
 	text_p = text;
-	skip = 0;   // quite the compiler warning
 
 	// clear diz
 	VectorClear( weaponOffsets[weapon_num] );
@@ -5535,11 +5512,9 @@ sets up explicit weapon rendering
 ================
 */
 qboolean CG_SetupRender( void ) {
-
 #ifdef SAME_WEAPONPIPE
 	return qfalse;
-#endif
-
+#else
 	// copy values from cg.refdef to cg.weaponrefdef
 	memset( &cg.weaponrefdef, 0, sizeof( cg.weaponrefdef ) );
 
@@ -5551,7 +5526,7 @@ qboolean CG_SetupRender( void ) {
 	cg.weaponrefdef.x = 0;
 	cg.weaponrefdef.y = 0;
 
-	cg.weaponrefdef.rdflags = RDF_NOWORLDMODEL;;
+	cg.weaponrefdef.rdflags = RDF_NOWORLDMODEL;
 
 
 	//	cg.weaponrefdef.text
@@ -5562,6 +5537,7 @@ qboolean CG_SetupRender( void ) {
 
 	trap_R_ClearScene();
 	return qtrue;
+#endif
 }
 void CG_RenderWeapon( void ) {
 	trap_R_RenderScene( &cg.weaponrefdef );
@@ -5571,7 +5547,7 @@ void CG_WeaponAnimation( playerState_t *ps ) {
 	refEntity_t hand;
 	centity_t   *cent;
 	clientInfo_t    *ci;
-	float fovOffset;
+	//float fovOffset;
 	vec3_t angles;
 	weaponInfo_t    *weapon;
 	refEntity_t flash, silencer, scope, lasersight,bayonet;
@@ -5613,12 +5589,14 @@ void CG_WeaponAnimation( playerState_t *ps ) {
 		return;
 	}
 
+#if 0
 	// drop gun lower at higher fov
 	if ( cg_fov.integer > 90 ) {
 		fovOffset = -0.2 * ( cg_fov.integer - 90 );
 	} else {
 		fovOffset = 0;
 	}
+#endif
 
 	cent = &cg.predictedPlayerEntity;   // &cg_entities[cg.snap->ps.clientNum];
 

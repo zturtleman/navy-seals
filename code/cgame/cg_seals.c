@@ -166,7 +166,6 @@ void CG_SparkTrail( localEntity_t *le ) {
 	for ( i = 0; i < num; i++ )
 	{
 		vec3_t dir;
-		refEntity_t     *re;
 
 		dir[0] = crandom();
 		dir[1] = crandom();
@@ -175,7 +174,6 @@ void CG_SparkTrail( localEntity_t *le ) {
 		BG_EvaluateTrajectory( &le->pos, cg.time, origin );
 
 		le = CG_AllocLocalEntity();
-		re = &le->refEntity;
 
 		VectorCopy( origin, le->pos.trBase );
 		VectorScale( dir, 150 + crandom() * 30, le->pos.trDelta );
@@ -1099,7 +1097,7 @@ static int CC_DrawStatusBar_MissionItems( int y ) {
 	int base_x = cg_timerPosX.integer;
 
 	qhandle_t layer_back        =   trap_R_RegisterShaderNoMip( "gfx/2d/hud/timer/background.tga" );
-	qhandle_t timer_back        =   trap_R_RegisterShaderNoMip( "gfx/2d/hud/timer/background_timer.tga" );
+	//qhandle_t timer_back        =   trap_R_RegisterShaderNoMip( "gfx/2d/hud/timer/background_timer.tga" );
 	qhandle_t briefcase_icon    =   trap_R_RegisterShaderNoMip( "gfx/2d/hud/timer/mission_briefcase.tga" );
 	qhandle_t bomb_icon         =   trap_R_RegisterShaderNoMip( "gfx/2d/hud/timer/mission_bomb.tga" );
 	qhandle_t layer_end         =   trap_R_RegisterShaderNoMip( "gfx/2d/hud/timer/background_end.tga" );
@@ -1322,7 +1320,6 @@ static int  CG_DrawStatusBar_Ammo( int y ) {
 	qhandle_t layer_end         =   trap_R_RegisterShaderNoMip( "gfx/2d/hud/timer/background_end.tga" );
 
 	int base_x = cg_timerPosX.integer;
-	int base_y = cg_timerPosY.integer;
 
 	if ( ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR || cg.snap->ps.pm_type == PM_SPECTATOR || cg.snap->ps.pm_type == PM_NOCLIP ) ) {
 		return y;
@@ -1352,7 +1349,6 @@ static int CG_DrawStatusBar_Armor( int y ) {
 	qhandle_t layer_back    =   trap_R_RegisterShaderNoMip( "gfx/2d/hud/timer/background.tga" );
 	qhandle_t layer_end         =   trap_R_RegisterShaderNoMip( "gfx/2d/hud/timer/background_end.tga" );
 	int base_x = cg_timerPosX.integer;
-	int base_y = cg_timerPosY.integer;
 	int misc;
 
 	misc = 0;
@@ -1400,7 +1396,6 @@ static int CG_DrawStatusBar_Armor( int y ) {
 
 static int CG_DrawStatusBar_Timer( int y ) {
 	int base_x = cg_timerPosX.integer;
-	int base_y = cg_timerPosY.integer;
 	qhandle_t layer_back    =   trap_R_RegisterShaderNoMip( "gfx/2d/hud/timer/background.tga" );
 	qhandle_t timer_clock   =   trap_R_RegisterShaderNoMip( "gfx/2d/hud/timer/timer_clock.tga" );
 	qhandle_t timer_vip     =   trap_R_RegisterShaderNoMip( "gfx/2d/hud/timer/timer_vip.tga" );
@@ -1710,6 +1705,7 @@ static void  CG_DrawHudLocatorSmall( int x, int y, int w, int h ) {
 	CG_DrawPic2( x, y, w, h,loc_small_bodyLines );
 	trap_R_SetColor( NULL );
 }
+#if 0
 static void CG_DrawWeaponStatus2( int x,int y, float scale ) {
 	playerState_t   *ps;
 	char *mode = "";
@@ -1777,11 +1773,12 @@ static void CG_DrawWeaponStatus2( int x,int y, float scale ) {
 
 	CG_Text_Paint2( x,y,scale,colorWhite, mode, 0, 0, 0 ); //ITEM_TEXTSTYLE_OUTLINED);
 }
+#endif
 extern vmCvar_t cg_hudStyle;
 
 static void CG_DrawWeaponStatusIcon( int x, int y, int width, int height ) {
 	qhandle_t firemode[5];
-	qhandle_t shader;
+	qhandle_t shader = 0;
 	int weapon = cg.snap->ps.weapon;
 	int weaponmode = cg.snap->ps.stats[STAT_WEAPONMODE];
 
@@ -1974,6 +1971,7 @@ void CG_DrawScrutchHud( void ) {
 		 cg.snap->ps.weapon != WP_C4 ) {
 		gitem_t *item = BG_FindItemForWeapon( cg.snap->ps.weapon );
 		int weapon = cg.predictedPlayerState.weapon;
+#if 0
 		int clipGfx = 0;
 
 		if ( BG_IsShotgun( weapon ) ) {
@@ -1987,6 +1985,7 @@ void CG_DrawScrutchHud( void ) {
 		} else if ( cg.snap->ps.stats[STAT_WEAPONMODE] & ( 1 << WM_GRENADELAUNCHER ) && cg.snap->ps.stats[STAT_WEAPONMODE] & ( 1 << WM_WEAPONMODE2 ) ) {
 			clipGfx = 4;
 		}
+#endif
 
 		if ( item ) {
 			int x2 = 90;
@@ -2026,7 +2025,7 @@ void CG_DrawDefconHud( void ) {
 
 	qhandle_t background = trap_R_RegisterShader( "gfx/2d/hud/defcon/background.tga" ),
 			  frame = trap_R_RegisterShader( "gfx/2d/hud/defcon/frame.tga" ),
-			  outline = trap_R_RegisterShader( "gfx/2d/hud/defcon/outline.tga" ),
+			  //outline = trap_R_RegisterShader( "gfx/2d/hud/defcon/outline.tga" ),
 			  stamina[3];
 
 	stamina[0]  =   trap_R_RegisterShader( "gfx/2d/hud/defcon/stamina_button1.tga" );
@@ -2119,7 +2118,6 @@ void CG_DrawDefconHud( void ) {
 	// rounds counter
 	//
 	{
-		float x = 15.0f;
 		int add = 0;
 		gitem_t *item ;
 		int weapon = cg.snap->ps.weapon;

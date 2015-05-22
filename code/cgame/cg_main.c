@@ -37,7 +37,7 @@ displayContextDef_t cgDC;
 void CG_Init( int serverMessageNum, int serverCommandSequence, int clientNum );
 void CG_Shutdown( void );
 
-int CG_LastAttacker();
+int CG_LastAttacker( void );
 /*
 ================
 vmMain
@@ -701,10 +701,9 @@ CG_CheckForCheats
 =================
 */
 qboolean CG_CheckForCheats( void ) {
-	int len;
 	fileHandle_t f;
 
-	len = trap_FS_FOpenFile( "../openGL32.dll",  &f, FS_READ );
+	trap_FS_FOpenFile( "../openGL32.dll",  &f, FS_READ );
 
 	if ( !f ) {
 		return qfalse;
@@ -1229,6 +1228,7 @@ static void CG_RegisterBombGraphics( void ) {
 	// Navy Seals ++
 	int i;
 
+#if 0
 	static char     *sb_digital_nums[10] = {
 		"models/misc/bombcase/digit_0",
 		"models/misc/bombcase/digit_1",
@@ -1241,6 +1241,7 @@ static void CG_RegisterBombGraphics( void ) {
 		"models/misc/bombcase/digit_8",
 		"models/misc/bombcase/digit_9",
 	};
+#endif
 
 	// precache status bar pics
 	CG_LoadingString( "Bombcase Graphics" );
@@ -1990,18 +1991,19 @@ qboolean CG_Load_Menu( char **p ) {
 void CG_LoadMenus( const char *menuFile ) {
 	char    *token;
 	char *p;
-	int len, start;
+	int len;
+	//int start;
 	fileHandle_t f;
 	static char buf[MAX_MENUDEFFILE];
 
-	start = trap_Milliseconds();
+	//start = trap_Milliseconds();
 
 	len = trap_FS_FOpenFile( menuFile, &f, FS_READ );
 	if ( !f ) {
 		trap_Error( va( S_COLOR_YELLOW "menu file not found: %s, using default\n", menuFile ) );
 		len = trap_FS_FOpenFile( "ui/hud.txt", &f, FS_READ );
 		if ( !f ) {
-			trap_Error( va( S_COLOR_RED "default HUD scriptfile not found: ui/hud.txt, unable to continue!\n", menuFile ) );
+			trap_Error( va( S_COLOR_RED "default HUD scriptfile not found: ui/hud.txt, unable to continue!\n" ) );
 		}
 	}
 
@@ -2434,8 +2436,10 @@ void CG_DoWeaponConfig( char **args, int parameter ) {
 
 			char var[MAX_TOKEN_CHARS];
 
+#if 0
 			gitem_t *it_primary;
 			gitem_t *it_secondary;
+#endif
 
 
 			trap_Cvar_VariableStringBuffer( "inven_lasersight", var, sizeof( var ) );
@@ -2480,12 +2484,14 @@ void CG_DoWeaponConfig( char **args, int parameter ) {
 			trap_Cvar_VariableStringBuffer( "inven_ammo_secondary", var, sizeof( var ) );
 			secammo = atoi( var );
 
+#if 0
 			if ( primary ) {
 				it_primary = BG_FindItemForWeapon( primary );
 			}
 			if ( secondary ) {
 				it_secondary = BG_FindItemForWeapon( secondary );
 			}
+#endif
 
 			//	<cmd>  <primary> <secondary> <PriAmmo> <SecAmmo> <40mm grenades> <Grenades> <Fl Grenades> <kevlar> <helmet> <scope> <gl> <bayonet> <lasersight>
 
@@ -2543,7 +2549,7 @@ CG_LoadHudMenu();
 
 =================
 */
-void CG_LoadHudMenu() {
+void CG_LoadHudMenu( void ) {
 	char buff[1024];
 	const char *hudSet;
 

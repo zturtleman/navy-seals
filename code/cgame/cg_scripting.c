@@ -96,7 +96,7 @@ float ClientScript_GetValueFloat( const char *token, qboolean cvarScan );
 //
 //===============================================================================
 
-void QDECL NSSL_Printf( const char *msg, ... ) {
+__attribute__ ( ( format( printf, 1, 2 ) ) ) void QDECL NSSL_Printf( const char *msg, ... ) {
 	va_list argptr;
 	char text[1024];
 
@@ -104,9 +104,7 @@ void QDECL NSSL_Printf( const char *msg, ... ) {
 	Q_vsnprintf( text, sizeof( text ), msg, argptr );
 	va_end( argptr );
 
-	Com_sprintf( text, 1024, S_COLOR_YELLOW "NSSL: %s", text );
-
-	CG_Printf( text );
+	CG_Printf( S_COLOR_YELLOW "NSSL: %s", text );
 }
 
 void ClientScript_Init( void ) {
@@ -298,10 +296,10 @@ void ClientScript_GetScriptCommand( char value[256], const char *token ) {
 		strcpy( value, va( "%f", random() * mod ) );
 	} else if ( !Q_stricmp( token, "getkey" ) )    {
 		int key;
-		char cha;
+		//char cha;
 		ClientScript_GetValue( value, ClientScript_NextToken(), qtrue );
 		key = trap_Key_GetKey( value );
-		cha = key;
+		//cha = key;
 		if ( key == -1 ) {
 			strcpy( value, "<??\?>" );
 			return;
@@ -468,13 +466,12 @@ void ClientScript_DoCalc( char value[256], const char *token ) {
 	float currentvalue;
 	char currentstring[256];
 
-	token++;
-	token++;
-	token++;
-	token++;
-	token++;
+	// skip "calc:"
+	token += 5;
 
 	strcpy( currentstring, "" );
+	currentvalue = 0;
+	previousvalue = 0;
 
 	while ( token && token != NULL && token[0] != ' ' && strlen( token ) > 0 )
 	{
@@ -820,7 +817,6 @@ void ClientScript_Modify( void ) {
 	char modifier[256];     // the value i parse from the big string
 	char inValue[256];
 	float cvarResult;   // the cvar buffer i use to modify
-	qboolean useElse = qtrue;
 
 	// get the cvar
 	token = ClientScript_NextToken();
@@ -1042,6 +1038,8 @@ void ClientScript_AddString( void ) {
 
 	x = y = 64;
 	r = g = b = a = 1.0f;
+	scale = 1.0f;
+	flags = 0;
 
 	token = ClientScript_NextToken();
 	if ( token ) {
@@ -1265,7 +1263,6 @@ void ClientScript_ProcessWhileLoop( int num ) {
 	char cvarResult[256];
 	float i_value = scriptLoopTable[num].value;
 	char cmd[512];
-	int result = 0;
 
 	ClientScript_GetValue( cvarResult, scriptLoopTable[num].cvar, qtrue );
 
@@ -1348,12 +1345,9 @@ void ClientScript_WhileLoop( void ) {
 	char value[256];    // the value i parse from the big string
 	char cmd[512];      // the command that has to be executed
 	int function = 0;
-	int openSubs = 0;     // amount of open { } there are
+	//int openSubs = 0;     // amount of open { } there are
 	int age = MAX_SCRIPT_LOOPS;
 	int     sleep = 500;
-
-	qboolean useElse = qtrue;
-
 
 	/* Get next token: */
 	token = ClientScript_NextToken();
@@ -1419,7 +1413,7 @@ void ClientScript_CopyVariable( void ) {
 	/* Get next token: */
 	token = ClientScript_NextToken();
 	if ( !token ) {
-		NSSL_Printf( "Wrong syntax: missing variable\n", token );
+		NSSL_Printf( "Wrong syntax: missing variable\n" );
 		return;
 	}
 	// get the valueparameter
@@ -1428,7 +1422,7 @@ void ClientScript_CopyVariable( void ) {
 	/* Get next token: */
 	token = ClientScript_NextToken();
 	if ( !token ) {
-		NSSL_Printf( "Wrong syntax: missing variable\n", token );
+		NSSL_Printf( "Wrong syntax: missing variable\n" );
 		return;
 	}
 	// get the cvar
@@ -1464,7 +1458,7 @@ void ClientScript_Set( void ) {
 	/* Get next token: */
 	token = ClientScript_NextToken();
 	if ( !token ) {
-		NSSL_Printf( "Wrong syntax: missing variable\n", token );
+		NSSL_Printf( "Wrong syntax: missing variable\n" );
 		return;
 	}
 	// get the valueparameter
@@ -1504,7 +1498,7 @@ void ClientScript_SwitchStatement( void ) {
 	int numValue = 0;
 	char cmd[MAX_SWITCH_VALUES][256];    // the command that has to be executed
 	char cvarResult[256];            // the cvar buffer i use to compare to
-	int openSubs = 0;            // amount of open { } there are
+	//int openSubs = 0;            // amount of open { } there are
 	char elseCmd[256];
 	qboolean useElse = qfalse;
 	int i;
@@ -1512,7 +1506,7 @@ void ClientScript_SwitchStatement( void ) {
 	/* Get next token: */
 	token = ClientScript_NextToken();
 	if ( !token ) {
-		NSSL_Printf( "Wrong syntax: missing variable\n", token );
+		NSSL_Printf( "Wrong syntax: missing variable\n" );
 		return;
 	}
 
@@ -1571,7 +1565,7 @@ qboolean ClientScript_LogicOperation( void ) {
 	int result = 0;
 	int numOperators = 1;
 	int function;
-	int openSub = 0;
+	//int openSub = 0;
 
 logic_operation:
 	// get first value
@@ -1777,7 +1771,7 @@ static clientScriptParam_t csParams[] = {
 	{ "help",   ClientScript_Help_f, "Type 'nssl help' to get a help, you can also type 'nssl help <cmd>' to get information about <cmd>." },
 };
 
-void ClientScript_Help_f() {
+void ClientScript_Help_f( void ) {
 	const char *token = ClientScript_NextToken();
 	int i;
 
@@ -1797,7 +1791,7 @@ void ClientScript_Help_f() {
 	}
 	CG_Printf( "Insert a '$' infront of a cvar within the NSSL enviroment to evaluate a cvar into a value.\n" );
 	CG_Printf( "Type '*<type>' to insert clientinformation as a value.\n" );
-	CG_Printf( "Type '%<variable>,<match>' to parse a variable out of a string (.*)\n" );
+	CG_Printf( "Type '%%<variable>,<match>' to parse a variable out of a string (.*)\n" );
 
 	CG_Printf( "-[^3cmd^7]-------[^3usage^7]----------------------------\n" );
 }

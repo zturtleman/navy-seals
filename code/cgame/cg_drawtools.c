@@ -679,7 +679,7 @@ UI_DrawBannerString
 */
 static void UI_DrawBannerString2( int x, int y, const char* str, vec4_t color ) {
 	const char* s;
-	char ch;
+	int ch;
 	float ax;
 	float ay;
 	float aw;
@@ -701,7 +701,7 @@ static void UI_DrawBannerString2( int x, int y, const char* str, vec4_t color ) 
 		ch = *s & 127;
 		if ( ch == ' ' ) {
 			ax += ( (float)PROPB_SPACE_WIDTH + (float)PROPB_GAP_WIDTH ) * cgs.screenXScale;
-		} else if ( ch >= 'A' && ch <= 'Z' )   {
+		} else if ( ch >= 'A' && ch <= 'Z' ) {
 			ch -= 'A';
 			fcol = (float)propMapB[ch][0] / 256.0f;
 			frow = (float)propMapB[ch][1] / 256.0f;
@@ -731,7 +731,7 @@ void UI_DrawBannerString( int x, int y, const char* str, int style, vec4_t color
 		ch = *s;
 		if ( ch == ' ' ) {
 			width += PROPB_SPACE_WIDTH;
-		} else if ( ch >= 'A' && ch <= 'Z' )   {
+		} else if ( ch >= 'A' && ch <= 'Z' ) {
 			width += propMapB[ch - 'A'][2] + PROPB_GAP_WIDTH;
 		}
 		s++;
@@ -786,7 +786,7 @@ int UI_ProportionalStringWidth( const char* str ) {
 
 static void UI_DrawProportionalString2( int x, int y, const char* str, vec4_t color, float sizeScale, qhandle_t charset ) {
 	const char* s;
-	char ch;
+	int ch;
 	float ax;
 	float ay;
 	float aw;

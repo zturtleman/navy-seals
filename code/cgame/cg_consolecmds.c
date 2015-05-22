@@ -147,7 +147,7 @@ static void CG_ScoresUp_f( void ) {
 
 static void CG_IronSightDown_f( void ) {
 	// BLUTENGEL: disabled ironsights
-	return;
+#if 0
 	if ( cg.ns_ironsightState == IS_NONE ) {
 		cg.ns_ironsightState = IS_PUTUP;
 
@@ -159,11 +159,13 @@ static void CG_IronSightDown_f( void ) {
 
 		cg.ns_ironsightDeactivate = qfalse;
 	}
+#endif
 }
 static void CG_IronSightUp_f( void ) {
 	// BLUTENGEL: disabled ironsights
-	return;
+#if 0
 	cg.ns_ironsightDeactivate = qtrue;
+#endif
 }
 
 static void CG_ReloadDown_f( void ) {
@@ -230,7 +232,7 @@ static void CG_WeaponMode3_f( void ) {
 
 #ifdef MISSIONPACK
 extern menuDef_t *menuScoreboard;
-void Menu_Reset();          // FIXME: add to right include file
+void Menu_Reset( void );          // FIXME: add to right include file
 
 extern /**static*/ int strPoolIndex;
 #define HASH_TABLE_SIZE 2048
@@ -575,7 +577,7 @@ static void CG_NSEcho_f( void ) {
 	char message[256];
 
 	trap_Args( message, sizeof( message ) );
-	CG_Printf( va( "%s\n",message ) );
+	CG_Printf( "%s\n", message );
 }
 
 static void CG_Alias_f( void ) {

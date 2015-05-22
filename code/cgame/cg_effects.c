@@ -346,7 +346,6 @@ localEntity_t *CG_SpawnParticle( vec3_t org, vec3_t dir, float speed, float boun
 
 void CG_SpawnEffect( vec3_t org ) {
 	int i = 0;
-	int max = 64;
 	vec3_t origin;
 	vec3_t dir = { 0, 0, 2 };
 

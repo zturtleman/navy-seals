@@ -59,7 +59,7 @@ typedef struct cg_atmosphericEffect_s {
 } cg_atmosphericEffect_t;
 
 static cg_atmosphericEffect_t cg_atmFx;
-qboolean CG_AtmosphericKludge();
+qboolean CG_AtmosphericKludge( void );
 
 /*
 **  Render utility functions
@@ -475,7 +475,7 @@ static void CG_SnowParticleRender( cg_atmosphericParticle_t *particle ) {
 **      Set up gust parameters.
 */
 
-static void CG_EffectGust() {
+static void CG_EffectGust( void ) {
 	// Generate random values for the next gust
 
 	int diff;
@@ -528,7 +528,7 @@ static qboolean CG_EffectGustCurrent( vec3_t curr, float *weight, int *num ) {
 ** Main render loop
 */
 
-void CG_AddAtmosphericEffects() {
+void CG_AddAtmosphericEffects( void ) {
 	// Add atmospheric effects (e.g. rain, snow etc.) to view
 
 	int curr, max, currnum;
