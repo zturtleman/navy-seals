@@ -268,8 +268,12 @@ static void UI_PositionEntityOnTag( refEntity_t *entity, const refEntity_t *pare
 	orientation_t lerped;
 
 	// lerp the tag
+#if 0
 	trap_CM_LerpTag( &lerped, parentModel, parent->oldframe, parent->frame,
 					 1.0 - parent->backlerp, tagName );
+#else
+	trap_CM_LerpTag( &lerped, parent, tagName, 0 );
+#endif
 
 	// FIXME: allow origin offsets along tag?
 	VectorCopy( parent->origin, entity->origin );
@@ -735,12 +739,12 @@ void UI_DrawHead( float x, float y, float w, float h, playerInfo_t *pi, int time
 	origin[0] -= 100;   // + = behind, - = in front
 	origin[1] += 100;   // + = left, - = right
 	origin[2] += 100;   // + = above, - = below
-	trap_R_AddLightToScene( origin, 500, 1.0, 1.0, 1.0 );
+	trap_R_AddLightToScene( origin, 500, 1.0f, 1.0f, 1.0f, 1.0f, 0, 0 );
 
 	origin[0] -= 100;
 	origin[1] -= 100;
 	origin[2] -= 100;
-	trap_R_AddLightToScene( origin, 500, 1.0, 0.0, 0.0 );
+	trap_R_AddLightToScene( origin, 500, 1.0f, 1.0f, 0.0f, 0.0f, 0, 0 );
 	//Com_Printf("rendered.\n");
 	trap_R_RenderScene( &refdef );
 }

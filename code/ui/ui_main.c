@@ -51,19 +51,18 @@ static const char *MonthAbbrev[] =
 static const char *netSources[] =
 {
 	"Local",
-	"Mplayer",
 	"Internet",
 	"Favorites"
 };
 static const int numNetSources = sizeof( netSources ) / sizeof( const char* );
 
+// note: NS:CO doesn't use this...
 static const serverFilter_t serverFilters[] =
 {
 	{"All", ""},
-	{"Quake 3 Arena", "" },
-	{"Team Arena", "missionpack" },
-	{"Rocket Arena", "arena" },
-	{"Alliance", "alliance" },
+	{"ET", "" },
+	{"ET:Legacy", "legacy" },
+	{"NS:CO", "seals" },
 };
 
 static const char *teamArenaGameTypes[] =
@@ -505,6 +504,7 @@ void _UI_MouseEvent( int dx, int dy );
 void _UI_Refresh( int realtime );
 qboolean _UI_IsFullscreen( void );
 void _UI_Precache( qboolean skipPrecache );
+uiMenuCommand_t _UI_GetActiveMenu( void );
 
 Q_EXPORT intptr_t vmMain( int command, int arg0, int arg1, int arg2, int arg3, int arg4, int arg5, int arg6, int arg7, int arg8, int arg9, int arg10, int arg11  ) {
 	switch ( command )
@@ -545,6 +545,9 @@ Q_EXPORT intptr_t vmMain( int command, int arg0, int arg1, int arg2, int arg3, i
 		_UI_SetActiveMenu( arg0 );
 		return 0;
 
+	case UI_GET_ACTIVE_MENU:
+		return _UI_GetActiveMenu();
+
 	case UI_CONSOLE_COMMAND:
 		return UI_ConsoleCommand( arg0 );
 
@@ -554,6 +557,12 @@ Q_EXPORT intptr_t vmMain( int command, int arg0, int arg1, int arg2, int arg3, i
 
 	case UI_HASUNIQUECDKEY:             // mod authors need to observe this
 		return qtrue;
+
+	case UI_CHECKEXECKEY:
+		return qfalse; //UI_CheckExecKey( arg0 );
+
+	case UI_WANTSBINDKEYS:
+		return qtrue; //( g_waitingForKey && g_bindItem ) ? qtrue : qfalse;
 	}
 
 	return -1;
@@ -1466,6 +1475,10 @@ qboolean Asset_Parse( int handle ) {
 			if ( !PC_String_Parse( handle, &tempStr ) || !PC_Int_Parse( handle,&pointSize ) ) {
 				return qfalse;
 			}
+
+			// ET doesn't fallback to fontImage, so force using it
+			tempStr = "fontImage";
+
 			trap_R_RegisterFont( tempStr, pointSize, &uiInfo.uiDC.Assets.textFont );
 			uiInfo.uiDC.Assets.fontRegistered = qtrue;
 			continue;
@@ -1476,6 +1489,10 @@ qboolean Asset_Parse( int handle ) {
 			if ( !PC_String_Parse( handle, &tempStr ) || !PC_Int_Parse( handle,&pointSize ) ) {
 				return qfalse;
 			}
+
+			// ET doesn't fallback to fontImage, so force using it
+			tempStr = "fontImage";
+
 			trap_R_RegisterFont( tempStr, pointSize, &uiInfo.uiDC.Assets.smallFont );
 			continue;
 		}
@@ -1485,6 +1502,10 @@ qboolean Asset_Parse( int handle ) {
 			if ( !PC_String_Parse( handle, &tempStr ) || !PC_Int_Parse( handle,&pointSize ) ) {
 				return qfalse;
 			}
+
+			// ET doesn't fallback to fontImage, so force using it
+			tempStr = "fontImage";
+
 			trap_R_RegisterFont( tempStr, pointSize, &uiInfo.uiDC.Assets.bigFont );
 			continue;
 		}
@@ -6796,6 +6817,12 @@ void UI_LoadNonIngame( void ) {
 	uiInfo.inGameLoad = qfalse;
 }
 
+static uiMenuCommand_t ui_lastActiveMenu = UIMENU_NONE;
+
+uiMenuCommand_t _UI_GetActiveMenu( void ) {
+	return ui_lastActiveMenu;
+}
+
 void _UI_SetActiveMenu( uiMenuCommand_t menu ) {
 	char buf[256];
 
@@ -6811,6 +6838,9 @@ void _UI_SetActiveMenu( uiMenuCommand_t menu ) {
 	if ( Menu_Count() > 0 ) {
 		vec3_t v;
 		v[0] = v[1] = v[2] = 0;
+
+		ui_lastActiveMenu = menu;
+
 		switch ( menu )
 		{
 		case UIMENU_NONE:
@@ -6825,7 +6855,7 @@ void _UI_SetActiveMenu( uiMenuCommand_t menu ) {
 			trap_Key_SetCatcher( KEYCATCH_UI );
 
 			//trap_S_StartLocalSound( trap_S_RegisterSound("sound/misc/menu_background.wav", qfalse) , CHAN_LOCAL_SOUND );
-			trap_S_StartBackgroundTrack( "sound/misc/nsmt.wav", NULL );
+			trap_S_StartBackgroundTrack( "sound/misc/nsmt.wav", NULL, 0 );
 			if ( uiInfo.inGameLoad ) {
 				UI_LoadNonIngame();
 			}
@@ -6874,6 +6904,9 @@ void _UI_SetActiveMenu( uiMenuCommand_t menu ) {
 			UI_BuildPlayerList();
 			Menus_CloseAll();
 			Menus_ActivateByName( "ingame" );
+			return;
+		default:
+			Com_Printf( "Unhandled menu command %d\n", menu );
 			return;
 		}
 	}
@@ -7207,7 +7240,6 @@ UI_StartServerRefresh
 =================
 */
 static void UI_StartServerRefresh( qboolean full ) {
-	int i;
 	char    *ptr;
 
 	qtime_t q;
@@ -7236,20 +7268,13 @@ static void UI_StartServerRefresh( qboolean full ) {
 	}
 
 	uiInfo.serverStatus.refreshtime = uiInfo.uiDC.realTime + 5000;
-	if ( ui_netSource.integer == AS_GLOBAL || ui_netSource.integer == AS_MPLAYER ) {
-		if ( ui_netSource.integer == AS_GLOBAL ) {
-			i = 0;
-		} else
-		{
-			i = 1;
-		}
-
+	if ( ui_netSource.integer == AS_GLOBAL ) {
 		ptr = UI_Cvar_VariableString( "debug_protocol" );
 		if ( strlen( ptr ) ) {
-			trap_Cmd_ExecuteText( EXEC_NOW, va( "globalservers %d %s full empty\n", i, ptr ) );
+			trap_Cmd_ExecuteText( EXEC_NOW, va( "globalservers %d %s\n", 0, ptr ) );
 		} else
 		{
-			trap_Cmd_ExecuteText( EXEC_NOW, va( "globalservers %d %d full empty\n", i, (int)trap_Cvar_VariableValue( "protocol" ) ) );
+			trap_Cmd_ExecuteText( EXEC_NOW, va( "globalservers %d %d\n", 0, (int)trap_Cvar_VariableValue( "protocol" ) ) );
 		}
 	}
 }

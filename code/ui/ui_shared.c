@@ -1270,7 +1270,11 @@ void Script_playLooped( itemDef_t *item, char **args ) {
 	const char *val;
 	if ( String_Parse( args, &val ) ) {
 		DC->stopBackgroundTrack();
+#ifdef CGAME
 		DC->startBackgroundTrack( val, val );
+#else
+		DC->startBackgroundTrack( val, val, 0 );
+#endif
 	}
 }
 
@@ -2820,7 +2824,11 @@ void  Menus_Activate( menuDef_t *menu ) {
 
 	if ( menu->soundName && *menu->soundName ) {
 		//		DC->stopBackgroundTrack();					// you don't want to do this since it will reset s_rawend
+#ifdef CGAME
 		DC->startBackgroundTrack( menu->soundName, menu->soundName );
+#else
+		DC->startBackgroundTrack( menu->soundName, menu->soundName, 0 );
+#endif
 	}
 
 	Display_CloseCinematics();

@@ -369,7 +369,11 @@ typedef struct {
 	void ( *Pause )( qboolean b );
 	int ( *ownerDrawWidth )( int ownerDraw, float scale );
 	sfxHandle_t ( *registerSound )( const char *name, qboolean compressed );
+#ifdef CGAME
 	void ( *startBackgroundTrack )( const char *intro, const char *loop );
+#else
+	void ( *startBackgroundTrack )( const char *intro, const char *loop, int fadeupTime );
+#endif
 	void ( *stopBackgroundTrack )( void );
 	int ( *playCinematic )( const char *name, float x, float y, float w, float h );
 	void ( *stopCinematic )( int handle );

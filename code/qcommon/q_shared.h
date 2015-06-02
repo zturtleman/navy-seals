@@ -247,10 +247,12 @@ typedef enum {
 // parameters to the main Error routine
 typedef enum {
 	ERR_FATAL,					// exit the entire game with a popup window
+	ERR_VID_FATAL,				// exit the entire game with a popup window and doesn't delete profile.pid
 	ERR_DROP,					// print to console and disconnect from game
 	ERR_SERVERDISCONNECT,		// don't kill server
 	ERR_DISCONNECT,				// client disconnected from the server
-	ERR_NEED_CD					// pop up the need-cd dialog
+	ERR_NEED_CD,				// pop up the need-cd dialog
+	ERR_AUTOUPDATE
 } errorParm_t;
 
 
@@ -723,6 +725,8 @@ typedef struct pc_token_s
 	int intvalue;
 	float floatvalue;
 	char string[MAX_TOKENLENGTH];
+	int line;
+	int linescrossed;
 } pc_token_t;
 
 // data is an in/out parm, returns a parsed out token
@@ -868,6 +872,10 @@ default values.
 #define	CVAR_TEMP			256	// can be set even when cheats are disabled, but is not archived
 #define CVAR_CHEAT			512	// can not be changed if cheats are disabled
 #define CVAR_NORESTART		1024	// do not clear when a cvar_restart is issued
+#define CVAR_WOLFINFO       2048    // DHM - NERVE :: Like userinfo, but for wolf multiplayer info
+
+#define CVAR_UNSAFE         4096    // ydnar: unsafe system cvars (renderer, sound settings, anything that might cause a crash)
+#define CVAR_SERVERINFO_NOUPDATE        8192    // gordon: WONT automatically send this to clients, but server browsers will see it
 
 // nothing outside the Cvar_*() functions should modify these fields!
 typedef struct cvar_s {
@@ -1163,13 +1171,34 @@ typedef struct playerState_s {
 #define	MOVE_RUN			120			// if forwardmove or rightmove are >= MOVE_RUN,
 // then BUTTON_WALKING should be set
 
+// Arnout: doubleTap buttons - DT_NUM can be max 8
+typedef enum {
+	DT_NONE,
+	DT_MOVELEFT,
+	DT_MOVERIGHT,
+	DT_FORWARD,
+	DT_BACK,
+	DT_LEANLEFT,
+	DT_LEANRIGHT,
+	DT_UP,
+	DT_NUM
+} dtType_t;
+
 // usercmd_t is sent to the server each client frame
 typedef struct usercmd_s {
-	int				serverTime;
-	int				angles[3];
-	int 			buttons;
-	byte			weapon;           // weapon 
-	signed char	forwardmove, rightmove, upmove;
+	int serverTime;
+	byte buttons;
+	byte wbuttons;
+	byte weapon;
+	byte flags;
+	int angles[3];
+
+	signed char forwardmove, rightmove, upmove;
+	byte doubleTap;             // Arnout: only 3 bits used
+
+	// rain - in ET, this can be any entity, and it's used as an array
+	// index, so make sure it's unsigned
+	byte identClient;           // NERVE - SMF
 } usercmd_t;
 
 //===================================================================
@@ -1308,12 +1337,9 @@ typedef struct qtime_s {
 
 
 // server browser sources
-// TTimo: AS_MPLAYER is no longer used
-#define AS_LOCAL			0
-#define AS_MPLAYER		1
-#define AS_GLOBAL			2
-#define AS_FAVORITES	3
-
+#define AS_LOCAL        0
+#define AS_GLOBAL       1           // NERVE - SMF - modified
+#define AS_FAVORITES    2
 
 // cinematic states
 typedef enum {
