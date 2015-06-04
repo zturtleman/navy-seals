@@ -784,7 +784,7 @@ qboolean    CG_ParseBriefingFile(  char *mapstring  ) {
 
 /*
 ====================
-CG_DrawInformation
+CG_DrawConnectScreen
 
 Draw all the status / pacifier stuff during level loading
 ====================
@@ -793,7 +793,7 @@ Draw all the status / pacifier stuff during level loading
 #define INFO_STRING_START   15
 #define INFO_STRING_DIST    12
 
-void CG_DrawInformation( void ) {
+void CG_DrawConnectScreen( void ) {
 	const char  *s;
 	const char  *info;
 	const char  *sysInfo;
@@ -804,8 +804,6 @@ void CG_DrawInformation( void ) {
 	qhandle_t detail;
 	char buf[1024];
 	float textscale = 0.18f;
-
-	return;
 
 	info = CG_ConfigString( CS_SERVERINFO );
 	sysInfo = CG_ConfigString( CS_SYSTEMINFO );
@@ -979,4 +977,26 @@ void CG_DrawInformation( void ) {
 			y += CG_Text_Height( TangoBriefing[value], textscale, 0 ) + 3;
 		}
 	}
+}
+
+/*
+====================
+CG_DrawInformation
+
+Draw all the status / pacifier stuff during level loading
+====================
+*/
+void CG_DrawInformation( void ) {
+	static int lastcalled = 0;
+
+	if ( lastcalled && ( trap_Milliseconds() - lastcalled < 500 ) ) {
+		return;
+	}
+	lastcalled = trap_Milliseconds();
+
+	if ( cg.snap ) {
+		return;     // we are in the world, no need to draw information
+	}
+
+	CG_DrawConnectScreen();
 }
