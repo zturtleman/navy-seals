@@ -1,26 +1,30 @@
 /*
 ===========================================================================
-Copyright (C) 1999-2005 Id Software, Inc.
 
-This file is part of Navy SEALs: Covert Operations source code.
+Wolfenstein: Enemy Territory GPL Source Code
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
-Navy SEALs: Covert Operations source code is free software; you can
-redistribute it and/or modify it under the terms of the GNU General Public
-License as published by the Free Software Foundation; either version 2 of
-the License, or (at your option) any later version.
+This file is part of the Wolfenstein: Enemy Territory GPL Source Code (Wolf ET Source Code).
 
-Navy SEALs: Covert Operations source code is distributed in the hope that it
-will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
-of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+Wolf ET Source Code is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Wolf ET Source Code is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with Navy SEALs: Covert Operations source code; if not, write to the
-Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
-02110-1301  USA
+along with Wolf ET Source Code.  If not, see <http://www.gnu.org/licenses/>.
+
+In addition, the Wolf: ET Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Wolf ET Source Code.  If not, please request a copy in writing from id Software at the address below.
+
+If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
+
 ===========================================================================
 */
-//
 
 // g_public.h -- game module information visible to server
 
@@ -31,40 +35,53 @@ Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 // in entityStates (level eType), so the game must explicitly flag
 // special server behaviors
 #define SVF_NOCLIENT            0x00000001  // don't send entity to clients, even if it has effects
-// TTimo
-// https://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=551
-#define SVF_CLIENTMASK 0x00000002
-#define SVF_BOT                 0x00000008  // set if the entity is a bot
+#define SVF_VISDUMMY            0x00000004  // this ent is a "visibility dummy" and needs it's master to be sent to clients that can see it even if they can't see the master ent
+#define SVF_BOT                 0x00000008
+#define SVF_POW                 0x00000010  // Gordon: stole SVF_CASTAI as it's no longer used
+
 #define SVF_BROADCAST           0x00000020  // send to all connected clients
 #define SVF_PORTAL              0x00000040  // merge a second pvs at origin2 into snapshots
-#define SVF_USE_CURRENT_ORIGIN  0x00000080  // entity->r.currentOrigin instead of entity->s.origin
-// for link position (missiles and movers)
-#define SVF_SINGLECLIENT        0x00000100  // only send to a single client (entityShared_t->singleClient)
-#define SVF_NOSERVERINFO        0x00000200  // don't send CS_SERVERINFO updates to this client
+#define SVF_BLANK               0x00000080  // Gordon: removed SVF_USE_CURRENT_ORIGIN as it plain doesnt do anything
+#define SVF_USE_CURRENT_ORIGIN  SVF_BLANK   // ZTM: FIXME: ### remove this later
+#define SVF_NOFOOTSTEPS         0x00000100
+
+// MrE:
+#define SVF_CAPSULE             0x00000200  // use capsule for collision detection
+
+#define SVF_VISDUMMY_MULTIPLE   0x00000400  // so that one vis dummy can add to snapshot multiple speakers
+
+// recent id changes
+#define SVF_SINGLECLIENT        0x00000800  // only send to a single client (entityShared_t->singleClient)
+#define SVF_NOSERVERINFO        0x00001000  // don't send CS_SERVERINFO updates to this client
                                             // so that it can be updated for ping tools without
                                             // lagging clients
-#define SVF_CAPSULE             0x00000400  // use capsule for collision detection instead of bbox
-#define SVF_NOTSINGLECLIENT     0x00000800  // send entity to everyone but one client
+#define SVF_NOTSINGLECLIENT     0x00002000  // send entity to everyone but one client
                                             // (entityShared_t->singleClient)
+// Gordon:
+#define SVF_IGNOREBMODELEXTENTS     0x00004000  // just use origin for in pvs check for snapshots, ignore the bmodel extents
+#define SVF_SELF_PORTAL             0x00008000  // use self->origin2 as portal
+#define SVF_SELF_PORTAL_EXCLUSIVE   0x00010000  // use self->origin2 as portal and DONT add self->origin PVS ents
 
-//
+//===============================================================
+
+#define MAX_TEAM_LANDMINES  10
+
+typedef qboolean ( *addToSnapshotCallback )( int entityNum, int clientNum );
 
 typedef struct {
-	entityState_t s;                // communicated by server to clients
+//	entityState_t	s;				// communicated by server to clients
 
 	qboolean linked;                // qfalse if not in any good cluster
 	int linkcount;
 
 	int svFlags;                    // SVF_NOCLIENT, SVF_BROADCAST, etc
-	// only send to this client when SVF_SINGLECLIENT is set
-	// if SVF_CLIENTMASK is set, use bitmask for clients to send to (maxclients must be <= 32, up to the mod to enforce this)
-	int singleClient;
+	int singleClient;               // only send to this client when SVF_SINGLECLIENT is set
 
 	qboolean bmodel;                // if false, assume an explicit mins / maxs bounding box
-	// only set by trap_SetBrushModel
+	                                // only set by trap_SetBrushModel
 	vec3_t mins, maxs;
 	int contents;                   // CONTENTS_TRIGGER, CONTENTS_SOLID, CONTENTS_BODY, etc
-	// a non-solid entity should set to 0
+	                                // a non-solid entity should set to 0
 
 	vec3_t absmin, absmax;          // derived from mins/maxs and origin + rotation
 
@@ -81,6 +98,11 @@ typedef struct {
 	// ent->s.ownerNum = passEntityNum	(don't interact with your own missiles)
 	// entity[ent->s.ownerNum].ownerNum = passEntityNum	(don't interact with other missiles from owner)
 	int ownerNum;
+	int eventTime;
+
+	int worldflags;             // DHM - Nerve
+
+	qboolean snapshotCallback;
 } entityShared_t;
 
 
@@ -115,20 +137,23 @@ typedef enum {
 	// console variable interaction
 	G_CVAR_REGISTER,    // ( vmCvar_t *vmCvar, const char *varName, const char *defaultValue, int flags );
 	G_CVAR_UPDATE,  // ( vmCvar_t *vmCvar );
-	G_CVAR_SET, // ( const char *var_name, const char *value );
-	G_CVAR_VARIABLE_INTEGER_VALUE, // ( const char *var_name );
+	G_CVAR_SET,     // ( const char *var_name, const char *value );
+	G_CVAR_VARIABLE_INTEGER_VALUE,  // ( const char *var_name );
 
 	G_CVAR_VARIABLE_STRING_BUFFER,  // ( const char *var_name, char *buffer, int bufsize );
 
-	G_ARGC,         // ( void );
+	G_CVAR_LATCHEDVARIABLESTRINGBUFFER,
 
+	G_ARGC,         // ( void );
 	// ClientCommand and ServerCommand parameter access
+
 	G_ARGV,         // ( int n, char *buffer, int bufferLength );
 
 	G_FS_FOPEN_FILE,    // ( const char *qpath, fileHandle_t *file, fsMode_t mode );
 	G_FS_READ,      // ( void *buffer, int len, fileHandle_t f );
-	G_FS_WRITE, // ( const void *buffer, int len, fileHandle_t f );
-	G_FS_FCLOSE_FILE,   // ( fileHandle_t f );
+	G_FS_WRITE,     // ( const void *buffer, int len, fileHandle_t f );
+	G_FS_RENAME,
+	G_FS_FCLOSE_FILE,       // ( fileHandle_t f );
 
 	G_SEND_CONSOLE_COMMAND, // ( const char *text );
 	// add commands to the console as if they were typed in
@@ -201,7 +226,7 @@ typedef enum {
 	// perform an exact check against inline brush models of non-square shape
 
 	// access for bots to get and free a server client (FIXME?)
-	G_BOT_ALLOCATE_CLIENT,  // ( void );
+	G_BOT_ALLOCATE_CLIENT,  // ( int clientNum );
 
 	G_BOT_FREE_CLIENT,  // ( int clientNum );
 
@@ -217,14 +242,25 @@ typedef enum {
 	G_DEBUG_POLYGON_DELETE,
 	G_REAL_TIME,
 	G_SNAPVECTOR,
-	G_TRACECAPSULE, // ( trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask );
-	G_ENTITY_CONTACTCAPSULE,    // ( const vec3_t mins, const vec3_t maxs, const gentity_t *ent );
+// MrE:
 
-	// 1.32
-	G_FS_SEEK,
+	G_TRACECAPSULE, // ( trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask );
+	// collision detection using capsule against all linked entities
+
+	G_ENTITY_CONTACTCAPSULE,    // ( const vec3_t mins, const vec3_t maxs, const gentity_t *ent );
+	// perform an exact check against inline brush models of non-square shape
+// done.
+
+	G_GETTAG,
+
+	G_REGISTERTAG,
+	// Gordon: load a serverside tag
+
+	G_REGISTERSOUND,    // xkan, 10/28/2002 - register the sound
+	G_GET_SOUND_LENGTH, // xkan, 10/28/2002 - get the length of the sound
 
 	BOTLIB_SETUP = 200,             // ( void );
-	BOTLIB_SHUTDOWN,                    // ( void );
+	BOTLIB_SHUTDOWN,                // ( void );
 	BOTLIB_LIBVAR_SET,
 	BOTLIB_LIBVAR_GET,
 	BOTLIB_PC_ADD_GLOBAL_DEFINE,
@@ -237,17 +273,24 @@ typedef enum {
 	BOTLIB_GET_CONSOLE_MESSAGE,     // ( int client, char *message, int size );
 	BOTLIB_USER_COMMAND,            // ( int client, usercmd_t *ucmd );
 
-	BOTLIB_AAS_ENABLE_ROUTING_AREA = 300,
-	BOTLIB_AAS_BBOX_AREAS,
-	BOTLIB_AAS_AREA_INFO,
+	BOTLIB_AAS_ENTITY_VISIBLE = 300,    //FIXME: remove
+	BOTLIB_AAS_IN_FIELD_OF_VISION,      //FIXME: remove
+	BOTLIB_AAS_VISIBLE_CLIENTS,         //FIXME: remove
 	BOTLIB_AAS_ENTITY_INFO,
 
 	BOTLIB_AAS_INITIALIZED,
 	BOTLIB_AAS_PRESENCE_TYPE_BOUNDING_BOX,
 	BOTLIB_AAS_TIME,
 
+	// Ridah
+	BOTLIB_AAS_SETCURRENTWORLD,
+	// done.
+
 	BOTLIB_AAS_POINT_AREA_NUM,
 	BOTLIB_AAS_TRACE_AREAS,
+	BOTLIB_AAS_BBOX_AREAS,
+	BOTLIB_AAS_AREA_CENTER,
+	BOTLIB_AAS_AREA_WAYPOINT,
 
 	BOTLIB_AAS_POINT_CONTENTS,
 	BOTLIB_AAS_NEXT_BSP_ENTITY,
@@ -257,35 +300,56 @@ typedef enum {
 	BOTLIB_AAS_INT_FOR_BSP_EPAIR_KEY,
 
 	BOTLIB_AAS_AREA_REACHABILITY,
+	BOTLIB_AAS_AREA_LADDER,
 
 	BOTLIB_AAS_AREA_TRAVEL_TIME_TO_GOAL_AREA,
 
 	BOTLIB_AAS_SWIMMING,
 	BOTLIB_AAS_PREDICT_CLIENT_MOVEMENT,
 
+	// Ridah, route-tables
+	BOTLIB_AAS_RT_SHOWROUTE,
+	//BOTLIB_AAS_RT_GETHIDEPOS,
+	//BOTLIB_AAS_FINDATTACKSPOTWITHINRANGE,
+	BOTLIB_AAS_NEARESTHIDEAREA,
+	BOTLIB_AAS_LISTAREASINRANGE,
+	BOTLIB_AAS_AVOIDDANGERAREA,
+	BOTLIB_AAS_RETREAT,
+	BOTLIB_AAS_ALTROUTEGOALS,
+	BOTLIB_AAS_SETAASBLOCKINGENTITY,
+	BOTLIB_AAS_RECORDTEAMDEATHAREA,
+	// done.
+
 	BOTLIB_EA_SAY = 400,
 	BOTLIB_EA_SAY_TEAM,
+	BOTLIB_EA_USE_ITEM,
+	BOTLIB_EA_DROP_ITEM,
+	BOTLIB_EA_USE_INV,
+	BOTLIB_EA_DROP_INV,
+	BOTLIB_EA_GESTURE,
 	BOTLIB_EA_COMMAND,
 
-	BOTLIB_EA_ACTION,
-	BOTLIB_EA_GESTURE,
+	BOTLIB_EA_SELECT_WEAPON,
 	BOTLIB_EA_TALK,
 	BOTLIB_EA_ATTACK,
+	BOTLIB_EA_RELOAD,
 	BOTLIB_EA_USE,
 	BOTLIB_EA_RESPAWN,
+	BOTLIB_EA_JUMP,
+	BOTLIB_EA_DELAYED_JUMP,
 	BOTLIB_EA_CROUCH,
+	BOTLIB_EA_WALK,
 	BOTLIB_EA_MOVE_UP,
 	BOTLIB_EA_MOVE_DOWN,
 	BOTLIB_EA_MOVE_FORWARD,
 	BOTLIB_EA_MOVE_BACK,
 	BOTLIB_EA_MOVE_LEFT,
 	BOTLIB_EA_MOVE_RIGHT,
-
-	BOTLIB_EA_SELECT_WEAPON,
-	BOTLIB_EA_JUMP,
-	BOTLIB_EA_DELAYED_JUMP,
 	BOTLIB_EA_MOVE,
 	BOTLIB_EA_VIEW,
+	// START	xkan, 9/16/2002
+	BOTLIB_EA_PRONE,
+	// END		xkan, 9/16/2002
 
 	BOTLIB_EA_END_REGULAR,
 	BOTLIB_EA_GET_INPUT,
@@ -353,6 +417,9 @@ typedef enum {
 	BOTLIB_AI_ALLOC_MOVE_STATE,
 	BOTLIB_AI_FREE_MOVE_STATE,
 	BOTLIB_AI_INIT_MOVE_STATE,
+	// Ridah
+	BOTLIB_AI_INIT_AVOID_REACH,
+	// done.
 
 	BOTLIB_AI_CHOOSE_BEST_FIGHT_WEAPON,
 	BOTLIB_AI_GET_WEAPON_INFO,
@@ -380,8 +447,15 @@ typedef enum {
 	BOTLIB_PC_LOAD_SOURCE,
 	BOTLIB_PC_FREE_SOURCE,
 	BOTLIB_PC_READ_TOKEN,
-	BOTLIB_PC_SOURCE_FILE_AND_LINE
+	BOTLIB_PC_SOURCE_FILE_AND_LINE,
+	BOTLIB_PC_UNREAD_TOKEN,
 
+	PB_STAT_REPORT,
+
+	// zinx
+	G_SENDMESSAGE,
+	G_MESSAGESTATUS,
+	// -zinx
 } gameImport_t;
 
 
@@ -418,5 +492,16 @@ typedef enum {
 	// The game can issue trap_argc() / trap_argv() commands to get the command
 	// and parameters.  Return qfalse if the game doesn't recognize it as a command.
 
-	BOTAI_START_FRAME               // ( int time );
+	GAME_SNAPSHOT_CALLBACK,         // ( int entityNum, int clientNum ); // return qfalse if you don't want it to be added
+
+	BOTAI_START_FRAME,              // ( int time );
+
+	// Ridah, Cast AI
+	BOT_VISIBLEFROMPOS,
+	BOT_CHECKATTACKATPOS,
+	// done.
+
+	// zinx
+	GAME_MESSAGERECEIVED,           // ( int cno, const char *buf, int buflen, int commandTime );
+	// -zinx
 } gameExport_t;

@@ -37,7 +37,8 @@ void    trap_Argv( int n, char *buffer, int bufferLength );
 void    trap_Args( char *buffer, int bufferLength );
 int     trap_FS_FOpenFile( const char *qpath, fileHandle_t *f, fsMode_t mode );
 void    trap_FS_Read( void *buffer, int len, fileHandle_t f );
-void    trap_FS_Write( const void *buffer, int len, fileHandle_t f );
+int     trap_FS_Write( const void *buffer, int len, fileHandle_t f );
+int     trap_FS_Rename( const char *from, const char *to );
 void    trap_FS_FCloseFile( fileHandle_t f );
 int     trap_FS_GetFileList( const char *path, const char *extension, char *listbuf, int bufsize );
 void    trap_SendConsoleCommand( int exec_when, const char *text );
@@ -47,8 +48,9 @@ void    trap_Cvar_Set( const char *var_name, const char *value );
 int     trap_Cvar_VariableIntegerValue( const char *var_name );
 float   trap_Cvar_VariableValue( const char *var_name );
 void    trap_Cvar_VariableStringBuffer( const char *var_name, char *buffer, int bufsize );
+void    trap_Cvar_LatchedVariableStringBuffer( const char *var_name, char *buffer, int bufsize );
 void    trap_LocateGameData( gentity_t *gEnts, int numGEntities, int sizeofGEntity_t, playerState_t *gameClients, int sizeofGameClient );
-void    trap_DropClient( int clientNum, const char *reason );
+void    trap_DropClient( int clientNum, const char *reason, int length );
 void    trap_SendServerCommand( int clientNum, const char *text );
 void    trap_SetConfigstring( int num, const char *string );
 void    trap_GetConfigstring( int num, char *buffer, int bufferSize );
@@ -57,6 +59,9 @@ void    trap_SetUserinfo( int num, const char *buffer );
 void    trap_GetServerinfo( char *buffer, int bufferSize );
 void    trap_SetBrushModel( gentity_t *ent, const char *name );
 void    trap_Trace( trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask );
+void    trap_TraceCapsule( trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask );
+void    trap_TraceCapsuleNoEnts( trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask );
+void    trap_TraceNoEnts( trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask );
 int     trap_PointContents( const vec3_t point, int passEntityNum );
 qboolean trap_InPVS( const vec3_t p1, const vec3_t p2 );
 qboolean trap_InPVSIgnorePortals( const vec3_t p1, const vec3_t p2 );
@@ -66,10 +71,15 @@ void    trap_LinkEntity( gentity_t *ent );
 void    trap_UnlinkEntity( gentity_t *ent );
 int     trap_EntitiesInBox( const vec3_t mins, const vec3_t maxs, int *entityList, int maxcount );
 qboolean trap_EntityContact( const vec3_t mins, const vec3_t maxs, const gentity_t *ent );
-int     trap_BotAllocateClient( void );
+qboolean trap_EntityContactCapsule( const vec3_t mins, const vec3_t maxs, const gentity_t *ent );
+int     trap_BotAllocateClient( int clientNum );
 void    trap_BotFreeClient( int clientNum );
 void    trap_GetUsercmd( int clientNum, usercmd_t *cmd );
 qboolean    trap_GetEntityToken( char *buffer, int bufferSize );
+qboolean trap_GetTag( int clientNum, int tagFileNumber, char *tagName, orientation_t * or );
+qboolean trap_LoadTag( const char* filename );
+
+int     trap_RealTime( qtime_t *qtime );
 
 int     trap_DebugPolygonCreate( int color, int numPoints, vec3_t *points );
 void    trap_DebugPolygonDelete( int id );
@@ -86,71 +96,103 @@ int     trap_BotLibTest( int parm0, char *parm1, vec3_t parm2, vec3_t parm3 );
 
 int     trap_BotGetSnapshotEntity( int clientNum, int sequence );
 int     trap_BotGetServerCommand( int clientNum, char *message, int size );
+//int		trap_BotGetConsoleMessage(int clientNum, char *message, int size);
 void    trap_BotUserCommand( int client, usercmd_t *ucmd );
 
-int     trap_AAS_BBoxAreas( vec3_t absmins, vec3_t absmaxs, int *areas, int maxareas );
-int     trap_AAS_AreaInfo( int areanum, void /* struct aas_areainfo_s */ *info );
-void    trap_AAS_EntityInfo( int entnum, void /* struct aas_entityinfo_s */ *info );
+void        trap_AAS_EntityInfo( int entnum, void /* struct aas_entityinfo_s */ *info );
 
-int     trap_AAS_Initialized( void );
-void    trap_AAS_PresenceTypeBoundingBox( int presencetype, vec3_t mins, vec3_t maxs );
-float   trap_AAS_Time( void );
+int         trap_AAS_Initialized( void );
+void        trap_AAS_PresenceTypeBoundingBox( int presencetype, vec3_t mins, vec3_t maxs );
+float       trap_AAS_Time( void );
 
-int     trap_AAS_PointAreaNum( vec3_t point );
-int     trap_AAS_PointReachabilityAreaIndex( vec3_t point );
-int     trap_AAS_TraceAreas( vec3_t start, vec3_t end, int *areas, vec3_t *points, int maxareas );
+// Ridah
+void        trap_AAS_SetCurrentWorld( int index );
+// done.
 
-int     trap_AAS_PointContents( vec3_t point );
-int     trap_AAS_NextBSPEntity( int ent );
-int     trap_AAS_ValueForBSPEpairKey( int ent, char *key, char *value, int size );
-int     trap_AAS_VectorForBSPEpairKey( int ent, char *key, vec3_t v );
-int     trap_AAS_FloatForBSPEpairKey( int ent, char *key, float *value );
-int     trap_AAS_IntForBSPEpairKey( int ent, char *key, int *value );
+int         trap_AAS_PointAreaNum( vec3_t point );
+int         trap_AAS_TraceAreas( vec3_t start, vec3_t end, int *areas, vec3_t *points, int maxareas );
+int         trap_AAS_BBoxAreas( vec3_t absmins, vec3_t absmaxs, int *areas, int maxareas );
+void        trap_AAS_AreaCenter( int areanum, vec3_t center );
+qboolean    trap_AAS_AreaWaypoint( int areanum, vec3_t center );
 
-int     trap_AAS_AreaReachability( int areanum );
+int         trap_AAS_PointContents( vec3_t point );
+int         trap_AAS_NextBSPEntity( int ent );
+int         trap_AAS_ValueForBSPEpairKey( int ent, char *key, char *value, int size );
+int         trap_AAS_VectorForBSPEpairKey( int ent, char *key, vec3_t v );
+int         trap_AAS_FloatForBSPEpairKey( int ent, char *key, float *value );
+int         trap_AAS_IntForBSPEpairKey( int ent, char *key, int *value );
 
-int     trap_AAS_AreaTravelTimeToGoalArea( int areanum, vec3_t origin, int goalareanum, int travelflags );
-int     trap_AAS_EnableRoutingArea( int areanum, int enable );
-int     trap_AAS_PredictRoute( void /*struct aas_predictroute_s*/ *route, int areanum, vec3_t origin,
-							   int goalareanum, int travelflags, int maxareas, int maxtime,
-							   int stopevent, int stopcontents, int stoptfl, int stopareanum );
+int         trap_AAS_AreaReachability( int areanum );
+int         trap_AAS_AreaLadder( int areanum );
 
-int     trap_AAS_AlternativeRouteGoals( vec3_t start, int startareanum, vec3_t goal, int goalareanum, int travelflags,
-										void /*struct aas_altroutegoal_s*/ *altroutegoals, int maxaltroutegoals,
-										int type );
-int     trap_AAS_Swimming( vec3_t origin );
-int     trap_AAS_PredictClientMovement( void /* aas_clientmove_s */ *move, int entnum, vec3_t origin, int presencetype, int onground, vec3_t velocity, vec3_t cmdmove, int cmdframes, int maxframes, float frametime, int stopevent, int stopareanum, int visualize );
+int         trap_AAS_AreaTravelTimeToGoalArea( int areanum, vec3_t origin, int goalareanum, int travelflags );
 
+int         trap_AAS_Swimming( vec3_t origin );
+int         trap_AAS_PredictClientMovement( void /* aas_clientmove_s */ *move, int entnum, vec3_t origin, int presencetype, int onground, vec3_t velocity, vec3_t cmdmove, int cmdframes, int maxframes, float frametime, int stopevent, int stopareanum, int visualize );
+
+// Ridah, route-tables
+void        trap_AAS_RT_ShowRoute( vec3_t srcpos, int srcnum, int destnum );
+int         trap_AAS_NearestHideArea( int srcnum, vec3_t origin, int areanum, int enemynum, vec3_t enemyorigin, int enemyareanum, int travelflags, float maxdist, vec3_t distpos );
+int         trap_AAS_ListAreasInRange( vec3_t srcpos, int srcarea, float range, int travelflags, float **outareas, int maxareas );
+int         trap_AAS_AvoidDangerArea( vec3_t srcpos, int srcarea, vec3_t dangerpos, int dangerarea, float range, int travelflags );
+int         trap_AAS_Retreat
+(
+    // Locations of the danger spots (AAS area numbers)
+	int *dangerSpots,
+    // The number of danger spots
+	int dangerSpotCount,
+	vec3_t srcpos,
+	int srcarea,
+	vec3_t dangerpos,
+	int dangerarea,
+    // Min range from startpos
+	float range,
+    // Min range from danger
+	float dangerRange,
+	int travelflags
+);
+int         trap_AAS_AlternativeRouteGoals( vec3_t start, vec3_t goal, int travelflags,
+                                            /*aas_altroutegoal_t*/ void *altroutegoals, int maxaltroutegoals,
+											int color );
+void        trap_AAS_SetAASBlockingEntity( vec3_t absmin, vec3_t absmax, int blocking );
+void        trap_AAS_RecordTeamDeathArea( vec3_t srcpos, int srcarea, int team, int teamCount, int travelflags );
+// done.
 
 void    trap_EA_Say( int client, char *str );
 void    trap_EA_SayTeam( int client, char *str );
+void    trap_EA_UseItem( int client, char *it );
+void    trap_EA_DropItem( int client, char *it );
+void    trap_EA_UseInv( int client, char *inv );
+void    trap_EA_DropInv( int client, char *inv );
+void    trap_EA_Gesture( int client );
 void    trap_EA_Command( int client, char *command );
 
-void    trap_EA_Action( int client, int action );
-void    trap_EA_Gesture( int client );
+void    trap_EA_SelectWeapon( int client, int weapon );
 void    trap_EA_Talk( int client );
 void    trap_EA_Attack( int client );
-void    trap_EA_Use( int client );
+void    trap_EA_Reload( int client );
+void    trap_EA_Activate( int client );
 void    trap_EA_Respawn( int client );
+void    trap_EA_Jump( int client );
+void    trap_EA_DelayedJump( int client );
 void    trap_EA_Crouch( int client );
+void    trap_EA_Walk( int client );
 void    trap_EA_MoveUp( int client );
 void    trap_EA_MoveDown( int client );
 void    trap_EA_MoveForward( int client );
 void    trap_EA_MoveBack( int client );
 void    trap_EA_MoveLeft( int client );
 void    trap_EA_MoveRight( int client );
-void    trap_EA_SelectWeapon( int client, int weapon );
-void    trap_EA_Jump( int client );
-void    trap_EA_DelayedJump( int client );
 void    trap_EA_Move( int client, vec3_t dir, float speed );
 void    trap_EA_View( int client, vec3_t viewangles );
+void    trap_EA_Prone( int client );
 
 void    trap_EA_EndRegular( int client, float thinktime );
 void    trap_EA_GetInput( int client, float thinktime, void /* struct bot_input_s */ *input );
-void    trap_EA_ResetInput( int client );
+void    trap_EA_ResetInput( int client, void *init );
 
 
-int     trap_BotLoadCharacter( char *charfile, float skill );
+int     trap_BotLoadCharacter( char *charfile, int skill );
 void    trap_BotFreeCharacter( int character );
 float   trap_Characteristic_Float( int character, int index );
 float   trap_Characteristic_BFloat( int character, int index, float min, float max );
@@ -177,7 +219,7 @@ void    trap_UnifyWhiteSpaces( char *string );
 void    trap_BotReplaceSynonyms( char *string, unsigned long int context );
 int     trap_BotLoadChatFile( int chatstate, char *chatfile, char *chatname );
 void    trap_BotSetChatGender( int chatstate, int gender );
-void    trap_BotSetChatName( int chatstate, char *name, int client );
+void    trap_BotSetChatName( int chatstate, char *name );
 void    trap_BotResetGoalState( int goalstate );
 void    trap_BotRemoveFromAvoidGoals( int goalstate, int number );
 void    trap_BotResetAvoidGoals( int goalstate );
@@ -197,7 +239,6 @@ int     trap_BotGetNextCampSpotGoal( int num, void /* struct bot_goal_s */ *goal
 int     trap_BotGetMapLocationGoal( char *name, void /* struct bot_goal_s */ *goal );
 int     trap_BotGetLevelItemGoal( int index, char *classname, void /* struct bot_goal_s */ *goal );
 float   trap_BotAvoidGoalTime( int goalstate, int number );
-void    trap_BotSetAvoidGoalTime( int goalstate, int number, float avoidtime );
 void    trap_BotInitLevelItems( void );
 void    trap_BotUpdateEntityItems( void );
 int     trap_BotLoadItemWeights( int goalstate, char *filename );
@@ -219,7 +260,9 @@ int     trap_BotPredictVisiblePosition( vec3_t origin, int areanum, void /* stru
 int     trap_BotAllocMoveState( void );
 void    trap_BotFreeMoveState( int handle );
 void    trap_BotInitMoveState( int handle, void /* struct bot_initmove_s */ *initmove );
-void    trap_BotAddAvoidSpot( int movestate, vec3_t origin, float radius, int type );
+// Ridah
+void    trap_BotInitAvoidReach( int handle );
+// done.
 
 int     trap_BotChooseBestFightWeapon( int weaponstate, int *inventory );
 void    trap_BotGetWeaponInfo( int weaponstate, int weapon, void /* struct weaponinfo_s */ *weaponinfo );
@@ -231,5 +274,16 @@ void    trap_BotResetWeaponState( int weaponstate );
 int     trap_GeneticParentsAndChildSelection( int numranks, float *ranks, int *parent1, int *parent2, int *child );
 
 void    trap_SnapVector( float *v );
+
+void        trap_SendMessage( int clientNum, char *buf, int buflen );
+messageStatus_t trap_MessageStatus( int clientNum );
+
+void G_ExplodeMissile( gentity_t *ent );
+
+void Svcmd_StartMatch_f( void );
+void Svcmd_ResetMatch_f( qboolean fDoReset, qboolean fDoRestart );
+void Svcmd_SwapTeams_f( void );
+
+void trap_PbStat( int clientNum, char *category, char *values ) ;
 
 #endif

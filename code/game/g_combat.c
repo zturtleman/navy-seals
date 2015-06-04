@@ -325,7 +325,7 @@ void player_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int
 
 						//	G_Say( attacker, NULL, 0, "quit (reason: team kill)");
 
-						trap_DropClient( attacker->s.clientNum, "Dropped due to team kills" );
+						trap_DropClient( attacker->s.clientNum, "Dropped due to team kills", 0 );
 					} else {
 						PrintMsg( NULL, S_COLOR_RED "%s"S_COLOR_WHITE " killed his teammate "S_COLOR_RED "%s"S_COLOR_WHITE ".\nHe is allowed to do %i more kills until he is dropped.\n",
 								  attacker->client->pers.netname, self->client->pers.netname, g_maxTeamKill.integer - attacker->client->pers.teamKills );

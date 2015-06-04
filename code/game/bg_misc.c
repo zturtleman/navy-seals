@@ -2206,9 +2206,11 @@ void BG_TouchJumpPad( playerState_t *ps, entityState_t *jumppad ) {
 	}
 #endif
 
+#if 0 // NSCO-ET: no jumppad variables
 	// remember hitting this jumppad this frame
 	ps->jumppad_ent = jumppad->number;
 	ps->jumppad_frame = ps->pmove_framecount;
+#endif
 	// give the player the velocity from the jumppad
 	VectorCopy( jumppad->origin2, ps->velocity );
 }
@@ -2308,8 +2310,10 @@ void BG_PlayerStateToEntityState( playerState_t *ps, entityState_t *s, qboolean 
 	}
 	// Navy Seals --
 
+#if 0 // ZTM: TODO: ### update BG_PlayerStateToEntityState
 	s->loopSound = ps->loopSound;
 	s->generic1 = ps->generic1;
+#endif
 }
 
 /*
@@ -2427,6 +2431,8 @@ void BG_PlayerStateToEntityStateExtraPolate( playerState_t *ps, entityState_t *s
 		}
 	}
 	// Navy Seals --
+#if 0 // ZTM: TODO: ### update BG_PlayerStateToEntityState
 	s->loopSound = ps->loopSound;
 	s->generic1 = ps->generic1;
+#endif
 }

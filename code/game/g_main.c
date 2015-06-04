@@ -354,6 +354,14 @@ Q_EXPORT intptr_t vmMain( int command, int arg0, int arg1, int arg2, int arg3, i
 		return ConsoleCommand();
 	case BOTAI_START_FRAME:
 		return 0;
+	case BOT_VISIBLEFROMPOS:
+		return qfalse;
+	case BOT_CHECKATTACKATPOS:
+		return qfalse;
+	case GAME_SNAPSHOT_CALLBACK:
+		return qtrue;
+	case GAME_MESSAGERECEIVED:
+		return -1;
 	}
 
 	return -1;

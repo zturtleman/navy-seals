@@ -1,24 +1,28 @@
 /*
 ===========================================================================
-Copyright (C) 1999-2005 Id Software, Inc.
-Copyright (C) 2007 Team Mirage
 
-This file is part of Navy SEALs: Covert Operations source code.
+Wolfenstein: Enemy Territory GPL Source Code
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
-Navy SEALs: Covert Operations source code is free software; you can
-redistribute it and/or modify it under the terms of the GNU General Public
-License as published by the Free Software Foundation; either version 2 of
-the License, or (at your option) any later version.
+This file is part of the Wolfenstein: Enemy Territory GPL Source Code (Wolf ET Source Code).
 
-Navy SEALs: Covert Operations source code is distributed in the hope that it
-will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
-of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+Wolf ET Source Code is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Wolf ET Source Code is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with Navy SEALs: Covert Operations source code; if not, write to the
-Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
-02110-1301  USA
+along with Wolf ET Source Code.  If not, see <http://www.gnu.org/licenses/>.
+
+In addition, the Wolf: ET Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Wolf ET Source Code.  If not, please request a copy in writing from id Software at the address below.
+
+If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
+
 ===========================================================================
 */
 
@@ -73,8 +77,12 @@ void    trap_FS_Read( void *buffer, int len, fileHandle_t f ) {
 	syscall( G_FS_READ, buffer, len, f );
 }
 
-void    trap_FS_Write( const void *buffer, int len, fileHandle_t f ) {
-	syscall( G_FS_WRITE, buffer, len, f );
+int     trap_FS_Write( const void *buffer, int len, fileHandle_t f ) {
+	return syscall( G_FS_WRITE, buffer, len, f );
+}
+
+int     trap_FS_Rename( const char *from, const char *to ) {
+	return syscall( G_FS_RENAME, from, to );
 }
 
 void    trap_FS_FCloseFile( fileHandle_t f ) {
@@ -109,17 +117,27 @@ void trap_Cvar_VariableStringBuffer( const char *var_name, char *buffer, int buf
 	syscall( G_CVAR_VARIABLE_STRING_BUFFER, var_name, buffer, bufsize );
 }
 
+void trap_Cvar_LatchedVariableStringBuffer( const char *var_name, char *buffer, int bufsize ) {
+	syscall( G_CVAR_LATCHEDVARIABLESTRINGBUFFER, var_name, buffer, bufsize );
+}
 
 void trap_LocateGameData( gentity_t *gEnts, int numGEntities, int sizeofGEntity_t,
 						  playerState_t *clients, int sizeofGClient ) {
 	syscall( G_LOCATE_GAME_DATA, gEnts, numGEntities, sizeofGEntity_t, clients, sizeofGClient );
 }
 
-void trap_DropClient( int clientNum, const char *reason ) {
-	syscall( G_DROP_CLIENT, clientNum, reason );
+void trap_DropClient( int clientNum, const char *reason, int length ) {
+	syscall( G_DROP_CLIENT, clientNum, reason, length );
 }
 
 void trap_SendServerCommand( int clientNum, const char *text ) {
+	// rain - #433 - commands over 1022 chars will crash the
+	// client engine upon receipt, so ignore them
+	if ( strlen( text ) > 1022 ) {
+		G_LogPrintf( "%s: trap_SendServerCommand( %d, ... ) length exceeds 1022.\n", GAMEVERSION, clientNum );
+		G_LogPrintf( "%s: text [%s]\n", GAMEVERSION, text );
+		return;
+	}
 	syscall( G_SEND_SERVER_COMMAND, clientNum, text );
 }
 
@@ -151,6 +169,18 @@ void trap_Trace( trace_t *results, const vec3_t start, const vec3_t mins, const 
 	syscall( G_TRACE, results, start, mins, maxs, end, passEntityNum, contentmask );
 }
 
+void trap_TraceNoEnts( trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask ) {
+	syscall( G_TRACE, results, start, mins, maxs, end, -2, contentmask );
+}
+
+void trap_TraceCapsule( trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask ) {
+	syscall( G_TRACECAPSULE, results, start, mins, maxs, end, passEntityNum, contentmask );
+}
+
+void trap_TraceCapsuleNoEnts( trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask ) {
+	syscall( G_TRACECAPSULE, results, start, mins, maxs, end, -2, contentmask );
+}
+
 int trap_PointContents( const vec3_t point, int passEntityNum ) {
 	return syscall( G_POINT_CONTENTS, point, passEntityNum );
 }
@@ -180,6 +210,7 @@ void trap_UnlinkEntity( gentity_t *ent ) {
 	syscall( G_UNLINKENTITY, ent );
 }
 
+
 int trap_EntitiesInBox( const vec3_t mins, const vec3_t maxs, int *list, int maxcount ) {
 	return syscall( G_ENTITIES_IN_BOX, mins, maxs, list, maxcount );
 }
@@ -188,12 +219,24 @@ qboolean trap_EntityContact( const vec3_t mins, const vec3_t maxs, const gentity
 	return syscall( G_ENTITY_CONTACT, mins, maxs, ent );
 }
 
-int trap_BotAllocateClient( void ) {
-	return syscall( G_BOT_ALLOCATE_CLIENT );
+qboolean trap_EntityContactCapsule( const vec3_t mins, const vec3_t maxs, const gentity_t *ent ) {
+	return syscall( G_ENTITY_CONTACTCAPSULE, mins, maxs, ent );
+}
+
+int trap_BotAllocateClient( int clientNum ) {
+	return syscall( G_BOT_ALLOCATE_CLIENT, clientNum );
 }
 
 void trap_BotFreeClient( int clientNum ) {
 	syscall( G_BOT_FREE_CLIENT, clientNum );
+}
+
+int trap_GetSoundLength( sfxHandle_t sfxHandle ) {
+	return syscall( G_GET_SOUND_LENGTH, sfxHandle );
+}
+
+sfxHandle_t trap_RegisterSound( const char *sample, qboolean compressed ) {
+	return syscall( G_REGISTERSOUND, sample, compressed );
 }
 
 void trap_GetUsercmd( int clientNum, usercmd_t *cmd ) {
@@ -221,6 +264,14 @@ void trap_SnapVector( float *v ) {
 	return;
 }
 
+qboolean trap_GetTag( int clientNum, int tagFileNumber, char *tagName, orientation_t *or ) {
+	return syscall( G_GETTAG, clientNum, tagFileNumber, tagName, or );
+}
+
+qboolean trap_LoadTag( const char* filename ) {
+	return syscall( G_REGISTERTAG, filename );
+}
+
 // BotLib traps start here
 int trap_BotLibSetup( void ) {
 	return syscall( BOTLIB_SETUP );
@@ -240,6 +291,30 @@ int trap_BotLibVarGet( char *var_name, char *value, int size ) {
 
 int trap_BotLibDefine( char *string ) {
 	return syscall( BOTLIB_PC_ADD_GLOBAL_DEFINE, string );
+}
+
+int trap_PC_AddGlobalDefine( char *define ) {
+	return syscall( BOTLIB_PC_ADD_GLOBAL_DEFINE, define );
+}
+
+int trap_PC_LoadSource( const char *filename ) {
+	return syscall( BOTLIB_PC_LOAD_SOURCE, filename );
+}
+
+int trap_PC_FreeSource( int handle ) {
+	return syscall( BOTLIB_PC_FREE_SOURCE, handle );
+}
+
+int trap_PC_ReadToken( int handle, pc_token_t *pc_token ) {
+	return syscall( BOTLIB_PC_READ_TOKEN, handle, pc_token );
+}
+
+int trap_PC_SourceFileAndLine( int handle, char *filename, int *line ) {
+	return syscall( BOTLIB_PC_SOURCE_FILE_AND_LINE, handle, filename, line );
+}
+
+int trap_PC_UnReadToken( int handle ) {
+	return syscall( BOTLIB_PC_UNREAD_TOKEN, handle );
 }
 
 int trap_BotLibStartFrame( float time ) {
@@ -288,12 +363,15 @@ float trap_AAS_Time( void ) {
 	return ( *(float*)&temp );
 }
 
+// Ridah, multiple AAS files
+void trap_AAS_SetCurrentWorld( int index ) {
+	// Gordon: stubbed out: we only use one aas
+//	syscall( BOTLIB_AAS_SETCURRENTWORLD, index );
+}
+// done.
+
 int trap_AAS_PointAreaNum( vec3_t point ) {
 	return syscall( BOTLIB_AAS_POINT_AREA_NUM, point );
-}
-
-int trap_AAS_PointReachabilityAreaIndex( vec3_t point ) {
-	return syscall( BOTLIB_AAS_POINT_REACHABILITY_AREA_INDEX, point );
 }
 
 int trap_AAS_TraceAreas( vec3_t start, vec3_t end, int *areas, vec3_t *points, int maxareas ) {
@@ -304,8 +382,12 @@ int trap_AAS_BBoxAreas( vec3_t absmins, vec3_t absmaxs, int *areas, int maxareas
 	return syscall( BOTLIB_AAS_BBOX_AREAS, absmins, absmaxs, areas, maxareas );
 }
 
-int trap_AAS_AreaInfo( int areanum, void /* struct aas_areainfo_s */ *info ) {
-	return syscall( BOTLIB_AAS_AREA_INFO, areanum, info );
+void trap_AAS_AreaCenter( int areanum, vec3_t center ) {
+	syscall( BOTLIB_AAS_AREA_CENTER, areanum, center );
+}
+
+qboolean trap_AAS_AreaWaypoint( int areanum, vec3_t center ) {
+	return syscall( BOTLIB_AAS_AREA_WAYPOINT, areanum, center );
 }
 
 int trap_AAS_PointContents( vec3_t point ) {
@@ -336,24 +418,12 @@ int trap_AAS_AreaReachability( int areanum ) {
 	return syscall( BOTLIB_AAS_AREA_REACHABILITY, areanum );
 }
 
+int trap_AAS_AreaLadder( int areanum ) {
+	return syscall( BOTLIB_AAS_AREA_LADDER, areanum );
+}
+
 int trap_AAS_AreaTravelTimeToGoalArea( int areanum, vec3_t origin, int goalareanum, int travelflags ) {
 	return syscall( BOTLIB_AAS_AREA_TRAVEL_TIME_TO_GOAL_AREA, areanum, origin, goalareanum, travelflags );
-}
-
-int trap_AAS_EnableRoutingArea( int areanum, int enable ) {
-	return syscall( BOTLIB_AAS_ENABLE_ROUTING_AREA, areanum, enable );
-}
-
-int trap_AAS_PredictRoute( void /*struct aas_predictroute_s*/ *route, int areanum, vec3_t origin,
-						   int goalareanum, int travelflags, int maxareas, int maxtime,
-						   int stopevent, int stopcontents, int stoptfl, int stopareanum ) {
-	return syscall( BOTLIB_AAS_PREDICT_ROUTE, route, areanum, origin, goalareanum, travelflags, maxareas, maxtime, stopevent, stopcontents, stoptfl, stopareanum );
-}
-
-int trap_AAS_AlternativeRouteGoals( vec3_t start, int startareanum, vec3_t goal, int goalareanum, int travelflags,
-									void /*struct aas_altroutegoal_s*/ *altroutegoals, int maxaltroutegoals,
-									int type ) {
-	return syscall( BOTLIB_AAS_ALTERNATIVE_ROUTE_GOAL, start, startareanum, goal, goalareanum, travelflags, altroutegoals, maxaltroutegoals, type );
 }
 
 int trap_AAS_Swimming( vec3_t origin ) {
@@ -364,6 +434,65 @@ int trap_AAS_PredictClientMovement( void /* struct aas_clientmove_s */ *move, in
 	return syscall( BOTLIB_AAS_PREDICT_CLIENT_MOVEMENT, move, entnum, origin, presencetype, onground, velocity, cmdmove, cmdframes, maxframes, PASSFLOAT( frametime ), stopevent, stopareanum, visualize );
 }
 
+// Ridah, route-tables
+void trap_AAS_RT_ShowRoute( vec3_t srcpos, int srcnum, int destnum ) {
+	syscall( BOTLIB_AAS_RT_SHOWROUTE, srcpos, srcnum, destnum );
+}
+
+//qboolean trap_AAS_RT_GetHidePos( vec3_t srcpos, int srcnum, int srcarea, vec3_t destpos, int destnum, int destarea, vec3_t returnPos ) {
+//	return syscall( BOTLIB_AAS_RT_GETHIDEPOS, srcpos, srcnum, srcarea, destpos, destnum, destarea, returnPos );
+//}
+
+//int trap_AAS_FindAttackSpotWithinRange(int srcnum, int rangenum, int enemynum, float rangedist, int travelflags, float *outpos) {
+//	return syscall( BOTLIB_AAS_FINDATTACKSPOTWITHINRANGE, srcnum, rangenum, enemynum, PASSFLOAT(rangedist), travelflags, outpos );
+//}
+
+int trap_AAS_NearestHideArea( int srcnum, vec3_t origin, int areanum, int enemynum, vec3_t enemyorigin, int enemyareanum, int travelflags, float maxdist, vec3_t distpos ) {
+	return syscall( BOTLIB_AAS_NEARESTHIDEAREA, srcnum, origin, areanum, enemynum, enemyorigin, enemyareanum, travelflags, PASSFLOAT( maxdist ), distpos );
+}
+
+int trap_AAS_ListAreasInRange( vec3_t srcpos, int srcarea, float range, int travelflags, float **outareas, int maxareas ) {
+	return syscall( BOTLIB_AAS_LISTAREASINRANGE, srcpos, srcarea, PASSFLOAT( range ), travelflags, outareas, maxareas );
+}
+
+int trap_AAS_AvoidDangerArea( vec3_t srcpos, int srcarea, vec3_t dangerpos, int dangerarea, float range, int travelflags ) {
+	return syscall( BOTLIB_AAS_AVOIDDANGERAREA, srcpos, srcarea, dangerpos, dangerarea, PASSFLOAT( range ), travelflags );
+}
+
+int trap_AAS_Retreat
+(
+    // Locations of the danger spots (AAS area numbers)
+	int *dangerSpots,
+    // The number of danger spots
+	int dangerSpotCount,
+	vec3_t srcpos,
+	int srcarea,
+	vec3_t dangerpos,
+	int dangerarea,
+    // Min range from startpos
+	float range,
+    // Min range from danger
+	float dangerRange,
+	int travelflags
+) {
+	return syscall( BOTLIB_AAS_RETREAT, dangerSpots, dangerSpotCount, srcpos, srcarea, dangerpos, dangerarea, PASSFLOAT( range ), PASSFLOAT( dangerRange ),travelflags );
+}
+
+int trap_AAS_AlternativeRouteGoals( vec3_t start, vec3_t goal, int travelflags,
+                                    /*aas_altroutegoal_t*/ void *altroutegoals, int maxaltroutegoals,
+									int color ) {
+	return syscall( BOTLIB_AAS_ALTROUTEGOALS, start, goal, travelflags, altroutegoals, maxaltroutegoals, color );
+}
+
+void trap_AAS_SetAASBlockingEntity( vec3_t absmin, vec3_t absmax, int blocking ) {
+	syscall( BOTLIB_AAS_SETAASBLOCKINGENTITY, absmin, absmax, blocking );
+}
+
+void trap_AAS_RecordTeamDeathArea( vec3_t srcpos, int srcarea, int team, int teamCount, int travelflags ) {
+	syscall( BOTLIB_AAS_RECORDTEAMDEATHAREA, srcpos, srcarea, team, teamCount, travelflags );
+}
+// done.
+
 void trap_EA_Say( int client, char *str ) {
 	syscall( BOTLIB_EA_SAY, client, str );
 }
@@ -372,16 +501,32 @@ void trap_EA_SayTeam( int client, char *str ) {
 	syscall( BOTLIB_EA_SAY_TEAM, client, str );
 }
 
-void trap_EA_Command( int client, char *command ) {
-	syscall( BOTLIB_EA_COMMAND, client, command );
+void trap_EA_UseItem( int client, char *it ) {
+	syscall( BOTLIB_EA_USE_ITEM, client, it );
 }
 
-void trap_EA_Action( int client, int action ) {
-	syscall( BOTLIB_EA_ACTION, client, action );
+void trap_EA_DropItem( int client, char *it ) {
+	syscall( BOTLIB_EA_DROP_ITEM, client, it );
+}
+
+void trap_EA_UseInv( int client, char *inv ) {
+	syscall( BOTLIB_EA_USE_INV, client, inv );
+}
+
+void trap_EA_DropInv( int client, char *inv ) {
+	syscall( BOTLIB_EA_DROP_INV, client, inv );
 }
 
 void trap_EA_Gesture( int client ) {
 	syscall( BOTLIB_EA_GESTURE, client );
+}
+
+void trap_EA_Command( int client, char *command ) {
+	syscall( BOTLIB_EA_COMMAND, client, command );
+}
+
+void trap_EA_SelectWeapon( int client, int weapon ) {
+	syscall( BOTLIB_EA_SELECT_WEAPON, client, weapon );
 }
 
 void trap_EA_Talk( int client ) {
@@ -392,7 +537,11 @@ void trap_EA_Attack( int client ) {
 	syscall( BOTLIB_EA_ATTACK, client );
 }
 
-void trap_EA_Use( int client ) {
+void trap_EA_Reload( int client ) {
+	syscall( BOTLIB_EA_RELOAD, client );
+}
+
+void trap_EA_Activate( int client ) {
 	syscall( BOTLIB_EA_USE, client );
 }
 
@@ -400,8 +549,20 @@ void trap_EA_Respawn( int client ) {
 	syscall( BOTLIB_EA_RESPAWN, client );
 }
 
+void trap_EA_Jump( int client ) {
+	syscall( BOTLIB_EA_JUMP, client );
+}
+
+void trap_EA_DelayedJump( int client ) {
+	syscall( BOTLIB_EA_DELAYED_JUMP, client );
+}
+
 void trap_EA_Crouch( int client ) {
 	syscall( BOTLIB_EA_CROUCH, client );
+}
+
+void trap_EA_Walk( int client ) {
+	syscall( BOTLIB_EA_WALK, client );
 }
 
 void trap_EA_MoveUp( int client ) {
@@ -428,18 +589,6 @@ void trap_EA_MoveRight( int client ) {
 	syscall( BOTLIB_EA_MOVE_RIGHT, client );
 }
 
-void trap_EA_SelectWeapon( int client, int weapon ) {
-	syscall( BOTLIB_EA_SELECT_WEAPON, client, weapon );
-}
-
-void trap_EA_Jump( int client ) {
-	syscall( BOTLIB_EA_JUMP, client );
-}
-
-void trap_EA_DelayedJump( int client ) {
-	syscall( BOTLIB_EA_DELAYED_JUMP, client );
-}
-
 void trap_EA_Move( int client, vec3_t dir, float speed ) {
 	syscall( BOTLIB_EA_MOVE, client, dir, PASSFLOAT( speed ) );
 }
@@ -456,12 +605,16 @@ void trap_EA_GetInput( int client, float thinktime, void /* struct bot_input_s *
 	syscall( BOTLIB_EA_GET_INPUT, client, PASSFLOAT( thinktime ), input );
 }
 
-void trap_EA_ResetInput( int client ) {
-	syscall( BOTLIB_EA_RESET_INPUT, client );
+void trap_EA_ResetInput( int client, void *init ) {
+	syscall( BOTLIB_EA_RESET_INPUT, client, init );
 }
 
-int trap_BotLoadCharacter( char *charfile, float skill ) {
-	return syscall( BOTLIB_AI_LOAD_CHARACTER, charfile, PASSFLOAT( skill ) );
+void trap_EA_Prone( int client ) {
+	syscall( BOTLIB_EA_PRONE, client );
+}
+
+int trap_BotLoadCharacter( char *charfile, int skill ) {
+	return syscall( BOTLIB_AI_LOAD_CHARACTER, charfile, skill );
 }
 
 void trap_BotFreeCharacter( int character ) {
@@ -533,6 +686,8 @@ int trap_BotChatLength( int chatstate ) {
 }
 
 void trap_BotEnterChat( int chatstate, int client, int sendto ) {
+	// RF, disabled
+	return;
 	syscall( BOTLIB_AI_ENTER_CHAT, chatstate, client, sendto );
 }
 
@@ -568,8 +723,8 @@ void trap_BotSetChatGender( int chatstate, int gender ) {
 	syscall( BOTLIB_AI_SET_CHAT_GENDER, chatstate, gender );
 }
 
-void trap_BotSetChatName( int chatstate, char *name, int client ) {
-	syscall( BOTLIB_AI_SET_CHAT_NAME, chatstate, name, client );
+void trap_BotSetChatName( int chatstate, char *name ) {
+	syscall( BOTLIB_AI_SET_CHAT_NAME, chatstate, name );
 }
 
 void trap_BotResetGoalState( int goalstate ) {
@@ -650,10 +805,6 @@ float trap_BotAvoidGoalTime( int goalstate, int number ) {
 	return ( *(float*)&temp );
 }
 
-void trap_BotSetAvoidGoalTime( int goalstate, int number, float avoidtime ) {
-	syscall( BOTLIB_AI_SET_AVOID_GOAL_TIME, goalstate, number, PASSFLOAT( avoidtime ) );
-}
-
 void trap_BotInitLevelItems( void ) {
 	syscall( BOTLIB_AI_INIT_LEVEL_ITEMS );
 }
@@ -692,10 +843,6 @@ void trap_BotFreeGoalState( int handle ) {
 
 void trap_BotResetMoveState( int movestate ) {
 	syscall( BOTLIB_AI_RESET_MOVE_STATE, movestate );
-}
-
-void trap_BotAddAvoidSpot( int movestate, vec3_t origin, float radius, int type ) {
-	syscall( BOTLIB_AI_ADD_AVOID_SPOT, movestate, origin, PASSFLOAT( radius ), type );
 }
 
 void trap_BotMoveToGoal( void /* struct bot_moveresult_s */ *result, int movestate, void /* struct bot_goal_s */ *goal, int travelflags ) {
@@ -738,6 +885,12 @@ void trap_BotInitMoveState( int handle, void /* struct bot_initmove_s */ *initmo
 	syscall( BOTLIB_AI_INIT_MOVE_STATE, handle, initmove );
 }
 
+// Ridah
+void trap_BotInitAvoidReach( int handle ) {
+	syscall( BOTLIB_AI_INIT_AVOID_REACH, handle );
+}
+// Done.
+
 int trap_BotChooseBestFightWeapon( int weaponstate, int *inventory ) {
 	return syscall( BOTLIB_AI_CHOOSE_BEST_FIGHT_WEAPON, weaponstate, inventory );
 }
@@ -764,4 +917,16 @@ void trap_BotResetWeaponState( int weaponstate ) {
 
 int trap_GeneticParentsAndChildSelection( int numranks, float *ranks, int *parent1, int *parent2, int *child ) {
 	return syscall( BOTLIB_AI_GENETIC_PARENTS_AND_CHILD_SELECTION, numranks, ranks, parent1, parent2, child );
+}
+
+void trap_PbStat( int clientNum, char *category, char *values ) {
+	syscall( PB_STAT_REPORT, clientNum, category, values ) ;
+}
+
+void trap_SendMessage( int clientNum, char *buf, int buflen ) {
+	syscall( G_SENDMESSAGE, clientNum, buf, buflen );
+}
+
+messageStatus_t trap_MessageStatus( int clientNum ) {
+	return syscall( G_MESSAGESTATUS, clientNum );
 }

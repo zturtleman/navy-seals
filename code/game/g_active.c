@@ -165,6 +165,7 @@ G_SetClientSound
 ===============
 */
 void G_SetClientSound( gentity_t *ent ) {
+#if 0 // ZTM: FIXME: ### readd loopSound, to entityState_t directly
 	if ( ent->client->sess.waiting ||
 		 ent->health <= 0 || ent->client->ps.stats[STAT_HEALTH] <= 0 ||
 		 ent->client->ps.pm_type != PM_NORMAL ) {
@@ -188,6 +189,7 @@ void G_SetClientSound( gentity_t *ent ) {
 	} else {
 		ent->client->ps.loopSound = 0;
 	}
+#endif
 }
 
 
@@ -307,11 +309,13 @@ void    G_TouchTriggers( gentity_t *ent ) {
 		}
 	}
 
-	// if we didn't touch a jump pad this pmove frame
+#if 0 // NSCO-ET: no jumppad variables
+	  // if we didn't touch a jump pad this pmove frame
 	if ( ent->client->ps.jumppad_frame != ent->client->ps.pmove_framecount ) {
 		ent->client->ps.jumppad_frame = 0;
 		ent->client->ps.jumppad_ent = 0;
 	}
+#endif
 }
 
 void ChangeCameraState( int *i, qboolean on ) {
@@ -482,7 +486,7 @@ qboolean ClientInactivityTimer( gclient_t *client ) {
 		client->inactivityWarning = qfalse;
 	} else if ( !client->pers.localClient ) {
 		if ( level.time > client->inactivityTime ) {
-			trap_DropClient( client - level.clients, "Dropped due to inactivity" );
+			trap_DropClient( client - level.clients, "Dropped due to inactivity", 0 );
 			return qfalse;
 		}
 		if ( level.time > client->inactivityTime - 10000 && !client->inactivityWarning ) {
