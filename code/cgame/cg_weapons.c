@@ -1762,7 +1762,7 @@ void CG_AddPlayerWeapon( refEntity_t *leftArm, refEntity_t *rightArm, playerStat
 		// BLUTENGEL 20040207
 		// def 2006-01-24, fixed dlights - removed junk code
 		VectorMA( trace.endpos, -20, forward, trace.endpos );
-		trap_R_AddLightToScene( trace.endpos, 100, 1.0f - trace.fraction,1.0f - trace.fraction,1.0f - trace.fraction );
+		trap_R_AddLightToScene( trace.endpos, 100, 1.0f, 1.0f - trace.fraction,1.0f - trace.fraction,1.0f - trace.fraction, 0, 0 );
 
 		// render the lensflare effect
 		CG_GetOriginFromTag( &gun, weapon->viewweaponModel, "tag_flash", endPoint );
@@ -2032,8 +2032,8 @@ void CG_AddPlayerWeapon( refEntity_t *leftArm, refEntity_t *rightArm, playerStat
 #endif
 	// make a dlight for the flash
 	if ( weapon->flashDlightColor[0] || weapon->flashDlightColor[1] || weapon->flashDlightColor[2] ) {
-		trap_R_AddLightToScene( flash.origin, 200 + ( rand() & 31 ), weapon->flashDlightColor[0],
-								weapon->flashDlightColor[1], weapon->flashDlightColor[2] );
+		trap_R_AddLightToScene( flash.origin, 320, 1.25 + ( rand() & 31 ) / 128, weapon->flashDlightColor[0],
+								weapon->flashDlightColor[1], weapon->flashDlightColor[2], 0, 0 );
 	}
 }
 
@@ -2924,11 +2924,17 @@ CG_LightParticles
 =================
 */
 void CG_LightParticles( vec3_t origin, vec4_t hcolor, float limit ) {
+#if 0
 	vec3_t ambientLight;
 	vec3_t lightDir;
 	vec3_t directedLight;
 
 	trap_R_LightForPoint( origin, ambientLight, directedLight, lightDir );
+#else // NSCO-ET: missing trap_R_LightForPoint
+	vec3_t directedLight;
+
+	VectorSet( directedLight, 127, 127, 127 );
+#endif
 
 	directedLight[0] /= 255;
 	directedLight[1] /= 255;
@@ -3118,7 +3124,7 @@ void CG_SurfaceEffect( vec3_t origin, vec3_t dir, int surface, int weapon, float
 		if ( BG_IsShotgun( weapon ) ) {
 			//max = 2;
 		} else {
-			trap_R_AddLightToScene( origin, intensity, value, value, value );
+			trap_R_AddLightToScene( origin, intensity, 1.0f, value, value, value, 0, 0 );
 		}
 
 		for ( i = 0; i < max; i++ )
@@ -6300,7 +6306,7 @@ void CG_WeaponAnimation( playerState_t *ps ) {
 
 	// make a dlight for the flash
 	if ( weapon->flashDlightColor[0] || weapon->flashDlightColor[1] || weapon->flashDlightColor[2] ) {
-		trap_R_AddLightToScene( flash.origin, 200 + ( rand() & 31 ), weapon->flashDlightColor[0],
-								weapon->flashDlightColor[1], weapon->flashDlightColor[2] );
+		trap_R_AddLightToScene( flash.origin,  320, 1.25 + ( rand() & 31 ) / 128, weapon->flashDlightColor[0],
+								weapon->flashDlightColor[1], weapon->flashDlightColor[2], 0, 0 );
 	}
 }

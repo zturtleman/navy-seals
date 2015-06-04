@@ -620,10 +620,10 @@ void CG_CheckLocalSounds( playerState_t *ps, playerState_t *ops ) {
 		if ( !( cg.fraglimitWarnings & 4 ) && highScore == ( cgs.fraglimit - 1 ) ) {
 			cg.fraglimitWarnings |= 1 | 2 | 4;
 			CG_AddBufferedSound( cgs.media.oneFragSound );
-		} else if ( cgs.fraglimit > 2 && !( cg.fraglimitWarnings & 2 ) && highScore == ( cgs.fraglimit - 2 ) )     {
+		} else if ( cgs.fraglimit > 2 && !( cg.fraglimitWarnings & 2 ) && highScore == ( cgs.fraglimit - 2 ) ) {
 			cg.fraglimitWarnings |= 1 | 2;
 			CG_AddBufferedSound( cgs.media.twoFragSound );
-		} else if ( cgs.fraglimit > 3 && !( cg.fraglimitWarnings & 1 ) && highScore == ( cgs.fraglimit - 3 ) )     {
+		} else if ( cgs.fraglimit > 3 && !( cg.fraglimitWarnings & 1 ) && highScore == ( cgs.fraglimit - 3 ) ) {
 			cg.fraglimitWarnings |= 1;
 			CG_AddBufferedSound( cgs.media.threeFragSound );
 		}

@@ -838,8 +838,9 @@ static void CG_AddExplosion( localEntity_t *ex ) {
 		} else {
 			light = 1.0 - ( light - 0.5 ) * 2;
 		}
-		light = ex->light * light;
-		trap_R_AddLightToScene( ent->origin, light, ex->lightColor[0], ex->lightColor[1], ex->lightColor[2] );
+		// ZTM: TODO: use light size?
+		//light = ex->light * light;
+		trap_R_AddLightToScene( ent->origin, 512, light, ex->lightColor[0], ex->lightColor[1], ex->lightColor[2], 0, 0 );
 	}
 }
 
@@ -880,8 +881,9 @@ static void CG_AddSpriteExplosion( localEntity_t *le ) {
 		} else {
 			light = 1.0 - ( light - 0.5 ) * 2;
 		}
-		light = le->light * light;
-		trap_R_AddLightToScene( re.origin, light, le->lightColor[0], le->lightColor[1], le->lightColor[2] );
+		// ZTM: TODO: use light size?
+		//light = le->light * light;
+		trap_R_AddLightToScene( re.origin, 320, light, le->lightColor[0], le->lightColor[1], le->lightColor[2], 0, 0 );
 	}
 }
 

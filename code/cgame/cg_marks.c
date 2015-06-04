@@ -40,7 +40,9 @@ markPoly_t  *cg_freeMarkPolys;          // single linked list
 markPoly_t cg_markPolys[MAX_MARK_POLYS];
 static int markTotal;
 extern vmCvar_t cg_lightmarks;
+#if 0 // NSCO-ET: missing trap_R_LightForPoint
 int CG_LightVerts( vec3_t normal, int numVerts, polyVert_t *verts );
+#endif
 
 /*
 ===================
@@ -213,6 +215,7 @@ void CG_ImpactMark( qhandle_t markShader, const vec3_t origin, const vec3_t dir,
 		// if it is a temporary (shadow) mark, add it immediately and forget about it
 		if ( temporary  ) {
 
+#if 0 // NSCO-ET: missing trap_R_LightForPoint
 			if ( cg_lightmarks.integer ) {
 				vec3_t normal;
 
@@ -220,6 +223,7 @@ void CG_ImpactMark( qhandle_t markShader, const vec3_t origin, const vec3_t dir,
 
 				CG_LightVerts( normal,  mf->numPoints, verts );
 			}
+#endif
 
 			trap_R_AddPolyToScene( markShader, mf->numPoints, verts );
 			continue;
@@ -246,6 +250,7 @@ void CG_ImpactMark( qhandle_t markShader, const vec3_t origin, const vec3_t dir,
 		}
 
 
+#if 0 // NSCO-ET: missing trap_R_LightForPoint
 		if ( cg_lightmarks.integer && mark->markShader  != cgs.media.wakeMarkShader  ) {
 			vec3_t normal;
 
@@ -255,6 +260,7 @@ void CG_ImpactMark( qhandle_t markShader, const vec3_t origin, const vec3_t dir,
 		}
 		//	if ( cg_lightmarks.integer && mark->markShader  != cgs.media.wakeMarkShader  )
 		//		CG_LightVerts( dir, mark->poly.numVerts , &mark->poly.verts );
+#endif
 
 		memcpy( mark->verts, verts, mf->numPoints * sizeof( verts[0] ) );
 		markTotal++;
@@ -363,6 +369,7 @@ void CG_DirectImpactMark( qhandle_t markShader, const vec3_t origin, const vec3_
 	memcpy( mark->verts, verts, 4 * sizeof( verts[0] ) );
 	markTotal++;
 
+#if 0 // NSCO-ET: missing trap_R_LightForPoint
 	if ( cg_lightmarks.integer && mark->markShader  != cgs.media.wakeMarkShader  ) {
 		vec3_t normal;
 
@@ -370,6 +377,7 @@ void CG_DirectImpactMark( qhandle_t markShader, const vec3_t origin, const vec3_
 
 		CG_LightVerts( normal,  4, mark->verts );
 	}
+#endif
 }
 
 

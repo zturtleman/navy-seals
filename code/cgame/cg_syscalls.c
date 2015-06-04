@@ -1,24 +1,28 @@
 /*
 ===========================================================================
-Copyright (C) 1999-2005 Id Software, Inc.
-Copyright (C) 2007 Team Mirage
 
-This file is part of Navy SEALs: Covert Operations source code.
+Wolfenstein: Enemy Territory GPL Source Code
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
-Navy SEALs: Covert Operations source code is free software; you can
-redistribute it and/or modify it under the terms of the GNU General Public
-License as published by the Free Software Foundation; either version 2 of
-the License, or (at your option) any later version.
+This file is part of the Wolfenstein: Enemy Territory GPL Source Code (Wolf ET Source Code).
 
-Navy SEALs: Covert Operations source code is distributed in the hope that it
-will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
-of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+Wolf ET Source Code is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Wolf ET Source Code is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with Navy SEALs: Covert Operations source code; if not, write to the
-Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
-02110-1301  USA
+along with Wolf ET Source Code.  If not, see <http://www.gnu.org/licenses/>.
+
+In addition, the Wolf: ET Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Wolf ET Source Code.  If not, please request a copy in writing from id Software at the address below.
+
+If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
+
 ===========================================================================
 */
 
@@ -40,6 +44,17 @@ int PASSFLOAT( float x ) {
 	floatint_t fi;
 	fi.f = x;
 	return fi.i;
+}
+
+void trap_PumpEventLoop( void ) {
+#if 1 // ZTM: TODO: Port "cgs.initing" from ET
+	return;
+#else
+	if ( !cgs.initing ) {
+		return;
+	}
+#endif
+	syscall( CG_PUMPEVENTLOOP );
 }
 
 void trap_Print( const char *fmt ) {
@@ -74,6 +89,10 @@ void trap_Cvar_VariableStringBuffer( const char *var_name, char *buffer, int buf
 	syscall( CG_CVAR_VARIABLESTRINGBUFFER, var_name, buffer, bufsize );
 }
 
+void trap_Cvar_LatchedVariableStringBuffer( const char *var_name, char *buffer, int bufsize ) {
+	syscall( CG_CVAR_LATCHEDVARIABLESTRINGBUFFER, var_name, buffer, bufsize );
+}
+
 int trap_Argc( void ) {
 	return syscall( CG_ARGC );
 }
@@ -102,20 +121,20 @@ void  trap_FS_FCloseFile( fileHandle_t f ) {
 	syscall( CG_FS_FCLOSEFILE, f );
 }
 
-void trap_FS_Seek( fileHandle_t f, long offset, fsOrigin_t origin ) {
-	syscall( CG_FS_SEEK, f, offset, origin );
+int trap_FS_GetFileList(  const char *path, const char *extension, char *listbuf, int bufsize ) {
+	return syscall( CG_FS_GETFILELIST, path, extension, listbuf, bufsize );
 }
 
-void  trap_SendConsoleCommand( const char *text ) {
+int trap_FS_Delete( const char *filename ) {
+	return syscall( CG_FS_DELETEFILE, filename );
+}
+
+void    trap_SendConsoleCommand( const char *text ) {
 	syscall( CG_SENDCONSOLECOMMAND, text );
 }
 
 void  trap_AddCommand( const char *cmdName ) {
 	syscall( CG_ADDCOMMAND, cmdName );
-}
-
-void  trap_RemoveCommand( const char *cmdName ) {
-	syscall( CG_REMOVECOMMAND, cmdName );
 }
 
 void  trap_SendClientCommand( const char *s ) {
@@ -126,9 +145,10 @@ void  trap_UpdateScreen( void ) {
 	syscall( CG_UPDATESCREEN );
 }
 
-void  trap_CM_LoadMap( const char *mapname ) {
-	syscall( CG_CM_LOADMAP, mapname );
-}
+/*void	trap_CM_LoadMap( const char *mapname ) {
+    CG_DrawInformation();
+    syscall( CG_CM_LOADMAP, mapname );
+}*/
 
 int   trap_CM_NumInlineModels( void ) {
 	return syscall( CG_CM_NUMINLINEMODELS );
@@ -189,8 +209,13 @@ int   trap_CM_MarkFragments( int numPoints, const vec3_t *points,
 					pointBuffer, maxFragments, fragmentBuffer );
 }
 
-void  trap_S_StartSound( vec3_t origin, int entityNum, int entchannel, sfxHandle_t sfx ) {
-	syscall( CG_S_STARTSOUND, origin, entityNum, entchannel, sfx );
+// ydnar
+void        trap_R_ProjectDecal( qhandle_t hShader, int numPoints, vec3_t *points, vec4_t projection, vec4_t color, int lifeTime, int fadeTime ) {
+	syscall( CG_R_PROJECTDECAL, hShader, numPoints, points, projection, color, lifeTime, fadeTime );
+}
+
+void        trap_R_ClearDecals( void ) {
+	syscall( CG_R_CLEARDECALS );
 }
 
 /*
@@ -200,72 +225,131 @@ void trap_S_StartSoundExtended( vec3_t origin, float volume, float rolloff, floa
 }
 */
 
-void  trap_S_StartLocalSound( sfxHandle_t sfx, int channelNum ) {
-	syscall( CG_S_STARTLOCALSOUND, sfx, channelNum );
+
+void    trap_S_StartSound( vec3_t origin, int entityNum, int entchannel, sfxHandle_t sfx ) {
+	syscall( CG_S_STARTSOUND, origin, entityNum, entchannel, sfx, 127 /* Gordon: default volume always for the moment*/ );
 }
 
-void  trap_S_ClearLoopingSounds( qboolean killall ) {
-	syscall( CG_S_CLEARLOOPINGSOUNDS, killall );
+void    trap_S_StartSoundVControl( vec3_t origin, int entityNum, int entchannel, sfxHandle_t sfx, int volume ) {
+	syscall( CG_S_STARTSOUND, origin, entityNum, entchannel, sfx, volume );
 }
 
-void  trap_S_AddLoopingSound( int entityNum, const vec3_t origin, const vec3_t velocity, sfxHandle_t sfx ) {
-	syscall( CG_S_ADDLOOPINGSOUND, entityNum, origin, velocity, sfx );
+//----(SA)	added
+void    trap_S_StartSoundEx( vec3_t origin, int entityNum, int entchannel, sfxHandle_t sfx, int flags ) {
+	syscall( CG_S_STARTSOUNDEX, origin, entityNum, entchannel, sfx, flags, 127 /* Gordon: default volume always for the moment*/ );
+}
+//----(SA)	end
+
+void    trap_S_StartSoundExVControl( vec3_t origin, int entityNum, int entchannel, sfxHandle_t sfx, int flags, int volume ) {
+	syscall( CG_S_STARTSOUNDEX, origin, entityNum, entchannel, sfx, flags, volume );
 }
 
-void  trap_S_AddRealLoopingSound( int entityNum, const vec3_t origin, const vec3_t velocity, sfxHandle_t sfx ) {
-	syscall( CG_S_ADDREALLOOPINGSOUND, entityNum, origin, velocity, sfx );
+void    trap_S_StartLocalSound( sfxHandle_t sfx, int channelNum ) {
+	syscall( CG_S_STARTLOCALSOUND, sfx, channelNum, 127 /* Gordon: default volume always for the moment*/ );
 }
 
-void  trap_S_StopLoopingSound( int entityNum ) {
-	syscall( CG_S_STOPLOOPINGSOUND, entityNum );
+void    trap_S_ClearLoopingSounds( void ) {
+	syscall( CG_S_CLEARLOOPINGSOUNDS );
 }
 
-void  trap_S_UpdateEntityPosition( int entityNum, const vec3_t origin ) {
+void    trap_S_ClearSounds( qboolean killmusic ) {
+	syscall( CG_S_CLEARSOUNDS, killmusic );
+}
+
+void    trap_S_AddLoopingSound( const vec3_t origin, const vec3_t velocity, sfxHandle_t sfx, int volume, int soundTime ) {
+	syscall( CG_S_ADDLOOPINGSOUND, origin, velocity, 1250, sfx, volume, soundTime );        // volume was previously removed from CG_S_ADDLOOPINGSOUND.  I added 'range'
+}
+
+void    trap_S_AddRealLoopingSound( const vec3_t origin, const vec3_t velocity, sfxHandle_t sfx, int range, int volume, int soundTime ) {
+	syscall( CG_S_ADDREALLOOPINGSOUND, origin, velocity, range, sfx, volume, soundTime );
+}
+
+void    trap_S_StopStreamingSound( int entityNum ) {
+	syscall( CG_S_STOPSTREAMINGSOUND, entityNum );
+}
+
+void    trap_S_UpdateEntityPosition( int entityNum, const vec3_t origin ) {
 	syscall( CG_S_UPDATEENTITYPOSITION, entityNum, origin );
 }
 
-void  trap_S_Respatialize( int entityNum, const vec3_t origin, vec3_t axis[3], int inwater ) {
+// Ridah, talking animations
+int     trap_S_GetVoiceAmplitude( int entityNum ) {
+	return syscall( CG_S_GETVOICEAMPLITUDE, entityNum );
+}
+// done.
+
+void    trap_S_Respatialize( int entityNum, const vec3_t origin, vec3_t axis[3], int inwater ) {
 	syscall( CG_S_RESPATIALIZE, entityNum, origin, axis, inwater );
 }
 
-sfxHandle_t trap_S_RegisterSound( const char *sample, qboolean compressed ) {
-	return syscall( CG_S_REGISTERSOUND, sample, compressed );
+/*sfxHandle_t	trap_S_RegisterSound( const char *sample, qboolean compressed ) {
+    CG_DrawInformation();
+    return syscall( CG_S_REGISTERSOUND, sample, compressed );
+}*/
+
+int trap_S_GetSoundLength( sfxHandle_t sfx ) {
+	return syscall( CG_S_GETSOUNDLENGTH, sfx );
 }
 
-void  trap_S_StartBackgroundTrack( const char *intro, const char *loop ) {
-	syscall( CG_S_STARTBACKGROUNDTRACK, intro, loop );
+// ydnar: for timing looped sounds
+int trap_S_GetCurrentSoundTime( void ) {
+	return syscall( CG_S_GETCURRENTSOUNDTIME );
 }
 
-void  trap_R_LoadWorldMap( const char *mapname ) {
-	syscall( CG_R_LOADWORLDMAP, mapname );
+void    trap_S_StartBackgroundTrack( const char *intro, const char *loop, int fadeupTime ) {
+	syscall( CG_S_STARTBACKGROUNDTRACK, intro, loop, fadeupTime );
+}
+
+void    trap_S_FadeBackgroundTrack( float targetvol, int time, int num ) {   // yes, i know.  fadebackground coming in, fadestreaming going out.  will have to see where functionality leads...
+	syscall( CG_S_FADESTREAMINGSOUND, PASSFLOAT( targetvol ), time, num ); // 'num' is '0' if it's music, '1' if it's "all streaming sounds"
+}
+
+void    trap_S_FadeAllSound( float targetvol, int time, qboolean stopsounds ) {
+	syscall( CG_S_FADEALLSOUNDS, PASSFLOAT( targetvol ), time, stopsounds );
+}
+
+int trap_S_StartStreamingSound( const char *intro, const char *loop, int entnum, int channel, int attenuation ) {
+	return syscall( CG_S_STARTSTREAMINGSOUND, intro, loop, entnum, channel, attenuation );
+}
+
+/*void	trap_R_LoadWorldMap( const char *mapname ) {
+    CG_DrawInformation();
+    syscall( CG_R_LOADWORLDMAP, mapname );
 }
 
 qhandle_t trap_R_RegisterModel( const char *name ) {
-	return syscall( CG_R_REGISTERMODEL, name );
+    CG_DrawInformation();
+    return syscall( CG_R_REGISTERMODEL, name );
+}*/
+
+//----(SA)	added
+qboolean trap_R_GetSkinModel( qhandle_t skinid, const char *type, char *name ) {
+	return syscall( CG_R_GETSKINMODEL, skinid, type, name );
 }
 
-/*
-qhandle_t trap_R_RegisterPermanentModel( const char *name )
-{
-    return syscall( CG_R_REGISTERPERMAMODEL, name );
+qhandle_t trap_R_GetShaderFromModel( qhandle_t modelid, int surfnum, int withlightmap ) {
+	return syscall( CG_R_GETMODELSHADER, modelid, surfnum, withlightmap );
 }
-*/
+//----(SA)	end
 
-qhandle_t trap_R_RegisterSkin( const char *name ) {
-	return syscall( CG_R_REGISTERSKIN, name );
+/*qhandle_t trap_R_RegisterSkin( const char *name ) {
+    CG_DrawInformation();
+    return syscall( CG_R_REGISTERSKIN, name );
 }
 
 qhandle_t trap_R_RegisterShader( const char *name ) {
-	return syscall( CG_R_REGISTERSHADER, name );
+    CG_DrawInformation();
+    return syscall( CG_R_REGISTERSHADER, name );
 }
 
 qhandle_t trap_R_RegisterShaderNoMip( const char *name ) {
-	return syscall( CG_R_REGISTERSHADERNOMIP, name );
+    CG_DrawInformation();
+    return syscall( CG_R_REGISTERSHADERNOMIP, name );
 }
 
-void trap_R_RegisterFont( const char *fontName, int pointSize, fontInfo_t *font ) {
-	syscall( CG_R_REGISTERFONT, fontName, pointSize, font );
-}
+void trap_R_RegisterFont(const char *fontName, int pointSize, fontInfo_t *font) {
+    syscall(CG_R_REGISTERFONT, fontName, pointSize, font );
+}*/
 
 void  trap_R_ClearScene( void ) {
 	syscall( CG_R_CLEARSCENE );
@@ -276,30 +360,64 @@ void  trap_R_AddRefEntityToScene( const refEntity_t *re ) {
 }
 
 void trap_R_AddPolyToScene( qhandle_t hShader, int numVerts, const polyVert_t *verts ) {
+	// ZTM: FIXME: there should not be missing shaders. The engine warns about them every frame .. to slience warnings for now.
+	if ( !hShader ) {
+		hShader = cgs.media.whiteShader;
+	}
+
 	syscall( CG_R_ADDPOLYTOSCENE, hShader, numVerts, verts );
 }
 
-void trap_R_AddPolysToScene( qhandle_t hShader, int numVerts, const polyVert_t *verts, int num ) {
-	syscall( CG_R_ADDPOLYSTOSCENE, hShader, numVerts, verts, num );
+void    trap_R_AddPolyBufferToScene( polyBuffer_t* pPolyBuffer ) {
+	syscall( CG_R_ADDPOLYBUFFERTOSCENE, pPolyBuffer );
 }
 
-int trap_R_LightForPoint( vec3_t point, vec3_t ambientLight, vec3_t directedLight, vec3_t lightDir ) {
-	return syscall( CG_R_LIGHTFORPOINT, point, ambientLight, directedLight, lightDir );
+// Ridah
+void    trap_R_AddPolysToScene( qhandle_t hShader, int numVerts, const polyVert_t *verts, int numPolys ) {
+	syscall( CG_R_ADDPOLYSTOSCENE, hShader, numVerts, verts, numPolys );
+}
+// done.
+
+// ydnar: new dlight system
+//%	void	trap_R_AddLightToScene( const vec3_t org, float intensity, float r, float g, float b, int overdraw ) {
+//%		syscall( CG_R_ADDLIGHTTOSCENE, org, PASSFLOAT(intensity), PASSFLOAT(r), PASSFLOAT(g), PASSFLOAT(b), overdraw );
+//%	}
+void    trap_R_AddLightToScene( const vec3_t org, float radius, float intensity, float r, float g, float b, qhandle_t hShader, int flags ) {
+	syscall( CG_R_ADDLIGHTTOSCENE, org, PASSFLOAT( radius ), PASSFLOAT( intensity ),
+			 PASSFLOAT( r ), PASSFLOAT( g ), PASSFLOAT( b ), hShader, flags );
 }
 
-void  trap_R_AddLightToScene( const vec3_t org, float intensity, float r, float g, float b ) {
-	syscall( CG_R_ADDLIGHTTOSCENE, org, PASSFLOAT( intensity ), PASSFLOAT( r ), PASSFLOAT( g ), PASSFLOAT( b ) );
+//----(SA)
+void    trap_R_AddCoronaToScene( const vec3_t org, float r, float g, float b, float scale, int id, qboolean visible ) {
+	syscall( CG_R_ADDCORONATOSCENE, org, PASSFLOAT( r ), PASSFLOAT( g ), PASSFLOAT( b ), PASSFLOAT( scale ), id, visible );
+}
+//----(SA)
+
+//----(SA)
+void    trap_R_SetFog( int fogvar, int var1, int var2, float r, float g, float b, float density ) {
+	syscall( CG_R_SETFOG, fogvar, var1, var2, PASSFLOAT( r ), PASSFLOAT( g ), PASSFLOAT( b ), PASSFLOAT( density ) );
+}
+//----(SA)
+
+void    trap_R_SetGlobalFog( qboolean restore, int duration, float r, float g, float b, float depthForOpaque ) {
+	syscall( CG_R_SETGLOBALFOG, restore, duration, PASSFLOAT( r ), PASSFLOAT( g ), PASSFLOAT( b ), PASSFLOAT( depthForOpaque ) );
 }
 
-void  trap_R_AddAdditiveLightToScene( const vec3_t org, float intensity, float r, float g, float b ) {
-	syscall( CG_R_ADDADDITIVELIGHTTOSCENE, org, PASSFLOAT( intensity ), PASSFLOAT( r ), PASSFLOAT( g ), PASSFLOAT( b ) );
-}
-
-void  trap_R_RenderScene( const refdef_t *fd ) {
+void    trap_R_RenderScene( const refdef_t *fd ) {
 	syscall( CG_R_RENDERSCENE, fd );
 }
 
-void  trap_R_SetColor( const float *rgba ) {
+// Mad Doctor I, 11/4/2002.
+void    trap_R_SaveViewParms() {
+	syscall( CG_R_SAVEVIEWPARMS );
+}
+
+// Mad Doctor I, 11/4/2002.
+void    trap_R_RestoreViewParms() {
+	syscall( CG_R_RESTOREVIEWPARMS );
+}
+
+void    trap_R_SetColor( const float *rgba ) {
 	syscall( CG_R_SETCOLOR, rgba );
 }
 
@@ -309,13 +427,28 @@ void  trap_R_DrawStretchPic( float x, float y, float w, float h,
 			 PASSFLOAT( s1 ), PASSFLOAT( t1 ), PASSFLOAT( s2 ), PASSFLOAT( t2 ), hShader );
 }
 
-void  trap_R_ModelBounds( clipHandle_t model, vec3_t mins, vec3_t maxs ) {
+void    trap_R_DrawRotatedPic( float x, float y, float w, float h,
+							   float s1, float t1, float s2, float t2, qhandle_t hShader, float angle ) {
+	syscall( CG_R_DRAWROTATEDPIC, PASSFLOAT( x ), PASSFLOAT( y ), PASSFLOAT( w ), PASSFLOAT( h ), PASSFLOAT( s1 ), PASSFLOAT( t1 ), PASSFLOAT( s2 ), PASSFLOAT( t2 ), hShader, PASSFLOAT( angle ) );
+}
+
+void    trap_R_DrawStretchPicGradient(  float x, float y, float w, float h,
+										float s1, float t1, float s2, float t2, qhandle_t hShader,
+										const float *gradientColor, int gradientType ) {
+	syscall( CG_R_DRAWSTRETCHPIC_GRADIENT, PASSFLOAT( x ), PASSFLOAT( y ), PASSFLOAT( w ), PASSFLOAT( h ), PASSFLOAT( s1 ), PASSFLOAT( t1 ), PASSFLOAT( s2 ), PASSFLOAT( t2 ), hShader, gradientColor, gradientType  );
+}
+
+void trap_R_Add2dPolys( polyVert_t* verts, int numverts, qhandle_t hShader ) {
+	syscall( CG_R_DRAW2DPOLYS, verts, numverts, hShader );
+}
+
+
+void    trap_R_ModelBounds( clipHandle_t model, vec3_t mins, vec3_t maxs ) {
 	syscall( CG_R_MODELBOUNDS, model, mins, maxs );
 }
 
-int   trap_R_LerpTag( orientation_t *tag, clipHandle_t mod, int startFrame, int endFrame,
-					  float frac, const char *tagName ) {
-	return syscall( CG_R_LERPTAG, tag, mod, startFrame, endFrame, PASSFLOAT( frac ), tagName );
+int     trap_R_LerpTag( orientation_t *tag, const refEntity_t *refent, const char *tagName, int startIndex ) {
+	return syscall( CG_R_LERPTAG, tag, refent, tagName, startIndex );
 }
 
 void  trap_R_RemapShader( const char *oldShader, const char *newShader, const char *timeOffset ) {
@@ -350,11 +483,15 @@ qboolean  trap_GetUserCmd( int cmdNumber, usercmd_t *ucmd ) {
 	return syscall( CG_GETUSERCMD, cmdNumber, ucmd );
 }
 
-void    trap_SetUserCmdValue( int stateValue, float sensitivityScale ) {
-	syscall( CG_SETUSERCMDVALUE, stateValue, PASSFLOAT( sensitivityScale ) );
+void        trap_SetUserCmdValue( int stateValue, int flags, float sensitivityScale, int mpIdentClient ) {
+	syscall( CG_SETUSERCMDVALUE, stateValue, flags, PASSFLOAT( sensitivityScale ), mpIdentClient );
 }
 
-void    testPrintInt( char *string, int i ) {
+void        trap_SetClientLerpOrigin( float x, float y, float z ) {
+	syscall( CG_SETCLIENTLERPORIGIN, PASSFLOAT( x ), PASSFLOAT( y ), PASSFLOAT( z ) );
+}
+
+void        testPrintInt( char *string, int i ) {
 	syscall( CG_TESTPRINTINT, string, i );
 }
 
@@ -366,12 +503,42 @@ int trap_MemoryRemaining( void ) {
 	return syscall( CG_MEMORY_REMAINING );
 }
 
+qboolean trap_loadCamera( int camNum, const char *name ) {
+	return syscall( CG_LOADCAMERA, camNum, name );
+}
+
+void trap_startCamera( int camNum, int time ) {
+	syscall( CG_STARTCAMERA, camNum, time );
+}
+
+void trap_stopCamera( int camNum ) {
+	syscall( CG_STOPCAMERA, camNum );
+}
+
+qboolean trap_getCameraInfo( int camNum, int time, vec3_t *origin, vec3_t *angles, float *fov ) {
+	return syscall( CG_GETCAMERAINFO, camNum, time, origin, angles, fov );
+}
+
+
 qboolean trap_Key_IsDown( int keynum ) {
 	return syscall( CG_KEY_ISDOWN, keynum );
 }
 
 int trap_Key_GetCatcher( void ) {
 	return syscall( CG_KEY_GETCATCHER );
+}
+
+qboolean trap_Key_GetOverstrikeMode( void ) {
+	return syscall( CG_KEY_GETOVERSTRIKEMODE );
+}
+
+void trap_Key_SetOverstrikeMode( qboolean state ) {
+	syscall( CG_KEY_SETOVERSTRIKEMODE, state );
+}
+
+// binding MUST be lower case
+void trap_Key_KeysForBinding( const char* binding, int* key1, int* key2 ) {
+	syscall( CG_KEY_BINDINGTOKEYS, binding, key1, key2 );
 }
 
 void trap_Key_SetCatcher( int catcher ) {
@@ -381,6 +548,7 @@ void trap_Key_SetCatcher( int catcher ) {
 int trap_Key_GetKey( const char *binding ) {
 	return syscall( CG_KEY_GETKEY, binding );
 }
+
 
 int trap_PC_AddGlobalDefine( char *define ) {
 	return syscall( CG_PC_ADD_GLOBAL_DEFINE, define );
@@ -402,7 +570,11 @@ int trap_PC_SourceFileAndLine( int handle, char *filename, int *line ) {
 	return syscall( CG_PC_SOURCE_FILE_AND_LINE, handle, filename, line );
 }
 
-void  trap_S_StopBackgroundTrack( void ) {
+int trap_PC_UnReadToken( int handle ) {
+	return syscall( CG_PC_UNREAD_TOKEN, handle );
+}
+
+void    trap_S_StopBackgroundTrack( void ) {
 	syscall( CG_S_STOPBACKGROUNDTRACK );
 }
 
@@ -441,4 +613,212 @@ void trap_CIN_DrawCinematic( int handle ) {
 // allows you to resize the animation dynamically
 void trap_CIN_SetExtents( int handle, int x, int y, int w, int h ) {
 	syscall( CG_CIN_SETEXTENTS, handle, x, y, w, h );
+}
+
+qboolean trap_GetEntityToken( char *buffer, int bufferSize ) {
+	return syscall( CG_GET_ENTITY_TOKEN, buffer, bufferSize );
+}
+
+//----(SA)	added
+// bring up a popup menu
+extern void Menus_OpenByName( const char *p );
+
+//void trap_UI_Popup( const char *arg0) {
+void trap_UI_Popup( int arg0 ) {
+	syscall( CG_INGAME_POPUP, arg0 );
+}
+
+void trap_UI_ClosePopup( const char *arg0 ) {
+	syscall( CG_INGAME_CLOSEPOPUP, arg0 );
+}
+
+void trap_Key_GetBindingBuf( int keynum, char *buf, int buflen ) {
+	syscall( CG_KEY_GETBINDINGBUF, keynum, buf, buflen );
+}
+
+void trap_Key_SetBinding( int keynum, const char *binding ) {
+	syscall( CG_KEY_SETBINDING, keynum, binding );
+}
+
+void trap_Key_KeynumToStringBuf( int keynum, char *buf, int buflen ) {
+	syscall( CG_KEY_KEYNUMTOSTRINGBUF, keynum, buf, buflen );
+}
+
+void trap_TranslateString( const char *string, char *buf ) {
+	syscall( CG_TRANSLATE_STRING, string, buf );
+}
+// -NERVE - SMF
+
+// Media register functions
+#if 1 // ZTM: TODO: port the ET forceRefresh argument / code ?
+	#define UPDATE_SCREEN CG_DrawInformation();
+#else
+	#define UPDATE_SCREEN CG_DrawInformation( qtrue );
+#endif
+#ifdef _DEBUG
+#define DEBUG_REGISTERPROFILE_INIT int dbgTime = trap_Milliseconds();
+#define DEBUG_REGISTERPROFILE_EXEC( f,n ) if ( developer.integer ) {CG_Printf( "%s : loaded %s in %i msec\n", f, n, trap_Milliseconds() - dbgTime ); }
+sfxHandle_t trap_S_RegisterSound( const char *sample, qboolean compressed ) {
+	sfxHandle_t snd;
+	DEBUG_REGISTERPROFILE_INIT
+	UPDATE_SCREEN
+		snd = syscall( CG_S_REGISTERSOUND, sample, qfalse /* compressed */ );
+	if ( !*sample ) {
+		Com_Printf( "^1Warning: Null Sample filename\n" );
+	}
+	if ( snd == 0 ) {
+		Com_Printf( "^1Warning: Failed to load sound: %s\n", sample );
+	}
+	DEBUG_REGISTERPROFILE_EXEC( "trap_S_RegisterSound",sample )
+	trap_PumpEventLoop();
+	return snd;
+}
+
+qhandle_t trap_R_RegisterModel( const char *name ) {
+	qhandle_t handle;
+	DEBUG_REGISTERPROFILE_INIT
+	UPDATE_SCREEN
+		handle = syscall( CG_R_REGISTERMODEL, name );
+	DEBUG_REGISTERPROFILE_EXEC( "trap_R_RegisterModel",name )
+	trap_PumpEventLoop();
+	return handle;
+}
+
+qhandle_t trap_R_RegisterSkin( const char *name ) {
+	qhandle_t handle;
+	DEBUG_REGISTERPROFILE_INIT
+	UPDATE_SCREEN
+		handle = syscall( CG_R_REGISTERSKIN, name );
+	DEBUG_REGISTERPROFILE_EXEC( "trap_R_RegisterSkin",name )
+	trap_PumpEventLoop();
+	return handle;
+}
+
+qhandle_t trap_R_RegisterShader( const char *name ) {
+	qhandle_t handle;
+	DEBUG_REGISTERPROFILE_INIT
+	UPDATE_SCREEN
+		handle = syscall( CG_R_REGISTERSHADER, name );
+	DEBUG_REGISTERPROFILE_EXEC( "trap_R_RegisterShader",name )
+	trap_PumpEventLoop();
+	return handle;
+}
+
+qhandle_t trap_R_RegisterShaderNoMip( const char *name ) {
+	qhandle_t handle;
+	DEBUG_REGISTERPROFILE_INIT
+	UPDATE_SCREEN
+		handle = syscall( CG_R_REGISTERSHADERNOMIP, name );
+	trap_PumpEventLoop();
+	DEBUG_REGISTERPROFILE_EXEC( "trap_R_RegisterShaderNpMip", name );
+	return handle;
+}
+
+void trap_R_RegisterFont( const char *fontName, int pointSize, fontInfo_t *font ) {
+	DEBUG_REGISTERPROFILE_INIT
+	UPDATE_SCREEN
+	syscall( CG_R_REGISTERFONT, fontName, pointSize, font );
+	DEBUG_REGISTERPROFILE_EXEC( "trap_R_RegisterFont",fontName )
+	trap_PumpEventLoop();
+}
+
+void    trap_CM_LoadMap( const char *mapname ) {
+	DEBUG_REGISTERPROFILE_INIT
+	UPDATE_SCREEN
+	syscall( CG_CM_LOADMAP, mapname );
+	DEBUG_REGISTERPROFILE_EXEC( "trap_CM_LoadMap",mapname )
+	trap_PumpEventLoop();
+}
+
+void    trap_R_LoadWorldMap( const char *mapname ) {
+	DEBUG_REGISTERPROFILE_INIT
+	UPDATE_SCREEN
+	syscall( CG_R_LOADWORLDMAP, mapname );
+	DEBUG_REGISTERPROFILE_EXEC( "trap_R_LoadWorldMap",mapname )
+	trap_PumpEventLoop();
+}
+#else
+sfxHandle_t trap_S_RegisterSound( const char *sample, qboolean compressed ) {
+	UPDATE_SCREEN
+	trap_PumpEventLoop();
+	return syscall( CG_S_REGISTERSOUND, sample, qfalse /* compressed */ );
+}
+
+qhandle_t trap_R_RegisterModel( const char *name ) {
+	UPDATE_SCREEN
+	trap_PumpEventLoop();
+	return syscall( CG_R_REGISTERMODEL, name );
+}
+
+qhandle_t trap_R_RegisterSkin( const char *name ) {
+	UPDATE_SCREEN
+	trap_PumpEventLoop();
+	return syscall( CG_R_REGISTERSKIN, name );
+}
+
+qhandle_t trap_R_RegisterShader( const char *name ) {
+	UPDATE_SCREEN
+	trap_PumpEventLoop();
+	return syscall( CG_R_REGISTERSHADER, name );
+}
+
+qhandle_t trap_R_RegisterShaderNoMip( const char *name ) {
+	UPDATE_SCREEN
+	trap_PumpEventLoop();
+	return syscall( CG_R_REGISTERSHADERNOMIP, name );
+}
+
+void trap_R_RegisterFont( const char *fontName, int pointSize, fontInfo_t *font ) {
+	UPDATE_SCREEN
+	trap_PumpEventLoop();
+	syscall( CG_R_REGISTERFONT, fontName, pointSize, font );
+}
+
+void    trap_CM_LoadMap( const char *mapname ) {
+	UPDATE_SCREEN
+	trap_PumpEventLoop();
+	syscall( CG_CM_LOADMAP, mapname );
+}
+
+void    trap_R_LoadWorldMap( const char *mapname ) {
+	UPDATE_SCREEN
+	trap_PumpEventLoop();
+	syscall( CG_R_LOADWORLDMAP, mapname );
+}
+#endif // _DEBUG
+
+qboolean trap_R_inPVS( const vec3_t p1, const vec3_t p2 ) {
+	return syscall( CG_R_INPVS, p1, p2 );
+}
+
+void trap_GetHunkData( int* hunkused, int* hunkexpected ) {
+	syscall( CG_GETHUNKDATA, hunkused, hunkexpected );
+}
+
+//zinx - binary message channel
+void trap_SendMessage( char *buf, int buflen ) {
+	syscall( CG_SENDMESSAGE, buf, buflen );
+}
+
+messageStatus_t trap_MessageStatus( void ) {
+	return syscall( CG_MESSAGESTATUS );
+}
+
+//bani - dynamic shaders
+qboolean trap_R_LoadDynamicShader( const char *shadername, const char *shadertext ) {
+	return syscall( CG_R_LOADDYNAMICSHADER, shadername, shadertext );
+}
+
+// fretn - render to texture
+void trap_R_RenderToTexture( int textureid, int x, int y, int w, int h ) {
+	syscall( CG_R_RENDERTOTEXTURE, textureid, x, y, w, h );
+}
+
+int trap_R_GetTextureId( const char *name ) {
+	return syscall( CG_R_GETTEXTUREID, name );
+}
+
+// bani - sync rendering
+void trap_R_Finish( void ) {
+	syscall( CG_R_FINISH );
 }

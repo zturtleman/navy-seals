@@ -805,6 +805,8 @@ void CG_DrawInformation( void ) {
 	char buf[1024];
 	float textscale = 0.18f;
 
+	return;
+
 	info = CG_ConfigString( CS_SERVERINFO );
 	sysInfo = CG_ConfigString( CS_SYSTEMINFO );
 

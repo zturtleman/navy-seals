@@ -54,6 +54,7 @@ Q_EXPORT intptr_t vmMain( int command, int arg0, int arg1, int arg2, int arg3, i
 		// Apoxol: Ok, huge hack here..  This will prevent any console messages from
 		// being displayed on the screen.  This is so we can move the chat window
 		CG_Init( arg0, arg1, arg2 );
+		// NSCO-ET: note: arg3 is qboolean demoPlayback
 		return 0;
 	case CG_SHUTDOWN:
 		CG_Shutdown();
@@ -80,6 +81,14 @@ Q_EXPORT intptr_t vmMain( int command, int arg0, int arg1, int arg2, int arg3, i
 	case CG_EVENT_HANDLING:
 		CG_EventHandling( arg0 );
 		return 0;
+	case CG_GET_TAG:
+		return qfalse;
+	case CG_CHECKEXECKEY:
+		return qfalse;
+	case CG_WANTSBINDKEYS:
+		return qtrue;
+	case CG_MESSAGERECEIVED:
+		return -1;
 	default:
 		CG_Error( "vmMain: unknown command %i", command );
 		break;
@@ -1712,7 +1721,7 @@ void CG_StartMusic( void ) {
 	Q_strncpyz( parm1, COM_Parse( &s ), sizeof( parm1 ) );
 	Q_strncpyz( parm2, COM_Parse( &s ), sizeof( parm2 ) );
 
-	trap_S_StartBackgroundTrack( parm1, parm2 );
+	trap_S_StartBackgroundTrack( parm1, parm2, 0 );
 }
 #ifdef MISSIONPACK
 char *CG_GetMenuBuffer( const char *filename ) {
@@ -2898,7 +2907,7 @@ void CG_Init( int serverMessageNum, int serverCommandSequence, int clientNum ) {
 
 	CG_ShaderStateChanged();
 
-	trap_S_ClearLoopingSounds( qtrue );
+	trap_S_ClearLoopingSounds();
 	// Navy Seals ++
 	CG_ParseWeaponAnimationFile( "scripts/weapon_mp5.cfg", WP_MP5 );
 	CG_ParseWeaponAnimationFile( "scripts/weapon_pdw.cfg", WP_PDW );

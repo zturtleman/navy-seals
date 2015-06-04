@@ -43,8 +43,12 @@ void CG_PositionEntityOnTag( refEntity_t *entity, const refEntity_t *parent,
 	orientation_t lerped;
 
 	// lerp the tag
+#if 0
 	trap_R_LerpTag( &lerped, parentModel, parent->oldframe, parent->frame,
 					1.0 - parent->backlerp, tagName );
+#else
+	trap_R_LerpTag( &lerped, parent, tagName, 0 );
+#endif
 
 	// FIXME: allow origin offsets along tag?
 	VectorCopy( parent->origin, entity->origin );
@@ -74,8 +78,12 @@ void CG_PositionRotatedEntityOnTag( refEntity_t *entity, const refEntity_t *pare
 
 	// AxisClear( entity->axis );
 	// lerp the tag
+#if 0
 	trap_R_LerpTag( &lerped, parentModel, parent->oldframe, parent->frame,
 					1.0 - parent->backlerp, tagName );
+#else
+	trap_R_LerpTag( &lerped, parent, tagName, 0 );
+#endif
 
 	// FIXME: allow origin offsets along tag?
 	VectorCopy( parent->origin, entity->origin );
@@ -101,8 +109,12 @@ void CG_GetOriginFromTag( const refEntity_t *parent,
 	orientation_t lerped;
 
 	// lerp the tag
+#if 0
 	trap_R_LerpTag( &lerped, parentModel, parent->oldframe, parent->frame,
 					1.0 - parent->backlerp, tagName );
+#else
+	trap_R_LerpTag( &lerped, parent, tagName, 0 );
+#endif
 
 	VectorCopy( parent->origin, out );
 
@@ -155,11 +167,11 @@ static void CG_EntityEffects( centity_t *cent ) {
 	// add loop sound
 	if ( cent->currentState.loopSound ) {
 		if ( cent->currentState.eType != ET_SPEAKER ) {
-			trap_S_AddLoopingSound( cent->currentState.number, cent->lerpOrigin, vec3_origin,
-									cgs.gameSounds[ cent->currentState.loopSound ] );
+			trap_S_AddLoopingSound( cent->lerpOrigin, vec3_origin,
+									cgs.gameSounds[ cent->currentState.loopSound ], 1.0f, 0 );
 		} else {
-			trap_S_AddRealLoopingSound( cent->currentState.number, cent->lerpOrigin, vec3_origin,
-										cgs.gameSounds[ cent->currentState.loopSound ] );
+			trap_S_AddRealLoopingSound( cent->lerpOrigin, vec3_origin,
+										cgs.gameSounds[ cent->currentState.loopSound ], 1250, 1.0f, 0 );
 		}
 	}
 
@@ -174,7 +186,7 @@ static void CG_EntityEffects( centity_t *cent ) {
 		g = ( cl >> 8 ) & 255;
 		b = ( cl >> 16 ) & 255;
 		i = ( ( cl >> 24 ) & 255 ) * 4;
-		trap_R_AddLightToScene( cent->lerpOrigin, i, r, g, b );
+		trap_R_AddLightToScene( cent->lerpOrigin, i, 1.0f, r, g, b, 0, 0 );
 	}
 
 }
@@ -315,7 +327,7 @@ static void CG_ParticleHost( centity_t *cent ) {
 
 	// add dynamic light
 	if ( dlight ) {
-		trap_R_AddLightToScene( cent->lerpOrigin, (float)dlight,1.0f,1.0f,1.0f );
+		trap_R_AddLightToScene( cent->lerpOrigin, (float)dlight,1.0f,1.0f,1.0f,1.0f,0,0 );
 	}
 
 	// set time next spawn will happen
@@ -899,7 +911,7 @@ static void CG_BulletEnt( centity_t *cent ) {
 
 	//	BG_EvaluateTrajectoryDelta( &cent->currentState.pos, cg.time, velocity );
 
-	//	trap_S_AddLoopingSound( cent->currentState.number, cent->lerpOrigin, velocity, cgs.media.tracerSound  );
+	//	trap_S_AddLoopingSound( cent->lerpOrigin, velocity, cgs.media.tracerSound, 1.0f,.0 );
 
 
 	BG_EvaluateTrajectory( &cent->currentState.pos, cg.time - cg_bulletTracerLength.value, oldOrigin );
@@ -1178,8 +1190,8 @@ static void CG_Missile( centity_t *cent ) {
 
 	// add dynamic light
 	if ( weapon->missileDlight ) {
-		trap_R_AddLightToScene( cent->lerpOrigin, weapon->missileDlight,
-								weapon->missileDlightColor[0], weapon->missileDlightColor[1], weapon->missileDlightColor[2] );
+		trap_R_AddLightToScene( cent->lerpOrigin, weapon->missileDlight, 1.0f,
+								weapon->missileDlightColor[0], weapon->missileDlightColor[1], weapon->missileDlightColor[2], 0, 0 );
 	}
 
 	// add missile sound
@@ -1188,7 +1200,7 @@ static void CG_Missile( centity_t *cent ) {
 
 		BG_EvaluateTrajectoryDelta( &cent->currentState.pos, cg.time, velocity );
 
-		trap_S_AddLoopingSound( cent->currentState.number, cent->lerpOrigin, velocity, weapon->missileSound );
+		trap_S_AddLoopingSound( cent->lerpOrigin, velocity, weapon->missileSound, 1.0f, 0 );
 	}
 
 

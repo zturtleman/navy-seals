@@ -2150,6 +2150,7 @@ void CG_AddRefEntityWithPowerups( refEntity_t *ent, entityState_t *state, int te
 	trap_R_AddRefEntityToScene( ent );
 }
 
+#if 0 // NSCO-ET: missing trap_R_LightForPoint
 /*
 =================
 CG_LightVerts
@@ -2195,6 +2196,7 @@ int CG_LightVerts( vec3_t normal, int numVerts, polyVert_t *verts ) {
 	}
 	return qtrue;
 }
+#endif
 
 
 /*

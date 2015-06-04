@@ -1270,11 +1270,7 @@ void Script_playLooped( itemDef_t *item, char **args ) {
 	const char *val;
 	if ( String_Parse( args, &val ) ) {
 		DC->stopBackgroundTrack();
-#ifdef CGAME
-		DC->startBackgroundTrack( val, val );
-#else
 		DC->startBackgroundTrack( val, val, 0 );
-#endif
 	}
 }
 

@@ -982,7 +982,9 @@ void CG_EntityEvent( centity_t *cent, vec3_t position ) {
 
 	case EV_STOPLOOPINGSOUND:
 		DEBUGNAME( "EV_STOPLOOPINGSOUND" );
+#if 0 // NSCO-ET: syscall does not exist
 		trap_S_StopLoopingSound( es->number );
+#endif
 		es->loopSound = 0;
 		break;
 	case EV_DEBUG_LINE:

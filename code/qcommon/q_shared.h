@@ -1243,8 +1243,6 @@ typedef struct playerState_s {
 	aistateEnum_t aiState;          // xkan, 1/10/2003
 } playerState_t;
 
-#define generic1 torsoAnim // ZTM: FIXME: ### tmp hack to compile
-
 
 //====================================================================
 
@@ -1384,7 +1382,11 @@ typedef struct entityState_s {
 
 	int density;            // for particle effects
 
+#if 1 // NSCO-ET
+	int generic1;           // generic value networed as 32 bits
+#else
 	int dmgFlags;           // to pass along additional information for damage effects for players/ Also used for cursorhints for non-player entities
+#endif
 
 	// Ridah
 	int onFireStart, onFireEnd;
@@ -1397,6 +1399,8 @@ typedef struct entityState_s {
 	aistateEnum_t aiState;      // xkan, 1/10/2003
 	int animMovetype;       // clients can't derive movetype of other clients for anim scripting system
 } entityState_t;
+
+
 
 typedef enum {
 	CA_UNINITIALIZED,

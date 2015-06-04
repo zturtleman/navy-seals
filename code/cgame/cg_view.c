@@ -992,7 +992,7 @@ void CG_DrawActiveFrame( int serverTime, stereoFrame_t stereoView, qboolean demo
 
 	// any looped sounds will be respecified as entities
 	// are added to the render list
-	trap_S_ClearLoopingSounds( qfalse );
+	trap_S_ClearLoopingSounds();
 
 	// clear all the render lists
 	trap_R_ClearScene();
@@ -1025,7 +1025,7 @@ void CG_DrawActiveFrame( int serverTime, stereoFrame_t stereoView, qboolean demo
 	}
 
 	// let the client system know what our weapon and zoom settings are
-	trap_SetUserCmdValue( cg.weaponSelect, cg.zoomSensitivity );
+	trap_SetUserCmdValue( cg.weaponSelect, 0, cg.zoomSensitivity, -1 );
 
 	if ( cg.snap->ps.powerups[PW_BRIEFCASE] && BG_IsPrimary( cg.snap->ps.weapon ) ) {
 		int i;
