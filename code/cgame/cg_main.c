@@ -1778,6 +1778,10 @@ qboolean CG_Asset_Parse( int handle ) {
 			if ( !PC_String_Parse( handle, &tempStr ) || !PC_Int_Parse( handle, &pointSize ) ) {
 				return qfalse;
 			}
+
+			// ET doesn't fallback to fontImage, so force using it
+			tempStr = "fontImage";
+
 			cgDC.registerFont( tempStr, pointSize, &cgDC.Assets.textFont );
 			continue;
 		}
@@ -1788,6 +1792,10 @@ qboolean CG_Asset_Parse( int handle ) {
 			if ( !PC_String_Parse( handle, &tempStr ) || !PC_Int_Parse( handle, &pointSize ) ) {
 				return qfalse;
 			}
+
+			// ET doesn't fallback to fontImage, so force using it
+			tempStr = "fontImage";
+
 			cgDC.registerFont( tempStr, pointSize, &cgDC.Assets.smallFont );
 			continue;
 		}
@@ -1798,6 +1806,10 @@ qboolean CG_Asset_Parse( int handle ) {
 			if ( !PC_String_Parse( handle, &tempStr ) || !PC_Int_Parse( handle, &pointSize ) ) {
 				return qfalse;
 			}
+
+			// ET doesn't fallback to fontImage, so force using it
+			tempStr = "fontImage";
+
 			cgDC.registerFont( tempStr, pointSize, &cgDC.Assets.bigFont );
 			continue;
 		}
