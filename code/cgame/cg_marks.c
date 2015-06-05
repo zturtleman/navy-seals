@@ -144,7 +144,7 @@ void CG_ImpactMark( qhandle_t markShader, const vec3_t origin, const vec3_t dir,
 	int i, j;
 	int numFragments;
 	markFragment_t markFragments[MAX_MARK_FRAGMENTS], *mf;
-	vec3_t markPoints[MAX_MARK_POINTS];
+	vec5_t markPoints[MAX_MARK_POINTS];             // Ridah, made it vec5_t so it includes S/T
 	vec3_t projection;
 
 	if ( !cg_addMarks.integer ) {
@@ -176,13 +176,8 @@ void CG_ImpactMark( qhandle_t markShader, const vec3_t origin, const vec3_t dir,
 	}
 
 	// get the fragments
-	if ( markShader == cgs.media.wakeMarkShader ) {
-		VectorScale( dir, -1, projection );
-	} else {
-		VectorScale( dir, -20, projection );
-	}
-
-	numFragments = trap_CM_MarkFragments( 4, (void *)originalPoints,
+	VectorScale( dir, radius * 2, projection );
+	numFragments = trap_CM_MarkFragments( (int)orientation, (void *)originalPoints,
 										  projection, MAX_MARK_POINTS, markPoints[0],
 										  MAX_MARK_FRAGMENTS, markFragments );
 
@@ -195,6 +190,14 @@ void CG_ImpactMark( qhandle_t markShader, const vec3_t origin, const vec3_t dir,
 		polyVert_t  *v;
 		polyVert_t verts[MAX_VERTS_ON_POLY];
 		markPoly_t  *mark;
+		qboolean hasST;
+
+		if ( mf->numPoints < 0 ) {
+			hasST = qtrue;
+			mf->numPoints *= -1;
+		} else {
+			hasST = qfalse;
+		}
 
 		// we have an upper limit on the complexity of polygons
 		// that we store persistantly
@@ -206,9 +209,15 @@ void CG_ImpactMark( qhandle_t markShader, const vec3_t origin, const vec3_t dir,
 
 			VectorCopy( markPoints[mf->firstPoint + j], v->xyz );
 
-			VectorSubtract( v->xyz, origin, delta );
-			v->st[0] = 0.5 + DotProduct( delta, axis[1] ) * texCoordScale;
-			v->st[1] = 0.5 + DotProduct( delta, axis[2] ) * texCoordScale;
+			if ( !hasST ) {
+				VectorSubtract( v->xyz, origin, delta );
+				v->st[0] = 0.5 + DotProduct( delta, axis[1] ) * texCoordScale;
+				v->st[1] = 0.5 + DotProduct( delta, axis[2] ) * texCoordScale;
+			} else {
+				v->st[0] = markPoints[mf->firstPoint + j][3];
+				v->st[1] = markPoints[mf->firstPoint + j][4];
+			}
+
 			*(int *)v->modulate = *(int *)colors;
 		}
 
