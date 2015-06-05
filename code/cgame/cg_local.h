@@ -1050,6 +1050,7 @@ typedef struct {
 // be cleared when a tournement restart is done, allowing
 // all clients to begin playing instantly
 typedef struct {
+	qboolean initing;
 	gameState_t gameState;              // gamestate from server
 	glconfig_t glconfig;                    // rendering configuration
 	float screenXScale;                     // derived from glconfig

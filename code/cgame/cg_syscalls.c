@@ -47,13 +47,9 @@ int PASSFLOAT( float x ) {
 }
 
 void trap_PumpEventLoop( void ) {
-#if 1 // ZTM: TODO: Port "cgs.initing" from ET
-	return;
-#else
 	if ( !cgs.initing ) {
 		return;
 	}
-#endif
 	syscall( CG_PUMPEVENTLOOP );
 }
 

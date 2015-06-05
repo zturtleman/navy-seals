@@ -54,6 +54,7 @@ Q_EXPORT intptr_t vmMain( int command, int arg0, int arg1, int arg2, int arg3, i
 		// Apoxol: Ok, huge hack here..  This will prevent any console messages from
 		// being displayed on the screen.  This is so we can move the chat window
 		CG_Init( arg0, arg1, arg2 );
+		cgs.initing = qfalse;
 		// NSCO-ET: note: arg3 is qboolean demoPlayback
 		return 0;
 	case CG_SHUTDOWN:
@@ -2752,6 +2753,7 @@ void CG_Init( int serverMessageNum, int serverCommandSequence, int clientNum ) {
 	memset( cg_weapons, 0, sizeof( cg_weapons ) );
 	memset( cg_items, 0, sizeof( cg_items ) );
 
+	cgs.initing = qtrue;
 	cg.clientNum = clientNum;
 
 	trap_SendConsoleCommand( "bind f1 \"vote yes\"\n" );
