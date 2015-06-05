@@ -1515,9 +1515,6 @@ static void CG_RegisterGraphics( void ) {
 	// precache weapons
 	CG_PrecacheWeapons();
 
-	cgs.media.shadowMarkShader = trap_R_RegisterShader( "markShadow" );
-	cgs.media.wakeMarkShader = trap_R_RegisterShader( "ns_wake" );
-
 	cgs.media.woodSmall = trap_R_RegisterModel( "models/props/wood_small.md3" );
 	cgs.media.woodMedium = trap_R_RegisterModel( "models/props/wood_medium.md3" );
 	cgs.media.woodBig = trap_R_RegisterModel( "models/props/wood_big.md3" );
@@ -1579,6 +1576,13 @@ static void CG_RegisterGraphics( void ) {
 	{
 		cgs.media.burnMarkShaders[i] = trap_R_RegisterShader( va( "gfx/damage/bhole_explo_%i",i + 1 ) );
 	}
+
+	//cgs.media.shadowMarkShader = trap_R_RegisterShader( "markShadow" );
+	//cgs.media.shadowFootShader = cgs.media.bulletholes[0][0];
+	// ET shadow shaders
+	cgs.media.shadowMarkShader = trap_R_RegisterShaderNoMip( "markShadowTorso" );
+	cgs.media.shadowFootShader = trap_R_RegisterShaderNoMip("markShadowFoot");
+	cgs.media.wakeMarkShader = trap_R_RegisterShader( "ns_wake" );
 
 	// register the inline models
 	cgs.numInlineModels = trap_CM_NumInlineModels();

@@ -2559,10 +2559,10 @@ void CG_Player( centity_t *cent ) {
 						VectorCopy( trace.plane.normal, dir );
 
 						VectorMA( trace.endpos, -1, forward, end );
-						CG_ImpactMark( cgs.media.bulletholes[0][0], end, dir, cent->pe.legs.yawAngle + 180, alpha,alpha,alpha,alpha,qfalse,3,qfalse );
+						CG_ImpactMark( cgs.media.shadowFootShader, end, dir, cent->pe.legs.yawAngle + 180, alpha,alpha,alpha,alpha,qfalse,3,qfalse );
 
 						VectorMA( trace.endpos, 2, forward, end );
-						CG_ImpactMark( cgs.media.bulletholes[0][0], end, dir, cent->pe.legs.yawAngle + 180, alpha,alpha,alpha,alpha,qfalse,3,qfalse );
+						CG_ImpactMark( cgs.media.shadowFootShader, end, dir, cent->pe.legs.yawAngle + 180, alpha,alpha,alpha,alpha,qfalse,3,qfalse );
 
 						// disable it
 						cent->footstepSpawn = 0;

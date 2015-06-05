@@ -848,6 +848,7 @@ typedef struct {
 	qhandle_t wakeMarkShader;
 	qhandle_t burnMarkShaders[3];
 	qhandle_t shadowMarkShader;
+	qhandle_t shadowFootShader;
 
 	// weapon effect models
 	qhandle_t bulletFlashModel;

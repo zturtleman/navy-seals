@@ -356,11 +356,6 @@ void  trap_R_AddRefEntityToScene( const refEntity_t *re ) {
 }
 
 void trap_R_AddPolyToScene( qhandle_t hShader, int numVerts, const polyVert_t *verts ) {
-	// ZTM: FIXME: there should not be missing shaders. The engine warns about them every frame .. to slience warnings for now.
-	if ( !hShader ) {
-		hShader = cgs.media.whiteShader;
-	}
-
 	syscall( CG_R_ADDPOLYTOSCENE, hShader, numVerts, verts );
 }
 
