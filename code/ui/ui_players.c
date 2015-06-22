@@ -847,7 +847,8 @@ void UI_DrawPlayerHead( float x, float y, float w, float h, playerInfo_t *pi, in
 	// get the rotation information
 	UI_HeadAngle( pi, head.axis );
 
-	renderfx = RF_LIGHTING_ORIGIN | RF_NOSHADOW;
+	// removed RF_LIGHTING_ORIGIN, it makes ET use world light grid
+	renderfx = RF_NOSHADOW;
 
 	memcpy( &torso, &head, sizeof( head ) );
 
