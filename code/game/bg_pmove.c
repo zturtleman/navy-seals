@@ -2752,7 +2752,7 @@ static void PM_Weapon( void ) {
 	}
 
 	// check for fire
-	if ( !( pm->cmd.buttons & 1 ) ) {
+	if ( !( pm->cmd.buttons & BUTTON_ATTACK ) ) {
 
 		pm->ps->weaponTime = 0;
 
