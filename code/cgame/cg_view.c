@@ -342,7 +342,7 @@ static void CG_OffsetThirdPersonView( void ) {
 			cg.deathZoom += ( cg.time - cg.oldTime ) / 12;
 		}
 
-		cg.deathRotation += ( cg.time - cg.oldTime ) / 16;
+		cg.deathRotation += ( cg.time - cg.oldTime ) / 32.0f;
 
 		forwardScale = cos( (float)cg.deathRotation / 180 * M_PI );
 		sideScale = sin( (float)cg.deathRotation / 180 * M_PI );
