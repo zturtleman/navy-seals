@@ -642,7 +642,8 @@ void trap_TranslateString( const char *string, char *buf ) {
 
 // Media register functions
 #if 1 // ZTM: TODO: port the ET forceRefresh argument / code ?
-	#define UPDATE_SCREEN CG_DrawInformation();
+	  // ZTM: NOTE: Disabled updating screen, maybe it will help with flickering ?
+	#define UPDATE_SCREEN //CG_DrawInformation();
 #else
 	#define UPDATE_SCREEN CG_DrawInformation( qtrue );
 #endif
