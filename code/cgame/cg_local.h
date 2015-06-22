@@ -794,7 +794,7 @@ typedef struct {
 	qboolean cheatsEnabled;
 	int deathTime;
 
-	int deathRotation;
+	float deathRotation;
 	int deathZoom;
 	qboolean deathCam;
 
