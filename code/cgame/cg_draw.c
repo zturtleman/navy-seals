@@ -1316,6 +1316,80 @@ static void CG_MissionInformation( void ) {
 
 //===========================================================================================
 
+/*
+=================
+CG_DrawTeamInfo
+=================
+*/
+static void CG_DrawTeamInfo( void ) {
+	int i;
+	vec4_t		hcolor;
+	int		chatHeight;
+	team_t	team;
+	float	frac;
+	int		timeLived, timeLeft, fadeOutTime;
+
+#define CHATLOC_Y 420 // bottom end
+#define CHATLOC_X 0
+
+	if (cg_teamChatHeight.integer < TEAMCHAT_HEIGHT)
+		chatHeight = cg_teamChatHeight.integer;
+	else
+		chatHeight = TEAMCHAT_HEIGHT;
+	if (chatHeight <= 0)
+		return; // disabled
+
+	if (cgs.teamLastChatPos != cgs.teamChatPos) {
+		if (cg.time - cgs.teamChatMsgTimes[cgs.teamLastChatPos % chatHeight] > cg_teamChatTime.integer) {
+			cgs.teamLastChatPos++;
+		}
+
+		fadeOutTime = MIN( 1000, cg_teamChatTime.integer * 0.25f );
+
+		for (i = cgs.teamChatPos - 1; i >= cgs.teamLastChatPos; i--) {
+			team = cgs.teamChatMsgTeams[i % chatHeight];
+
+			frac = 1;
+
+			if ( cg_teamChatTime.integer > 0 ) {
+				timeLived = ( cg.time - cgs.teamChatMsgTimes[i % chatHeight] );
+				timeLeft = cg_teamChatTime.integer - timeLived;
+
+				if ( timeLeft < fadeOutTime ) {
+					frac = Com_Clamp( 0, 1, timeLeft / (float)fadeOutTime );
+				}
+			}
+
+			if ( team == TEAM_RED ) {
+				hcolor[0] = 1.0f;
+				hcolor[1] = 0.0f;
+				hcolor[2] = 0.0f;
+			} else if ( team == TEAM_BLUE ) {
+				hcolor[0] = 0.0f;
+				hcolor[1] = 0.0f;
+				hcolor[2] = 1.0f;
+			} else {
+				hcolor[0] = 0.0f;
+				hcolor[1] = 1.0f;
+				hcolor[2] = 0.0f;
+			}
+
+			hcolor[3] = 0.33f * frac;
+
+			trap_R_SetColor( hcolor );
+			CG_DrawPic( CHATLOC_X, CHATLOC_Y - (cgs.teamChatPos - i)*TINYCHAR_HEIGHT, 640, TINYCHAR_HEIGHT, cgs.media.teamStatusBar );
+			trap_R_SetColor( NULL );
+
+			hcolor[0] = hcolor[1] = hcolor[2] = 1.0f;
+			hcolor[3] = frac;
+
+			CG_DrawStringExt( CHATLOC_X + TINYCHAR_WIDTH,
+				CHATLOC_Y - (cgs.teamChatPos - i)*TINYCHAR_HEIGHT,
+				cgs.teamChatMsgs[i % chatHeight], hcolor, qfalse, qfalse,
+				TINYCHAR_WIDTH, TINYCHAR_HEIGHT, 0 );
+		}
+	}
+}
 
 /*
 ===============================================================================
@@ -2949,12 +3023,14 @@ static void CG_Draw2D( void ) {
 		) {
 		CG_DrawRadar();
 
+		CG_DrawTeamInfo();
 		CG_DrawScrutchHud();
 	} else if ( ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR || cg.snap->ps.pm_type == PM_SPECTATOR || cg.snap->ps.pm_type == PM_NOCLIP ) ) {
 		if ( !cg.showScores && cg.viewMissionInfo == qfalse  ) {
 			Menu_PaintAll();
 			CG_DrawTimedMenus();
 			CG_DrawSpectatorHud();
+			CG_DrawTeamInfo();
 		}
 	} else {
 		if ( cg.snap->ps.stats[STAT_HEALTH] > 0 ) {
@@ -2980,6 +3056,7 @@ static void CG_Draw2D( void ) {
 				CG_DrawTimedMenus();
 			}
 			// draw hud
+			CG_DrawTeamInfo();
 			CG_DrawScrutchHud();
 		}
 

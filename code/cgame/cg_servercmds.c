@@ -671,7 +671,7 @@ CG_AddToTeamChat
 
 =======================
 */
-static void CG_AddToTeamChat( const char *str ) {
+static void CG_AddToTeamChat( const char *str, team_t team ) {
 	int len;
 	char *p, *ls;
 	int lastcolor;
@@ -693,6 +693,8 @@ static void CG_AddToTeamChat( const char *str ) {
 
 	p = cgs.teamChatMsgs[cgs.teamChatPos % chatHeight];
 	*p = 0;
+
+	cgs.teamChatMsgTeams[cgs.teamChatPos % chatHeight] = team;
 
 	lastcolor = '7';
 
@@ -865,6 +867,11 @@ static void CG_ServerCommand( void ) {
 			}
 
 			Q_strncpyz( text, CG_Argv( 1 ), MAX_SAY_TEXT );
+			CG_RemoveChatEscapeChar( text );
+
+			// ET doesn't have notify text, so put all chat in 'team chat'
+			CG_AddToTeamChat( text, TEAM_FREE );
+
 			CG_Printf( "%s\n", text );
 		}
 		return;
@@ -877,7 +884,7 @@ static void CG_ServerCommand( void ) {
 
 		Q_strncpyz( text, CG_Argv( 1 ), MAX_SAY_TEXT );
 		CG_RemoveChatEscapeChar( text );
-		CG_AddToTeamChat( text );
+		CG_AddToTeamChat( text, cg.snap->ps.persistant[PERS_TEAM] );
 		CG_Printf( "%s\n",text );
 		return;
 	}

@@ -1114,6 +1114,7 @@ typedef struct {
 	// teamchat width is *3 because of embedded color codes
 	char teamChatMsgs[TEAMCHAT_HEIGHT][TEAMCHAT_WIDTH * 3 + 1];
 	int teamChatMsgTimes[TEAMCHAT_HEIGHT];
+	int teamChatMsgTeams[TEAMCHAT_HEIGHT];
 	int teamChatPos;
 	int teamLastChatPos;
 
