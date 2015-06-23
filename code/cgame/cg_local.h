@@ -123,6 +123,29 @@ typedef enum {
 
 //=================================================
 
+//#define UNICODE_MFIELD
+
+#define	MAX_EDIT_LINE	256
+typedef struct {
+	int		cursor;
+	int		scroll;					// display buffer offset
+	int		widthInChars;			// display width
+#ifdef UNICODE_MFIELD
+	int		buffer[MAX_EDIT_LINE];	// buffer holding Unicode code points
+#else
+	char	buffer[MAX_EDIT_LINE];	// buffer holding ASCII characters
+#endif
+	int		len;					// length of buffer
+	int		maxchars;				// max number of characters to insert in buffer
+} mfield_t;
+
+void	MField_Clear( mfield_t *edit );
+void	MField_KeyDownEvent( mfield_t *edit, int key );
+void	MField_CharEvent( mfield_t *edit, int ch );
+void	MField_SetText( mfield_t *edit, const char *text );
+const char *MField_Buffer( mfield_t *edit );
+void	MField_Draw( mfield_t *edit, int x, int y, int style, qboolean drawCursor );
+
 // player entities need to track more information
 // than any other type of entity.
 
@@ -599,6 +622,11 @@ typedef struct {
 	int centerPrintY;
 	char centerPrint[1024];
 	int centerPrintLines;
+
+	// say, say_team, ...
+	char		messageCommand[32];
+	char		messagePrompt[64];
+	mfield_t		messageField;
 
 	// kill timers for carnage reward
 	int lastKillTime;
@@ -1393,6 +1421,7 @@ void CG_PrecacheWeapons( void );
 void CG_UpdateCvars( void );
 
 int CG_CrosshairPlayer( void );
+int CG_LastAttacker( void );
 void CG_LoadMenus( const char *menuFile );
 void CG_KeyEvent( int key, qboolean down );
 void CG_MouseEvent( int x, int y );

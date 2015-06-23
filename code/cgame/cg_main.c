@@ -36,8 +36,8 @@ displayContextDef_t cgDC;
 
 void CG_Init( int serverMessageNum, int serverCommandSequence, int clientNum );
 void CG_Shutdown( void );
+void Message_Key( int key, qboolean down );
 
-int CG_LastAttacker( void );
 /*
 ================
 vmMain
@@ -70,7 +70,10 @@ Q_EXPORT intptr_t vmMain( int command, int arg0, int arg1, int arg2, int arg3, i
 	case CG_LAST_ATTACKER:
 		return CG_LastAttacker();
 	case CG_KEY_EVENT:
-		CG_KeyEvent( arg0, arg1 );
+		if ( cgs.eventHandling == CGAME_EVENT_MESSAGEMODE )
+			Message_Key( arg0, arg1 );
+		else
+			CG_KeyEvent( arg0, arg1 );
 		return 0;
 	case CG_MOUSE_EVENT:
 #ifdef MISSIONPACK
@@ -2998,6 +3001,50 @@ void CG_Shutdown( void ) {
 	// like closing files or archiving session data
 }
 
+/*
+================
+Message_Key
+
+In game talk message
+================
+*/
+void Message_Key( int key, qboolean down ) {
+	char	buffer[MAX_STRING_CHARS];
+
+	if ( !down ) {
+		return;
+	}
+
+	if ( key & K_CHAR_FLAG ) {
+		key &= ~K_CHAR_FLAG;
+		MField_CharEvent( &cg.messageField, key );
+		return;
+	}
+
+#if 0 // this is handled in the ET engine
+	if ( key == K_ESCAPE ) {
+		CG_EventHandling( CGAME_EVENT_NONE );
+		trap_Key_SetCatcher( trap_Key_GetCatcher( ) & ~KEYCATCH_CGAME );
+		MField_Clear( &cg.messageField );
+		return;
+	}
+#endif
+
+	if ( key == K_ENTER || key == K_KP_ENTER ) {
+		if ( cg.messageField.buffer[0] ) {
+			Com_sprintf( buffer, sizeof ( buffer ), "%s %s\n", cg.messageCommand, MField_Buffer( &cg.messageField ) );
+
+			trap_SendClientCommand( buffer );
+		}
+
+		CG_EventHandling( CGAME_EVENT_NONE );
+		trap_Key_SetCatcher( trap_Key_GetCatcher( ) & ~KEYCATCH_CGAME );
+		MField_Clear( &cg.messageField );
+		return;
+	}
+
+	MField_KeyDownEvent( &cg.messageField, key );
+}
 
 /*
 ==================

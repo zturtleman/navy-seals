@@ -3089,7 +3089,7 @@ static void CG_Draw2D( void ) {
 	CG_MissionInformation();
 	//	CG_DrawMenu();
 
-	if ( trap_Key_GetCatcher() & KEYCATCH_CGAME  ) {
+	if ( cgs.eventHandling != CGAME_EVENT_MESSAGEMODE && ( trap_Key_GetCatcher() & KEYCATCH_CGAME ) ) {
 		CG_DrawMouse( cgs.cursorX, cgs.cursorY, 32,32 );
 	}
 }
@@ -3100,6 +3100,23 @@ static void CG_DrawTourneyScoreboard( void ) {
 #else
 	CG_DrawOldTourneyScoreboard();
 #endif
+}
+
+/*
+=================
+CG_DrawMessageMode
+=================
+*/
+void CG_DrawMessageMode( void ) {
+	if ( cgs.eventHandling != CGAME_EVENT_MESSAGEMODE ) {
+		return;
+	}
+
+	// draw the chat line
+	CG_DrawBigString( 8, 232, cg.messagePrompt, 1.0f );
+
+	MField_Draw( &cg.messageField, 8 + CG_DrawStrlen( cg.messagePrompt ) * BIGCHAR_WIDTH, 232,
+			UI_DROPSHADOW|UI_BIGFONT, qtrue );
 }
 
 /*
@@ -3180,6 +3197,8 @@ void CG_DrawActive( stereoFrame_t stereoView ) {
 #endif
 	// draw status bar and other floating elements
 	CG_Draw2D();
+
+	CG_DrawMessageMode();
 
 	//	void ClientScript_Update( void )
 	ClientScript_Update();

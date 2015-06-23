@@ -103,6 +103,95 @@ static void CG_SizeDown_f( void ) {
 
 
 /*
+================
+CG_MessageMode_f
+================
+*/
+void CG_MessageMode_f( void ) {
+	Q_strncpyz( cg.messageCommand, "say", sizeof (cg.messageCommand) );
+	Q_strncpyz( cg.messagePrompt, "Say:", sizeof (cg.messagePrompt) );
+	MField_Clear( &cg.messageField );
+	cg.messageField.widthInChars = 30;
+
+	if ( cgs.eventHandling != CGAME_EVENT_MESSAGEMODE ) {
+		CG_EventHandling( CGAME_EVENT_MESSAGEMODE );
+		trap_Key_SetCatcher( trap_Key_GetCatcher( ) | KEYCATCH_CGAME );
+	} else {
+		CG_EventHandling( CGAME_EVENT_NONE );
+		trap_Key_SetCatcher( trap_Key_GetCatcher( ) & ~KEYCATCH_CGAME );
+	}
+}
+
+/*
+================
+CG_MessageMode2_f
+================
+*/
+void CG_MessageMode2_f( void ) {
+	Q_strncpyz( cg.messageCommand, "say_team", sizeof (cg.messageCommand) );
+	Q_strncpyz( cg.messagePrompt, "Team Say:", sizeof (cg.messagePrompt) );
+	MField_Clear( &cg.messageField );
+	cg.messageField.widthInChars = 25;
+
+	if ( cgs.eventHandling != CGAME_EVENT_MESSAGEMODE ) {
+		CG_EventHandling( CGAME_EVENT_MESSAGEMODE );
+		trap_Key_SetCatcher( trap_Key_GetCatcher( ) | KEYCATCH_CGAME );
+	} else {
+		CG_EventHandling( CGAME_EVENT_NONE );
+		trap_Key_SetCatcher( trap_Key_GetCatcher( ) & ~KEYCATCH_CGAME );
+	}
+}
+
+/*
+================
+CG_MessageMode3_f
+================
+*/
+void CG_MessageMode3_f( void ) {
+	int clientNum = CG_CrosshairPlayer();
+	if ( clientNum < 0 || clientNum >= MAX_CLIENTS ) {
+		return;
+	}
+	Com_sprintf( cg.messageCommand, sizeof (cg.messageCommand), "tell %d", clientNum );
+	Com_sprintf( cg.messagePrompt, sizeof (cg.messagePrompt), "Tell %s:", cgs.clientinfo[ clientNum ].name );
+	MField_Clear( &cg.messageField );
+	cg.messageField.widthInChars = 30;
+
+	if ( cgs.eventHandling != CGAME_EVENT_MESSAGEMODE ) {
+		CG_EventHandling( CGAME_EVENT_MESSAGEMODE );
+		trap_Key_SetCatcher( trap_Key_GetCatcher( ) | KEYCATCH_CGAME );
+	} else {
+		CG_EventHandling( CGAME_EVENT_NONE );
+		trap_Key_SetCatcher( trap_Key_GetCatcher( ) & ~KEYCATCH_CGAME );
+	}
+}
+
+/*
+================
+CG_MessageMode4_f
+================
+*/
+void CG_MessageMode4_f( void ) {
+	int clientNum = CG_LastAttacker();
+	if ( clientNum < 0 || clientNum >= MAX_CLIENTS ) {
+		return;
+	}
+	Com_sprintf( cg.messageCommand, sizeof (cg.messageCommand), "tell %d", clientNum );
+	Com_sprintf( cg.messagePrompt, sizeof (cg.messagePrompt), "Tell %s:", cgs.clientinfo[ clientNum ].name );
+	MField_Clear( &cg.messageField );
+	cg.messageField.widthInChars = 30;
+
+	if ( cgs.eventHandling != CGAME_EVENT_MESSAGEMODE ) {
+		CG_EventHandling( CGAME_EVENT_MESSAGEMODE );
+		trap_Key_SetCatcher( trap_Key_GetCatcher( ) | KEYCATCH_CGAME );
+	} else {
+		CG_EventHandling( CGAME_EVENT_NONE );
+		trap_Key_SetCatcher( trap_Key_GetCatcher( ) & ~KEYCATCH_CGAME );
+	}
+}
+
+
+/*
 =============
 CG_Viewpos_f
 
@@ -667,7 +756,11 @@ static consoleCommand_t commands[] = {
 	{ "editradar", CG_EditRadar_f },
 	{ "edithud", CG_EditHud_f },
 	{ "editradarpos", CG_EditRadarPos_f },
-	{ "cgamemem", CG_GameMem_f }
+	{ "cgamemem", CG_GameMem_f },
+	{ "messageMode", CG_MessageMode_f },
+	{ "messageMode2", CG_MessageMode2_f },
+	{ "messageMode3", CG_MessageMode3_f },
+	{ "messageMode4", CG_MessageMode4_f },
 };
 
 /*
