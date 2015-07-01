@@ -3435,7 +3435,7 @@ typedef struct
 static bind_t g_bindings[] =
 {
 	{"+scores",          K_TAB,             -1,     -1, -1},
-	{"+button2",         K_ENTER,           -1,     -1, -1}, // BUTTON_USE
+	{"+useitem",         K_ENTER,           -1,     -1, -1}, // BUTTON_USE
 	{"+speed",           'Y',           -1,     -1, -1},
 	{"+forward",         K_UPARROW,     -1,     -1, -1},
 	{"+back",            K_DOWNARROW,   -1,     -1, -1},
@@ -3449,14 +3449,14 @@ static bind_t g_bindings[] =
 	{"+lookup",          K_PGDN,                -1,     -1, -1},
 	{"+lookdown",    K_DEL,             -1,     -1, -1},
 	{"+mlook",           '/',                   -1,     -1, -1},
-	{"+button6",             'r',                       -1,     -1, -1}, // BUTTON_RELOAD
+	{"+reload",              'r',                       -1,     -1, -1}, // BUTTON_RELOAD
 	{"bandage",         'b',                        -1,     -1, -1},
-	{"+button5",        'v',                        -1,     -1, -1}, // BUTTON_SPRINT
+	{"+sprint",         'v',                        -1,     -1, -1}, // BUTTON_SPRINT
 	{"dropweapon",      'c',                        -1,     -1, -1},
-	{"+button7",        K_SHIFT,                        -1,     -1, -1}, // BUTTON_WEAPON1
-	{"+button8",        K_CTRL,                     -1,     -1, -1}, // BUTTON_WEAPON2
-	{"+button9",        K_ALT,                      -1,     -1, -1}, // BUTTON_WEAPON3
-	{"+button10",       -1,                         -1,     -1, -1}, // BUTTON_IRONSIGHT
+	{"+activate",       K_SHIFT,                        -1,     -1, -1}, // BUTTON_WEAPON1
+	{"+attack2",        K_CTRL,                     -1,     -1, -1}, // BUTTON_WEAPON2
+	{"+zoom",           K_ALT,                      -1,     -1, -1}, // BUTTON_WEAPON3
+	{"+prone",          -1,                         -1,     -1, -1}, // BUTTON_IRONSIGHT
 	{"radiomenu",       'm',-1,    -1, -1},
 	{"gamemenu",        'n',-1,    -1, -1},
 	{"use",             'u',-1,    -1, -1},
@@ -3478,7 +3478,7 @@ static bind_t g_bindings[] =
 	{"+attack",          K_MOUSE1,              -1,     -1, -1},
 	{"weapprev",         '[',                   -1,     -1, -1},
 	{"weapnext",         ']',                   -1,     -1, -1},
-	{"+button3",         -1,                    -1,     -1, -1}, // BUTTON_GESTURE
+	{"+salute",          -1,                    -1,     -1, -1}, // BUTTON_GESTURE
 	{"scoresUp", K_KP_PGUP,         -1,     -1, -1},
 	{"scoresDown", K_KP_PGDN,           -1,     -1, -1},
 	{"messagemode",  -1,                    -1,     -1, -1},
@@ -3658,6 +3658,44 @@ void Controls_SetDefaults( void ) {
 
 int BindingIDFromName( const char *name ) {
 	int i;
+
+	// HACK: check if it's a Q3 button name and rename to ET button name
+	if ( strncmp( name, "+button", 7 ) == 0 ) {
+		switch ( name[7] ) {
+			case '0': // BUTTON_ATTACK
+				name = "+attack";
+				break;
+			case '2': // BUTTON_USE
+				name = "+useitem";
+				break;
+			case '3': // BUTTON_GESTURE
+				name = "+salute";
+				break;
+			case '5': // BUTTON_SPRINT
+				name = "+sprint";
+				break;
+			case '6': // BUTTON_RELOAD
+				name = "+reload";
+				break;
+			case '7': // BUTTON_WEAPON1
+				name = "+activate";
+				break;
+			case '8': // BUTTON_WEAPON2
+				name = "+attack2";
+				break;
+			case '9': // BUTTON_WEAPON3
+				name = "+zoom";
+				break;
+			case '1':
+				// 10 - BUTTON_IRONSIGHT
+				if ( name[8] == '0' ) {
+					name = "+prone";
+				}
+			default:
+				break;
+		}
+	}
+
 	for ( i = 0; i < g_bindCount; i++ )
 	{
 		if ( Q_stricmp( name, g_bindings[i].command ) == 0 ) {
