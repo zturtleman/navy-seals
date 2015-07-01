@@ -3431,7 +3431,7 @@ typedef struct
 static bind_t g_bindings[] =
 {
 	{"+scores",          K_TAB,             -1,     -1, -1},
-	{"+button2",         K_ENTER,           -1,     -1, -1},
+	{"+button2",         K_ENTER,           -1,     -1, -1}, // BUTTON_USE
 	{"+speed",           'Y',           -1,     -1, -1},
 	{"+forward",         K_UPARROW,     -1,     -1, -1},
 	{"+back",            K_DOWNARROW,   -1,     -1, -1},
@@ -3445,13 +3445,13 @@ static bind_t g_bindings[] =
 	{"+lookup",          K_PGDN,                -1,     -1, -1},
 	{"+lookdown",    K_DEL,             -1,     -1, -1},
 	{"+mlook",           '/',                   -1,     -1, -1},
-	{"+button6",             'r',                       -1,     -1, -1},
+	{"+button6",             'r',                       -1,     -1, -1}, // BUTTON_RELOAD
 	{"bandage",         'b',                        -1,     -1, -1},
-	{"+button5",        'v',                        -1,     -1, -1},
+	{"+button5",        'v',                        -1,     -1, -1}, // BUTTON_SPRINT
 	{"dropweapon",      'c',                        -1,     -1, -1},
-	{"+button7",        K_SHIFT,                        -1,     -1, -1},
-	{"+button8",        K_CTRL,                     -1,     -1, -1},
-	{"+button9",        K_ALT,                      -1,     -1, -1},
+	{"+button7",        K_SHIFT,                        -1,     -1, -1}, // BUTTON_WEAPON1
+	{"+button8",        K_CTRL,                     -1,     -1, -1}, // BUTTON_WEAPON2
+	{"+button9",        K_ALT,                      -1,     -1, -1}, // BUTTON_WEAPON3
 	{"radiomenu",       'm',-1,    -1, -1},
 	{"gamemenu",        'n',-1,    -1, -1},
 	{"use",             'u',-1,    -1, -1},
@@ -3473,7 +3473,7 @@ static bind_t g_bindings[] =
 	{"+attack",          K_MOUSE1,              -1,     -1, -1},
 	{"weapprev",         '[',                   -1,     -1, -1},
 	{"weapnext",         ']',                   -1,     -1, -1},
-	//	{"+button3",         K_MOUSE3,			-1,		-1, -1},
+	//	{"+button3",         K_MOUSE3,			-1,		-1, -1}, // BUTTON_GESTURE
 	{"scoresUp", K_KP_PGUP,         -1,     -1, -1},
 	{"scoresDown", K_KP_PGDN,           -1,     -1, -1},
 	{"messagemode",  -1,                    -1,     -1, -1},
