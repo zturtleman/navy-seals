@@ -3669,28 +3669,24 @@ char g_nameBind2[32];
 void BindingFromName( const char *cvar ) {
 	int i, b1, b2;
 
-	// iterate each command, set its default binding
-	for ( i = 0; i < g_bindCount; i++ )
-	{
-		if ( Q_stricmp( cvar, g_bindings[i].command ) == 0 ) {
-			b1 = g_bindings[i].bind1;
-			if ( b1 == -1 ) {
-				break;
-			}
-			DC->keynumToStringBuf( b1, g_nameBind1, 32 );
-			Q_strupr( g_nameBind1 );
+	i = BindingIDFromName( cvar );
 
-			b2 = g_bindings[i].bind2;
-			if ( b2 != -1 ) {
-				DC->keynumToStringBuf( b2, g_nameBind2, 32 );
-				Q_strupr( g_nameBind2 );
-				strcat( g_nameBind1, " or " );
-				strcat( g_nameBind1, g_nameBind2 );
-			}
-			return;
-		}
+	if ( i == -1 || g_bindings[i].bind1 == -1 ) {
+		strcpy( g_nameBind1, "???" );
+		return;
 	}
-	strcpy( g_nameBind1, "???" );
+
+	b1 = g_bindings[i].bind1;
+	DC->keynumToStringBuf( b1, g_nameBind1, 32 );
+	Q_strupr( g_nameBind1 );
+
+	b2 = g_bindings[i].bind2;
+	if ( b2 != -1 ) {
+		DC->keynumToStringBuf( b2, g_nameBind2, 32 );
+		Q_strupr( g_nameBind2 );
+		strcat( g_nameBind1, " or " );
+		strcat( g_nameBind1, g_nameBind2 );
+	}
 }
 
 void Item_Slider_Paint( itemDef_t *item ) {
