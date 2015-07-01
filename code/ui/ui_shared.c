@@ -3452,6 +3452,7 @@ static bind_t g_bindings[] =
 	{"+button7",        K_SHIFT,                        -1,     -1, -1}, // BUTTON_WEAPON1
 	{"+button8",        K_CTRL,                     -1,     -1, -1}, // BUTTON_WEAPON2
 	{"+button9",        K_ALT,                      -1,     -1, -1}, // BUTTON_WEAPON3
+	{"+button10",       -1,                         -1,     -1, -1}, // BUTTON_IRONSIGHT
 	{"radiomenu",       'm',-1,    -1, -1},
 	{"gamemenu",        'n',-1,    -1, -1},
 	{"use",             'u',-1,    -1, -1},
@@ -3473,7 +3474,7 @@ static bind_t g_bindings[] =
 	{"+attack",          K_MOUSE1,              -1,     -1, -1},
 	{"weapprev",         '[',                   -1,     -1, -1},
 	{"weapnext",         ']',                   -1,     -1, -1},
-	//	{"+button3",         K_MOUSE3,			-1,		-1, -1}, // BUTTON_GESTURE
+	{"+button3",         -1,                    -1,     -1, -1}, // BUTTON_GESTURE
 	{"scoresUp", K_KP_PGUP,         -1,     -1, -1},
 	{"scoresDown", K_KP_PGDN,           -1,     -1, -1},
 	{"messagemode",  -1,                    -1,     -1, -1},
