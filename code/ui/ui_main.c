@@ -6540,13 +6540,26 @@ void _UI_Init( qboolean inGameLoad ) {
 
 	// check if first run and load game defaults
 	if ( ui_configVersion.integer < 1 ) {
+		int fullscreen = trap_Cvar_VariableValue( "r_fullscreen" );
+		int mode = trap_Cvar_VariableValue( "r_mode" );
+		int customwidth = trap_Cvar_VariableValue( "r_customwidth" );
+		int customheight = trap_Cvar_VariableValue( "r_customheight" );
+
 		trap_Print( "Initializing settings for Navy SEALs: Covert Operations\n" );
+
+		// resetDefaults
 		trap_Cmd_ExecuteText( EXEC_APPEND, "cvar_restart\n" );
 		trap_Cmd_ExecuteText( EXEC_APPEND, "exec default.cfg\n" );
 		Controls_SetDefaults();
 		trap_Cvar_Set( "com_introPlayed", "1" );
+
 		trap_Cvar_Set( "ui_configVersion", "1" );
-		trap_Cvar_Set( "r_fullscreen", "0" );
+
+		// restore video mode
+		trap_Cmd_ExecuteText( EXEC_APPEND,
+				va( "r_fullscreen %d;r_mode %d;r_customwidth %d;r_customheight %d\n",
+				fullscreen, mode, customwidth, customheight ) );
+
 		trap_Cmd_ExecuteText( EXEC_APPEND, "vid_restart\n" );
 		return;
 	}
