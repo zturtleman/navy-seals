@@ -3435,7 +3435,7 @@ typedef struct
 static bind_t g_bindings[] =
 {
 	{"+scores",          K_TAB,             -1,     -1, -1},
-	{"+button2",         K_ENTER,           -1,     -1, -1},
+	{"+button2",         K_ENTER,           -1,     -1, -1}, // BUTTON_USE
 	{"+speed",           'Y',           -1,     -1, -1},
 	{"+forward",         K_UPARROW,     -1,     -1, -1},
 	{"+back",            K_DOWNARROW,   -1,     -1, -1},
@@ -3449,13 +3449,14 @@ static bind_t g_bindings[] =
 	{"+lookup",          K_PGDN,                -1,     -1, -1},
 	{"+lookdown",    K_DEL,             -1,     -1, -1},
 	{"+mlook",           '/',                   -1,     -1, -1},
-	{"+button6",             'r',                       -1,     -1, -1},
+	{"+button6",             'r',                       -1,     -1, -1}, // BUTTON_RELOAD
 	{"bandage",         'b',                        -1,     -1, -1},
-	{"+button5",        'v',                        -1,     -1, -1},
+	{"+button5",        'v',                        -1,     -1, -1}, // BUTTON_SPRINT
 	{"dropweapon",      'c',                        -1,     -1, -1},
-	{"+button7",        K_SHIFT,                        -1,     -1, -1},
-	{"+button8",        K_CTRL,                     -1,     -1, -1},
-	{"+button9",        K_ALT,                      -1,     -1, -1},
+	{"+button7",        K_SHIFT,                        -1,     -1, -1}, // BUTTON_WEAPON1
+	{"+button8",        K_CTRL,                     -1,     -1, -1}, // BUTTON_WEAPON2
+	{"+button9",        K_ALT,                      -1,     -1, -1}, // BUTTON_WEAPON3
+	{"+button10",       -1,                         -1,     -1, -1}, // BUTTON_IRONSIGHT
 	{"radiomenu",       'm',-1,    -1, -1},
 	{"gamemenu",        'n',-1,    -1, -1},
 	{"use",             'u',-1,    -1, -1},
@@ -3477,7 +3478,7 @@ static bind_t g_bindings[] =
 	{"+attack",          K_MOUSE1,              -1,     -1, -1},
 	{"weapprev",         '[',                   -1,     -1, -1},
 	{"weapnext",         ']',                   -1,     -1, -1},
-	//	{"+button3",         K_MOUSE3,			-1,		-1, -1},
+	{"+button3",         -1,                    -1,     -1, -1}, // BUTTON_GESTURE
 	{"scoresUp", K_KP_PGUP,         -1,     -1, -1},
 	{"scoresDown", K_KP_PGDN,           -1,     -1, -1},
 	{"messagemode",  -1,                    -1,     -1, -1},
@@ -3672,28 +3673,24 @@ char g_nameBind2[32];
 void BindingFromName( const char *cvar ) {
 	int i, b1, b2;
 
-	// iterate each command, set its default binding
-	for ( i = 0; i < g_bindCount; i++ )
-	{
-		if ( Q_stricmp( cvar, g_bindings[i].command ) == 0 ) {
-			b1 = g_bindings[i].bind1;
-			if ( b1 == -1 ) {
-				break;
-			}
-			DC->keynumToStringBuf( b1, g_nameBind1, 32 );
-			Q_strupr( g_nameBind1 );
+	i = BindingIDFromName( cvar );
 
-			b2 = g_bindings[i].bind2;
-			if ( b2 != -1 ) {
-				DC->keynumToStringBuf( b2, g_nameBind2, 32 );
-				Q_strupr( g_nameBind2 );
-				strcat( g_nameBind1, " or " );
-				strcat( g_nameBind1, g_nameBind2 );
-			}
-			return;
-		}
+	if ( i == -1 || g_bindings[i].bind1 == -1 ) {
+		strcpy( g_nameBind1, "???" );
+		return;
 	}
-	strcpy( g_nameBind1, "???" );
+
+	b1 = g_bindings[i].bind1;
+	DC->keynumToStringBuf( b1, g_nameBind1, 32 );
+	Q_strupr( g_nameBind1 );
+
+	b2 = g_bindings[i].bind2;
+	if ( b2 != -1 ) {
+		DC->keynumToStringBuf( b2, g_nameBind2, 32 );
+		Q_strupr( g_nameBind2 );
+		strcat( g_nameBind1, " or " );
+		strcat( g_nameBind1, g_nameBind2 );
+	}
 }
 
 void Item_Slider_Paint( itemDef_t *item ) {
@@ -5562,6 +5559,43 @@ KeywordHash_Add(itemParseKeywordHash, &itemParseKeywords[i]);
 }
 }
 */
+
+/*
+===============
+Item_ApplyHacks
+
+Hacks to fix issues with Team Arena menu scripts
+===============
+*/
+static void Item_ApplyHacks( itemDef_t *item ) {
+
+	// Fix length of favorite address in createfavorite.menu
+	if ( item->type == ITEM_TYPE_EDITFIELD && item->cvar && !Q_stricmp( item->cvar, "ui_favoriteAddress" ) ) {
+		editFieldDef_t *editField = (editFieldDef_t *)item->typeData;
+
+		// enough to hold an IPv6 address plus null
+		if ( editField->maxChars < 48 ) {
+			Com_Printf( "Extended create favorite address edit field length to hold an IPv6 address\n" );
+			editField->maxChars = 48;
+		}
+	}
+
+	if ( item->type == ITEM_TYPE_EDITFIELD && item->cvar && ( !Q_stricmp( item->cvar, "ui_Name" ) || !Q_stricmp( item->cvar, "ui_findplayer" ) ) ) {
+		editFieldDef_t *editField = (editFieldDef_t *)item->typeData;
+
+		// enough to hold a full player name
+		if ( editField->maxChars < MAX_NAME_LENGTH ) {
+			if ( editField->maxPaintChars > editField->maxChars ) {
+				editField->maxPaintChars = editField->maxChars;
+			}
+
+			Com_Printf( "Extended player name field using cvar %s to %d characters\n", item->cvar, MAX_NAME_LENGTH );
+			editField->maxChars = MAX_NAME_LENGTH;
+		}
+	}
+
+}
+
 /*
 ===============
 Item_Parse
@@ -5585,6 +5619,7 @@ qboolean Item_Parse( int handle, itemDef_t *item ) {
 		}
 
 		if ( *token.string == '}' ) {
+			Item_ApplyHacks( item );
 			return qtrue;
 		}
 

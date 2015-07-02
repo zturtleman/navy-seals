@@ -313,6 +313,7 @@ vmCvar_t ui_char_stealth;
 vmCvar_t ui_char_technical;
 vmCvar_t ui_char_speed;
 vmCvar_t ui_gamestate;
+vmCvar_t ui_configVersion;
 
 cvarTable_t cvarTable[] = {
 	{ &ui_ffa_fraglimit, "ui_ffa_fraglimit", "20", CVAR_ARCHIVE },
@@ -482,7 +483,9 @@ cvarTable_t cvarTable[] = {
 	{ &ui_char_accuracy, "ui_char_stealth", "1", CVAR_ROM},
 	{ &ui_char_accuracy, "ui_char_technical", "1", CVAR_ROM},
 	{ &ui_char_accuracy, "ui_char_speed", "1", CVAR_ROM},
-	{ &ui_char_accuracy, "ui_gamestate", "0", CVAR_ROM}
+	{ &ui_char_accuracy, "ui_gamestate", "0", CVAR_ROM},
+
+	{ &ui_configVersion, "ui_configVersion", "", CVAR_ARCHIVE|CVAR_NORESTART}
 
 };
 
@@ -4994,8 +4997,8 @@ static void UI_RunMenuScript( char **args ) {
 			UI_GameType_HandleKey( 0, 0, K_MOUSE1, qfalse );
 			UI_GameType_HandleKey( 0, 0, K_MOUSE2, qfalse );
 		} else if ( Q_stricmp( name, "resetDefaults" ) == 0 ) {
-			trap_Cmd_ExecuteText( EXEC_APPEND, "exec default.cfg\n" );
 			trap_Cmd_ExecuteText( EXEC_APPEND, "cvar_restart\n" );
+			trap_Cmd_ExecuteText( EXEC_APPEND, "exec default.cfg\n" );
 			Controls_SetDefaults();
 			trap_Cvar_Set( "com_introPlayed", "1" );
 			trap_Cmd_ExecuteText( EXEC_APPEND, "vid_restart\n" );
@@ -6555,6 +6558,32 @@ void _UI_Init( qboolean inGameLoad ) {
 
 	UI_RegisterCvars();
 	UI_InitMemory();
+
+	// check if first run and load game defaults
+	if ( ui_configVersion.integer < 1 ) {
+		int fullscreen = trap_Cvar_VariableValue( "r_fullscreen" );
+		int mode = trap_Cvar_VariableValue( "r_mode" );
+		int customwidth = trap_Cvar_VariableValue( "r_customwidth" );
+		int customheight = trap_Cvar_VariableValue( "r_customheight" );
+
+		trap_Print( "Initializing settings for Navy SEALs: Covert Operations\n" );
+
+		// resetDefaults
+		trap_Cmd_ExecuteText( EXEC_APPEND, "cvar_restart\n" );
+		trap_Cmd_ExecuteText( EXEC_APPEND, "exec default.cfg\n" );
+		Controls_SetDefaults();
+		trap_Cvar_Set( "com_introPlayed", "1" );
+
+		trap_Cvar_Set( "ui_configVersion", "1" );
+
+		// restore video mode
+		trap_Cmd_ExecuteText( EXEC_APPEND,
+				va( "r_fullscreen %d;r_mode %d;r_customwidth %d;r_customheight %d\n",
+				fullscreen, mode, customwidth, customheight ) );
+
+		trap_Cmd_ExecuteText( EXEC_APPEND, "vid_restart\n" );
+		return;
+	}
 
 	// cache redundant calulations
 	trap_GetGlconfig( &uiInfo.uiDC.glconfig );
