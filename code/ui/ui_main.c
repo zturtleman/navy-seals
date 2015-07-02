@@ -6576,6 +6576,9 @@ void _UI_Init( qboolean inGameLoad ) {
 
 		trap_Cvar_Set( "ui_configVersion", "1" );
 
+		// Disable ET's model and shader caching
+		trap_Cmd_ExecuteText( EXEC_APPEND, "seta r_cache 0;seta r_cacheModels 0;seta r_cacheShaders 0\n" );
+
 		// restore video mode
 		trap_Cmd_ExecuteText( EXEC_APPEND,
 				va( "r_fullscreen %d;r_mode %d;r_customwidth %d;r_customheight %d\n",
