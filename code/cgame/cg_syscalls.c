@@ -47,10 +47,12 @@ int PASSFLOAT( float x ) {
 }
 
 void trap_PumpEventLoop( void ) {
+#if 0 // ZTM: In ET:Legacy with developer 1, this spams "Obsolete cgame system trap: 173". It's code is disabled in ET-GPL too.
 	if ( !cgs.initing ) {
 		return;
 	}
 	syscall( CG_PUMPEVENTLOOP );
+#endif
 }
 
 void trap_Print( const char *fmt ) {
