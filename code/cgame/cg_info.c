@@ -826,7 +826,9 @@ void CG_DrawConnectScreen( void ) {
 
 	// blend a detail texture over it
 	detail = trap_R_RegisterShader( "levelShotDetail" );
-	CG_DrawPic( 76, 96, 241, 124, detail );
+	if ( detail ) {
+		CG_DrawPic( 76, 96, 241, 124, detail );
+	}
 
 	// darw the loading bar
 	CG_DrawLoadingBar( 76, 432, 492, 17 );
@@ -835,7 +837,9 @@ void CG_DrawConnectScreen( void ) {
 
 	// blend a detail texture over it
 	detail = trap_R_RegisterShader( "levelShotDetail" );
-	CG_DrawPic( 48, 23, 175, 131, detail );
+	if ( detail ) {
+		CG_DrawPic( 48, 23, 175, 131, detail );
+	}
 
 	// darw the loading bar
 	CG_DrawLoadingBar( 16, 448, 604, 16 );
