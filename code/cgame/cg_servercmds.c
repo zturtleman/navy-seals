@@ -845,6 +845,8 @@ static void CG_ServerCommand( void ) {
 		if ( strstr( CG_Argv( 1 ), "disconnected\n" ) ) {
 			;
 		} else {
+			CG_AddToChat( CG_Argv( 1 ) );
+
 			CG_Printf( "%s", CG_Argv( 1 ) );
 		}
 		/*

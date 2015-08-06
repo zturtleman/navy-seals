@@ -1318,7 +1318,69 @@ static void CG_MissionInformation( void ) {
 
 /*
 =================
+CG_DrawChat
+
+Draw notify text / chat
+=================
+*/
+static void CG_DrawChat( void ) {
+	int i;
+	vec4_t hcolor;
+	int chatHeight;
+	float frac;
+	int timeLived, timeLeft, fadeOutTime;
+
+#define CHATLOC_Y 0 // top begin
+#define CHATLOC_X 0
+
+	if ( cg_chatHeight.integer < TEAMCHAT_HEIGHT ) {
+		chatHeight = cg_chatHeight.integer;
+	} else {
+		chatHeight = TEAMCHAT_HEIGHT;
+	}
+	if ( chatHeight <= 0 ) {
+		return; // disabled
+	}
+
+	if ( cgs.LastChatPos != cgs.ChatPos ) {
+		if ( cg.time - cgs.ChatMsgTimes[cgs.LastChatPos % chatHeight] > cg_chatTime.integer ) {
+			cgs.LastChatPos++;
+		}
+
+		fadeOutTime = MIN( 1000, cg_chatTime.integer * 0.25f );
+
+		hcolor[0] = hcolor[1] = hcolor[2] = 1.0f;
+
+		for ( i = cgs.ChatPos - 1; i >= cgs.LastChatPos; i-- ) {
+			frac = 1;
+
+			if ( cg_chatTime.integer > 0 ) {
+				timeLived = ( cg.time - cgs.ChatMsgTimes[i % chatHeight] );
+				timeLeft = cg_chatTime.integer - timeLived;
+
+				if ( timeLeft < fadeOutTime ) {
+					frac = Com_Clamp( 0, 1, timeLeft / (float)fadeOutTime );
+				}
+			}
+
+			hcolor[3] = frac;
+
+			CG_DrawStringExt( CHATLOC_X + TINYCHAR_WIDTH,
+							  CHATLOC_Y + ( i - cgs.LastChatPos ) * TINYCHAR_HEIGHT,
+							  cgs.ChatMsgs[i % chatHeight], hcolor, qfalse, qtrue,
+							  TINYCHAR_WIDTH, TINYCHAR_HEIGHT, 0 );
+		}
+	}
+
+#undef CHATLOC_Y
+#undef CHATLOC_X
+}
+
+/*
+=================
 CG_DrawTeamInfo
+
+Draw team chat
 =================
 */
 static void CG_DrawTeamInfo( void ) {
@@ -3198,6 +3260,7 @@ void CG_DrawActive( stereoFrame_t stereoView ) {
 	// draw status bar and other floating elements
 	CG_Draw2D();
 
+	CG_DrawChat();
 	CG_DrawMessageMode();
 
 	//	void ClientScript_Update( void )
