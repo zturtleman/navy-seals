@@ -186,7 +186,7 @@ static void CG_Obituary( entityState_t *ent ) {
 	}
 
 	if ( message ) {
-		CG_Printf( "%s %s.\n", targetName, message );
+		CG_NotifyPrintf( "%s %s.\n", targetName, message );
 		return;
 	}
 
@@ -219,14 +219,14 @@ static void CG_Obituary( entityState_t *ent ) {
 		}
 
 		if ( message ) {
-			CG_Printf( "%s %s %s%s\n",
+			CG_NotifyPrintf( "%s %s %s%s\n",
 					   targetName, message, attackerName, message2 );
 			return;
 		}
 	}
 
 	// we don't know what it was
-	CG_Printf( "%s died.\n", targetName );
+	CG_NotifyPrintf( "%s died.\n", targetName );
 }
 
 //==========================================================================
@@ -662,7 +662,7 @@ void CG_EntityEvent( centity_t *cent, vec3_t position ) {
 	case EV_BREAKLOCK:
 		DEBUGNAME( "EV_BREAKLOCK" );
 		{
-			CG_Printf( "broke lock\n" );
+			CG_NotifyPrintf( "broke lock\n" );
 			CG_LockBreak( cent );
 		}
 		break;

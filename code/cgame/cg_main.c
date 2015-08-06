@@ -947,6 +947,39 @@ void QDECL CG_Printf( const char *msg, ... ) {
 	//	CG_AddToChat( text );
 }
 
+/*
+=================
+CG_NotifyPrintf
+=================
+*/
+void QDECL CG_NotifyPrintf( const char *msg, ... ) {
+	char *p, *oldp;
+	va_list argptr;
+	char text[1024];
+
+	va_start( argptr, msg );
+	Q_vsnprintf( text, sizeof( text ), msg, argptr );
+	va_end( argptr );
+
+	// split lines
+	oldp = text;
+	p = strchr( oldp, '\n' );
+
+	do {
+		if ( p ) {
+			*p = '\0';
+		}
+
+		CG_AddToChat( oldp );
+		CG_Printf( "%s\n", oldp );
+
+		if ( p ) {
+			oldp = p + 1;
+			p = strchr( oldp, '\n' );
+		}
+	} while ( p != NULL );
+}
+
 void QDECL CG_Error( const char *msg, ... ) {
 	va_list argptr;
 	char text[1024];
