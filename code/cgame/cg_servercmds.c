@@ -845,9 +845,27 @@ static void CG_ServerCommand( void ) {
 		if ( strstr( CG_Argv( 1 ), "disconnected\n" ) ) {
 			;
 		} else {
-			CG_AddToChat( CG_Argv( 1 ) );
+			char *p, *oldp;
 
-			CG_Printf( "%s", CG_Argv( 1 ) );
+			Q_strncpyz( text, CG_Argv( 1 ), MAX_SAY_TEXT );
+
+			// split lines
+			oldp = text;
+			p = strchr( oldp, '\n' );
+
+			do {
+				if ( p ) {
+					*p = '\0';
+				}
+
+				CG_AddToChat( oldp );
+				CG_Printf( "%s\n", oldp );
+
+				if ( p ) {
+					oldp = p + 1;
+					p = strchr( oldp, '\n' );
+				}
+			} while ( p != NULL );
 		}
 		/*
 		#ifdef MISSIONPACK
