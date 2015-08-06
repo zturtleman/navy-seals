@@ -1682,6 +1682,7 @@ void CG_LoadVoiceChats( void );
 void CG_ShaderStateChanged( void );
 void CG_VoiceChatLocal( int mode, qboolean voiceOnly, int clientNum, int color, const char *cmd );
 void CG_PlayBufferedVoiceChats( void );
+void CG_AddToChat( const char *str );
 
 //
 // cg_playerstate.c

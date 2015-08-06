@@ -664,8 +664,18 @@ void CG_UpdateLooks_f( void ) {
 }
 static void CG_NSEcho_f( void ) {
 	char message[256];
+	int len;
 
 	trap_Args( message, sizeof( message ) );
+
+	// remove new line if it exists
+	len = strlen( message );
+	if ( len > 0 && message[ len - 1 ] == '\n' ) {
+		message[ len - 1 ] = '\0';
+	}
+
+	CG_AddToChat( message );
+
 	CG_Printf( "%s\n", message );
 }
 
@@ -761,6 +771,7 @@ static consoleCommand_t commands[] = {
 	{ "messageMode2", CG_MessageMode2_f },
 	{ "messageMode3", CG_MessageMode3_f },
 	{ "messageMode4", CG_MessageMode4_f },
+	{ "cpm", CG_NSEcho_f }, // executed by ET echo command
 };
 
 /*
