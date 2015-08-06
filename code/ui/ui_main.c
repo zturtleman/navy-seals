@@ -6560,7 +6560,7 @@ void _UI_Init( qboolean inGameLoad ) {
 	UI_InitMemory();
 
 	// check if first run and load game defaults
-	if ( ui_configVersion.integer < 1 ) {
+	if ( ui_configVersion.integer < 2 ) {
 		int fullscreen = trap_Cvar_VariableValue( "r_fullscreen" );
 		int mode = trap_Cvar_VariableValue( "r_mode" );
 		int customwidth = trap_Cvar_VariableValue( "r_customwidth" );
@@ -6574,10 +6574,7 @@ void _UI_Init( qboolean inGameLoad ) {
 		Controls_SetDefaults();
 		trap_Cvar_Set( "com_introPlayed", "1" );
 
-		trap_Cvar_Set( "ui_configVersion", "1" );
-
-		// Disable ET's model and shader caching
-		trap_Cmd_ExecuteText( EXEC_APPEND, "seta r_cache 0;seta r_cacheModels 0;seta r_cacheShaders 0\n" );
+		trap_Cvar_Set( "ui_configVersion", "2" );
 
 		// restore video mode
 		trap_Cmd_ExecuteText( EXEC_APPEND,
