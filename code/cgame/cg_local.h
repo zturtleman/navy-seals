@@ -833,9 +833,6 @@ typedef struct {
 	qhandle_t selectShader;
 	qhandle_t viewBloodShader;
 	qhandle_t tracerShader;
-	qhandle_t hdrShader;
-	qhandle_t motionblurShader;
-	qhandle_t blurShader;
 	qhandle_t lagometerShader;
 	qhandle_t backTileShader;
 
@@ -882,7 +879,12 @@ typedef struct {
 
 	qhandle_t nullModel;
 
+#ifdef NSCO_GOLD
 	qhandle_t ns_bloodtrailShader;
+	qhandle_t hdrShader;
+	qhandle_t motionblurShader;
+	qhandle_t blurShader;
+#endif
 
 	qhandle_t shellRifle;
 	qhandle_t shellPistol;
@@ -1270,9 +1272,11 @@ extern vmCvar_t cg_cameraMode;
 extern vmCvar_t cg_smallFont;
 extern vmCvar_t cg_bigFont;
 extern vmCvar_t cg_debugAlloc;
+#ifdef NSCO_GOLD
 extern vmCvar_t r_hdr;
 extern vmCvar_t r_motionblur;
 extern vmCvar_t r_blur;
+#endif
 // Navy Seals ++
 // i use these for debbuging my hud
 extern vmCvar_t test_x;
