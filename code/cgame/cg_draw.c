@@ -2930,6 +2930,7 @@ void CG_DrawTimedMenus( void ) {
 }
 #endif
 
+#ifdef NSCO_GOLD
 /*
 =================
 CG_DrawHDR
@@ -2966,6 +2967,7 @@ void CG_DrawBlur( void ) {
 
 	CG_DrawPic( 0, 0, 640, 480, cgs.media.blurShader );
 }
+#endif
 
 extern vmCvar_t cg_hudStyle;
 void CG_DrawPic2( float x, float y, float width, float height, qhandle_t hShader );
@@ -3045,9 +3047,11 @@ static void CG_Draw2D( void ) {
 		trap_R_SetColor( NULL );
 	}
 
+#ifdef NSCO_GOLD
 	CG_DrawHDR();
 	CG_DrawMotionBlur();
 	CG_DrawBlur();
+#endif
 
 	if ( cg_draw2D.integer == 0 ) {
 		return;

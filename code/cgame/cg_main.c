@@ -389,9 +389,12 @@ vmCvar_t cg_timetocache;
 vmCvar_t cg_crosshairFade;
 vmCvar_t cg_lowAmmoWarning;
 
+#ifdef NSCO_GOLD
 vmCvar_t r_hdr;
 vmCvar_t r_motionblur;
 vmCvar_t r_blur;
+#endif
+
 // Navy Seals --
 typedef struct {
 	vmCvar_t    *vmCvar;
@@ -698,9 +701,11 @@ cvarTable_t cvarTable[] = {
 	{    &cg_debugAlloc, "cg_debugAlloc", "0", 0 },
 	{ &cg_crosshairFade, "cg_crosshairFade", "0", CVAR_ARCHIVE},
 	{ &cg_lowAmmoWarning, "cg_lowAmmoWarning", "0", CVAR_ARCHIVE},
+#ifdef NSCO_GOLD
 	{ &r_hdr, "r_hdr", "0", CVAR_ARCHIVE},
 	{ &r_motionblur, "r_motionblur", "0", CVAR_ARCHIVE},
-	{ &r_blur, "r_blur", "0", CVAR_ARCHIVE}
+	{ &r_blur, "r_blur", "0", CVAR_ARCHIVE},
+#endif
 
 	// Navy Seals --
 };
@@ -1570,7 +1575,12 @@ static void CG_RegisterGraphics( void ) {
 	cgs.media.glassSplinter = trap_R_RegisterModel( "models/props/glass_splinter.md3" );
 	cgs.media.softSplinter = trap_R_RegisterModel( "models/props/soft_chip.md3" );
 	//
+#ifdef NSCO_GOLD
 	cgs.media.ns_bloodtrailShader = trap_R_RegisterShader( "ns_bloodTrail" );
+	cgs.media.hdrShader = trap_R_RegisterShader( "hdr" );
+	cgs.media.motionblurShader = trap_R_RegisterShader( "motionblur" );
+	cgs.media.blurShader = trap_R_RegisterShader( "blur" );
+#endif
 
 	cgs.media.briefcaseModel =  trap_R_RegisterModel( "models/misc/suitcase/suitcase.md3" );
 	cgs.media.briefcaseModel_vweap =    trap_R_RegisterModel( "models/misc/suitcase/suitcase_vweap.md3" );
@@ -1653,11 +1663,6 @@ static void CG_RegisterGraphics( void ) {
 	cgs.media.cursor = trap_R_RegisterShaderNoMip( "menu/art/3_cursor2" );
 	cgs.media.sizeCursor = trap_R_RegisterShaderNoMip( "ui/assets/sizecursor.tga" );
 	cgs.media.selectCursor = trap_R_RegisterShaderNoMip( "ui/assets/selectcursor.tga" );
-
-	cgs.media.hdrShader = trap_R_RegisterShader( "hdr" );
-	cgs.media.motionblurShader = trap_R_RegisterShader( "motionblur" );
-	cgs.media.blurShader = trap_R_RegisterShader( "blur" );
-
 }
 
 /*
