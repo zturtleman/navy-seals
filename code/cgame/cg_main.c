@@ -394,8 +394,12 @@ vmCvar_t r_hdr;
 vmCvar_t r_motionblur;
 vmCvar_t r_blur;
 #endif
-
 // Navy Seals --
+
+#ifdef USE_PREMIUM
+vmCvar_t cg_premiumServer;
+#endif
+
 typedef struct {
 	vmCvar_t    *vmCvar;
 	char        *cvarName;
@@ -708,6 +712,10 @@ cvarTable_t cvarTable[] = {
 #endif
 
 	// Navy Seals --
+
+#ifdef USE_PREMIUM
+	{ &cg_premiumServer, "com_premiumServer", "0", CVAR_SYSTEMINFO},
+#endif
 };
 
 int cvarTableSize = sizeof( cvarTable ) / sizeof( cvarTable[0] );
@@ -2781,6 +2789,99 @@ static qboolean    CG_ParseCvarFile( void ) {
 	return qtrue;
 }
 
+#ifdef USE_PREMIUM
+/*
+=================
+CG_HasPremiumKey
+=================
+*/
+qboolean CG_HasPremiumKey( int premiumKey ) {
+	fileHandle_t f;
+	int len;
+	char text[20000];
+	char *text_p, *token;
+	int total, partA, partB;
+	int i, n;
+
+	// load the file
+	len = trap_FS_FOpenFile( "premiumkey.cfg", &f, FS_READ );
+	if ( len <= 0 ) {
+		trap_FS_FCloseFile( f );
+		return qfalse;
+	}
+	if ( len >= sizeof( text ) - 1 ) {
+		trap_FS_FCloseFile( f );
+		return qfalse;
+	}
+	trap_FS_Read( text, len, f );
+	text[len] = 0;
+	trap_FS_FCloseFile( f );
+
+	// parse the text
+	text_p = text;
+
+	while ( 1 ) {
+		token = COM_Parse( &text_p );
+
+		// end of file
+		if ( !token || !*token ) {
+			break;
+		}
+
+		// too short
+		if ( strlen( token ) < 13 ) {
+			continue;
+		}
+
+		for ( i = 0; i < 4; i++ ) {
+			if ( !isalpha( token[i] ) ) {
+				return qfalse;
+			}
+		}
+
+		if ( token[4] != '-' ) {
+			continue;
+		}
+
+		for ( i = 5; i < 13; i++ ) {
+			if ( !isdigit( token[i] ) ) {
+				return qfalse;
+			}
+		}
+
+		// read first 4 chars
+		n = 0;
+		total = (tolower(token[n])-'a') | ( (tolower(token[n+1])-'a') << 8 );
+		n += 4;
+
+		if ( premiumKey > 1 && total != premiumKey ) {
+			continue;
+		}
+
+		if ( total < 65 ) {
+			continue;
+		}
+
+		// skip hypen
+		n += 1;
+
+		// read next 4 chars
+		partA = (tolower(token[n+3])-'0') | ( (tolower(token[n+2])-'0') << 8 );
+		n += 4;
+
+		// read next 4 chars
+		partB = (tolower(token[n])-'0') | ( (tolower(token[n+1])-'0') << 8 );
+		n += 4;
+
+		if ( total == partA + partB ) {
+			return qtrue;
+		}
+	}
+
+	return qfalse;
+}
+#endif
+
 /*
 =================
 CG_Init
@@ -2831,6 +2932,11 @@ void CG_Init( int serverMessageNum, int serverCommandSequence, int clientNum ) {
 
 	CG_RegisterCvars();
 
+#ifdef USE_PREMIUM
+	if ( cg_premiumServer.integer && !CG_HasPremiumKey( cg_premiumServer.integer ) ) {
+		Com_Error( ERR_DROP, "This server requires a subscription, visit patreon.com/osfpsproject for details" );
+	}
+#endif
 
 	if ( r_lightVertex.integer ) {
 		trap_Cvar_Set( "r_vertexlight", "1" );

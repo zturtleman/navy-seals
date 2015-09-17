@@ -161,6 +161,10 @@ int LTS_Rounds = 1;
 int i_sCountDown;
 // Navy Seals --
 
+#ifdef USE_PREMIUM
+vmCvar_t g_premiumServer;
+#endif
+
 cvarTable_t gameCvarTable[] = {
 	// don't override the cheat state set by the system
 	{ &g_cheats, "sv_cheats", "", 0, 0, qfalse },
@@ -302,6 +306,10 @@ cvarTable_t gameCvarTable[] = {
 
 	{ &g_matchLockXP, "g_matchLockXP", "0", CVAR_LATCH | CVAR_SERVERINFO,0, qfalse },
 	{ &g_LockXP, "g_LockXP", "0", CVAR_LATCH | CVAR_SERVERINFO,0, qfalse },
+
+#ifdef USE_PREMIUM
+	{ &g_premiumServer, "com_premiumServer", "0", CVAR_SYSTEMINFO, 0, qfalse },
+#endif
 
 };
 
@@ -565,6 +573,15 @@ void G_InitGame( int levelTime, int randomSeed, int restart ) {
 	srand( randomSeed );
 
 	G_RegisterCvars();
+
+#ifdef USE_PREMIUM
+	// if it's a public internet server, enable premium mode
+	if ( g_dedicated.integer == 2 ) {
+		trap_Cvar_Set( "com_premiumServer", "1" );
+	} else {
+		trap_Cvar_Set( "com_premiumServer", "0" );
+	}
+#endif
 
 	G_ProcessIPBans();
 
