@@ -70,11 +70,12 @@ Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 
 #define VOTE_TIME           30000   // 30 seconds before vote times out
 
-#define MAXS_Z              31
-#define MINS_Z              -24
-#define DEFAULT_VIEWHEIGHT  26
-#define CROUCH_VIEWHEIGHT   12
-#define DEAD_VIEWHEIGHT     -16
+// shrink soldier!
+#define MAXS_Z              3.1f
+#define MINS_Z              -2.4f
+#define DEFAULT_VIEWHEIGHT  2.6f
+#define CROUCH_VIEWHEIGHT   1.2f
+#define DEAD_VIEWHEIGHT     -1.6f
 
 #define LEN_SCORE_STRING    6       // length of a seperate playerinfo string that is includedin the scoreboard message.
 //

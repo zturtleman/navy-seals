@@ -286,7 +286,8 @@ static void CG_OffsetThirdPersonView( void ) {
 	AngleVectors( focusAngles, forward, NULL, NULL );
 
 	VectorMA( cg.refdef.vieworg, FOCUS_DISTANCE, forward, focusPoint );
-	cg.refdef.vieworg[2] += 20;
+	// shrink soldier!
+	cg.refdef.vieworg[2] += 2.0f;
 
 	VectorCopy( cg.refdef.vieworg, view );
 
@@ -358,8 +359,9 @@ static void CG_OffsetThirdPersonView( void ) {
 	{
 		forwardScale = cos( cg_thirdPersonAngle.value / 180 * M_PI );
 		sideScale = sin( cg_thirdPersonAngle.value / 180 * M_PI );
-		VectorMA( view, -cg_thirdPersonRange.value * forwardScale, forward, view );
-		VectorMA( view, -cg_thirdPersonRange.value * sideScale, right, view );
+		// shrink soldier!
+		VectorMA( view, -cg_thirdPersonRange.value * 0.1f * forwardScale, forward, view );
+		VectorMA( view, -cg_thirdPersonRange.value * 0.1f * sideScale, right, view );
 	}
 
 	// trace a ray from the origin to the viewpoint to make sure the view isn't

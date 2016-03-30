@@ -2353,6 +2353,11 @@ void CG_Player( centity_t *cent ) {
 	// get the rotation information
 	CG_PlayerAngles( cent, legs.axis, torso.axis, larm.axis,  head.axis );
 
+	// shrink soldier!
+	VectorScale( legs.axis[0], 0.1f, legs.axis[0] );
+	VectorScale( legs.axis[1], 0.1f, legs.axis[1] );
+	VectorScale( legs.axis[2], 0.1f, legs.axis[2] );
+
 	// copy the same axis to the rightarm
 	AxisCopy( larm.axis, rarm.axis );
 

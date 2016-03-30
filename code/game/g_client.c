@@ -34,8 +34,9 @@ void NS_SendStatusMessageToTeam( gentity_t *affected, int status, int team );
 // static vec3_t	playerMins = {-15, -15, -24};
 // static vec3_t	playerMaxs = { 15, 15, 32};
 
-static vec3_t playerMins = {-10, -10, MINS_Z};
-static vec3_t playerMaxs = {10, 10, MAXS_Z};
+// shrink soldier!
+static vec3_t playerMins = {-1, -1, MINS_Z};
+static vec3_t playerMaxs = {1, 1, MAXS_Z};
 
 /*QUAKED info_player_deathmatch (1 0 1) (-16 -16 -24) (16 16 32) initial
 potential spawning position for deathmatch games.
