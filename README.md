@@ -1,3 +1,18 @@
+zturtleman/navy-seals
+-------------
+
+The original Navy SEALs: Covert Operations Gold Edition source code did
+not compile and used Mod APIs not compatible with the Quake 3 engine.
+The NSCO: Gold Edition engine and data have not been released. I ported
+the source code back to running as a Quake 3 mod and restored the ability
+to play using the [NSCO Beta 1.93 data files](http://www.moddb.com/mods/navy-seals-covert-operations/downloads/nsco-v193-full-already-patched-rar).
+There are minor bug fixes as well. I have not compared NSCO Beta 1.93 and
+this code for game play differences however. The incompatible 'Gold Edition'
+data changes can be re-enabled by defining `NSCO_GOLD`. My original goal
+was porting the mod to run on the Enemy Territory engine, available in the
+`enemyterritory` branch, which was commissioned by [The OS FPS/TPS project](https://sourceforge.net/projects/theosfpsproject/)
+and released in 2015 as [NSCO ETL mod on moddb](http://www.moddb.com/mods/navy-seals-covert-operations-et). ~Zack Middleton
+
 Navy SEALs: Covert Operations Gold Edition - Source Code
 --------------------------------------------------------
 
