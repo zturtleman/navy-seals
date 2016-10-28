@@ -66,7 +66,7 @@ static void CG_ParseMenuOld( void ) {
 	i_Menu[0].l_color = colorLtBlue;
 	i_Menu[1].l_color = colorWhite;
 
-	for ( i = 2; i <= MAX_MENU_LINES; i++ ) {
+	for ( i = 2; i < MAX_MENU_LINES; i++ ) {
 		// clear Array
 
 		Com_sprintf( i_Menu[i].Line,sizeof( i_Menu[i].Line ),"%s", CG_Argv( i ) );

@@ -471,7 +471,7 @@ qboolean    CG_ParseBriefingFile(  char *mapstring  ) {
 	cg.mapOriginX = cg.mapOriginY = 256;
 
 	cg.radarNumObjects = 0;
-	memset( &cg.radarObjects, sizeof( cg.radarObjects ), 0 );
+	memset( &cg.radarObjects, 0, sizeof( cg.radarObjects ) );
 
 	memset( &cgs.mi_helpers, 0, sizeof( cgs.mi_helpers ) );
 
@@ -508,7 +508,7 @@ qboolean    CG_ParseBriefingFile(  char *mapstring  ) {
 
 		if ( !Q_stricmp( token, "[radar]" ) ) {
 			cg.radarNumObjects = 0;
-			memset( &cg.radarObjects, sizeof( cg.radarObjects ), 0 );
+			memset( &cg.radarObjects, 0, sizeof( cg.radarObjects ) );
 
 			while ( 1 )
 			{
